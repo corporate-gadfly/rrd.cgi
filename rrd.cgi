@@ -337,21 +337,26 @@ sub http_headers($$)
     my $refresh = $cfg->{refresh};
     $refresh ||= 300;
 
-    print <<EOT;
-Content-Type: $content_type
-Pragma: no-cache
-EOT
-    # Don't print refresh headers for graphics and when asked not to
-    my $autorefresh = defined $cfg->{autorefresh}
-        ? $cfg->{autorefresh} : '';
-    print <<EOT unless $content_type eq "image/$imagetype" || $autorefresh eq 'no' || !defined $cfg;
-Refresh: $refresh
-EOT
+    print 'Content-Type: ', $content_type, "\n";
 
-    # Expires header calculation stolen from CGI.pm
-    print strftime("Expires: %a, %d %b %Y %H:%M:%S GMT\n",
-        gmtime(time+60*$interval));
+    if( %$cfg ) {
+        # $cfg contains a reference to a non-empty hash
 
+        # pragma header
+        print 'Pragma: no-cache', "\n";
+
+        # Don't print refresh headers for graphics and
+        # when asked not to
+        my $autorefresh = defined $cfg->{autorefresh}
+            ? $cfg->{autorefresh} : '';
+        print 'Refresh: ', $refresh, "\n"
+            if $content_type ne "image/$imagetype" and
+                $autorefresh ne 'no';
+
+        # Expires header calculation stolen from CGI.pm
+        print strftime("Expires: %a, %d %b %Y %H:%M:%S GMT\n",
+            gmtime(time+60*$interval));
+    }
     print "\n";
 }
 
