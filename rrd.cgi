@@ -61,13 +61,14 @@ sub main ($)
 	my ($dir, $stat, $ext) = ($q->path_info() =~
 		/^(.*)\/([^\/]+)(\.html|-(hour|day|week|month|year)\.($imagetype|src))$/);
 
-	$dir =~ s/^\///;
+	$dir && $dir =~ s/^\///;
 
-	print_error("Undefined statistics")
+	print_error('Undefined statistic: ' . $q->path_info())
 		unless defined $stat and defined $targets{$stat};
 
-	print_error("Incorrect directory")
-		unless defined $targets{$stat}{directory} || $targets{$stat}{directory} eq $dir;
+	print_error('Incorrect directory: ' . $q->path_info())
+        unless defined $targets{$stat}{directory} ||
+        $targets{$stat}{directory} eq $dir;
 
 	my $tgt = $targets{$stat};
 
@@ -111,7 +112,7 @@ sub main ($)
 	} elsif ($ext eq '-year.src') {
 		do_image($tgt, 'year', 1, 0);
 	} else {
-		print_error("Unknown extension");
+		print_error('Unknown extension: ' . $ext);
 	}
 	$ENV{TZ} = $oldtz
 		if defined $oldtz;
