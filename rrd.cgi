@@ -766,6 +766,7 @@ sub display_archived_images($$$$) {
     my $archive_url = $directories{$dir}{config}{archiveurl};
 
     my @targets = ();
+    my $title;
 
     # if only $dir is defined it means user is requesting archived
     # images for the whole directory. Otherwise, if all of $dir, $stat
@@ -776,9 +777,17 @@ sub display_archived_images($$$$) {
         for my $target ( @{$directories{$dir}{target}} ) {
             push @targets, $target;
         }
+        $title = 'Images for ' . $dir;
     } else {
         # single archived image
         push @targets, $stat;
+        $title = 'Image for ' . $stat;
+    }
+
+    for( $mode ) {
+        /daily/     && do { $title .= " daily mode for $m-$d-$y"; last; };
+        /monthly/   && do { $title .= " monthly mode for $m-$y"; last; };
+        /yearly/    && do { $title .= " yearly mode for $y"; last; };
     }
 
     my $icon_dir = defined $directories{$dir}{config}{icondir}
@@ -791,7 +800,7 @@ sub display_archived_images($$$$) {
 <html>
 <head>
 <link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
-<title>RRD: Archived Images</title>
+<title>RRD: Archived $title</title>
 </head><body bgcolor="#ffffff">
 EOT
     for my $target ( @targets ) {
@@ -810,16 +819,10 @@ EOT
 
         my $image_file;
         my $image_dir = $directories{$dir}{config}{archivedir} . '/' . $dir;
-        SWITCH: for( $mode ) {
-            /daily/     && do { $image_file = "$y/$m/$target-$y-$m-$d";
-                                last SWITCH;
-                            };
-            /monthly/   && do { $image_file = "$y/$target-$y-$m";
-                                last SWITCH;
-                            };
-            /yearly/    && do { $image_file = "$target-$y";
-                                last SWITCH;
-                            };
+        for( $mode ) {
+            /daily/     && do { $image_file = "$y/$m/$target-$y-$m-$d"; last; };
+            /monthly/   && do { $image_file = "$y/$target-$y-$m"; last; };
+            /yearly/    && do { $image_file = "$target-$y"; last; };
             print_error('Undefined mode, ', $mode);
         }
         $image_file .= '.' . $imagetype;
