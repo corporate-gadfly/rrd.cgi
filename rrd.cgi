@@ -828,12 +828,14 @@ sub parse_directories {
                     $component);
 
                 # For the directory, get the global parameters
-                # from the # config of the first item of the
+                # from the config of the first item of the
                 # directory:
-                $directories{$prefix}{config} =
-                    $targets{$name}{config};
-                $directories{$prefix}{bodytag} =
-                    $targets{$name}{bodytag};
+                unless( $prefix eq '' ) {
+                    $directories{$prefix}{config} =
+                        $targets{$name}{config};
+                    $directories{$prefix}{bodytag} =
+                        $targets{$name}{bodytag};
+                }
             }
             $prefix .= $component . '/';
         }
