@@ -738,12 +738,20 @@ EOT
 We only carry Archived snapshots uptil yesterday.
 EOT
         }
+        display_archived_images($dir, $stat, $m, $d, $y);
+    }
+}
 
-        http_headers('text/html', undef);
-        print <<EOT;
+sub display_archived_images($$$$$) {
+    my $dir = shift;
+    my $stat = shift;
+    my $m = shift;
+    my $d = shift;
+    my $y = shift;
+    http_headers('text/html', undef);
+    print <<EOT;
 <img src="/rrd/archive$dir/$y/$m/$stat-$y-$m-$d.png">
 EOT
-    }
 }
 
 sub try_read_config($)
@@ -914,10 +922,15 @@ sub print_dir($$) {
     }
     http_headers('text/html', $directories{$dir}{config});
 
+    my $icon_dir = defined $directories{$dir}{config}{icondir}
+        ?
+            $directories{$dir}{config}{icondir}
+        :
+            $directories{$directories{$dir}{subdir}[0]}{config}{icondir};
     print <<EOT;
 <HTML>
 <HEAD>
-<link type="text/css" rel="stylesheet" href="$directories{$dir}{config}{icondir}/style.css">
+<link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
 <TITLE>RRD: Directory $dir1</TITLE>
 </HEAD><BODY BGCOLOR=#ffffff>
 EOT
@@ -1032,7 +1045,7 @@ EOT
 <h3><a href="/rrd/special/">Issues/Problem events</a> | <a
     href="/rrd/scripts/">About This Site</a></h3>
 <a href="http://www.rrdtool.org/"><img
-    src="$directories{$dir}{config}{icondir}/rrdtool.gif" width="120"
+    src="$icon_dir/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
 EOT
 
