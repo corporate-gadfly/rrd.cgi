@@ -1359,7 +1359,7 @@ sub archive_directory($$) {
                         $save_year = $y - 1;
                     }
                     # add leading zero if less than 10
-                    $save_month < 10 && $save_month = '0' . $save_month;
+                    $save_month < 10 and $save_month = '0' . $save_month;
                     $file =
                         "$archive_dir/$save_year/$target-$save_year-$save_month.$imagetype";
                     $url = "$archive_url/$target-month.$imagetype";
