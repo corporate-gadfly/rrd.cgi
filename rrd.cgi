@@ -30,6 +30,7 @@ use vars qw(@config_files @all_config_files %targets $config_time
 BEGIN { @config_files = qw(
     /etc/mrtg/rrd.cfg
     /etc/mrtg/rrd-tomcat.cfg
+    /etc/mrtg/rrd-network.cfg
 ); }
 
 $version = '0.6';
