@@ -602,6 +602,14 @@ sub do_custom_image($$$) {
             }
         }
     }
+    # in the case of custom images alternating background doesn't make
+    # sense (because it won't be exact) so make it impossibly large
+    my $bg_time = 12*31*24*60*60;   # 12 months
+    my $half_time = $bg_time / 2;
+    for( @graph_args ) {
+        s/%BGTIME%/$bg_time/g;
+        s/%BGTIME_DIV2%/$half_time/g;
+    }
     my( $fh, $filename );
     if( $ENV{MOD_PERL} ) {
         use File::Temp qw/ tempfile /;
