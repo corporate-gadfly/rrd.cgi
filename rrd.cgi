@@ -1349,20 +1349,27 @@ sub archive_directory($$) {
 
                 ## capture monthly images if its the first day of the month
                 if( $d eq '01' ) {
-                    # file location for storing image
-                    my $file = "$archive_dir/$y/$target-$y-$m.$imagetype";
-                    # url
-                    my $url = "$archive_url/$target-month.$imagetype";
+                    my( $save_year, $save_month );
+                    if( $m ne '01' ) {
+                        $save_month = $m - 1;
+                        $save_year = $y;
+                    } else {
+                        # year rolled over to previous
+                        $save_month = '12';
+                        $save_year = $y - 1;
+                    }
+                    # add leading zero if less than 10
+                    $save_month < 10 && $save_month = '0' . $save_month;
+                    $file =
+                        "$archive_dir/$save_year/$target-$save_year-$save_month.$imagetype";
+                    $url = "$archive_url/$target-month.$imagetype";
                     save_image_url($ua, $file, $url);
-                }
-
-                ## capture yearly images if its the first day of the year
-                if( $d eq '01' and $m eq '01' ) {
-                    # file location for storing image
-                    my $file = "$archive_dir/$target-$y.$imagetype";
-                    # url
-                    my $url = "$archive_url/$target-year.$imagetype";
-                    save_image_url($ua, $file, $url);
+                    ## capture yearly images if its the first day of the year
+                    if( $m eq '01' ) {
+                        $file = "$archive_dir/$target-$save_year.$imagetype";
+                        $url = "$archive_url/$target-year.$imagetype";
+                        save_image_url($ua, $file, $url);
+                    }
                 }
             }
         }
