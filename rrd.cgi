@@ -175,6 +175,16 @@ EOT
 Go to $switch_auto_refresh.</small>
 EOT
 
+                # total number of graphs (either 4 or 5)
+    my $total_graphs = $tgt->{config}{interval} ne '1' ? 4 : 5;
+                # How many are suppressed?
+    my( $suppressed_graphs ) = $tgt->{suppress} =~ /([hdwmy]+)/;
+    print '<div id="summary">';
+    print '<h1>', $total_graphs-length($suppressed_graphs), ' Graphs(s)</h1>';
+    $suppressed_graphs
+        and print '<p>', length($suppressed_graphs), ' graph(s) suppressed</p>';
+    print '</div>';
+
 	my $dayavg = $tgt->{config}->{interval};
 
 #    print '<!--';
@@ -738,6 +748,23 @@ sub print_dir($$) {
 
 	my $dir1 = $dir . '/';
 
+    my( $summary ) = {graphs => 0, suppress => 0, subdir => 0};
+    # run over all the targets in this directory for summary stats
+    if (defined @{$directories{$dir}{target}}) {
+        for my $item (@{$directories{$dir}{target}}) {
+            $summary->{graphs}++;
+            # see if item is suppressed?
+            if( defined $targets{$item}{suppress} ) {
+                if( ($targets{$item}{suppress} =~ /d/ &&
+                            $targets{$item}{config}{interval} ne '1') ||
+                        ($targets{$item}{suppress} =~ /h/ &&
+                         $targets{$item}{config}{interval} eq '1') ) {
+                    $summary->{suppress}++;
+                }
+            }
+        }
+    }
+
     # run over all the targets in this directory to see if any of them
     # has interval eq '1' meaning a refresh of 60
 	if (defined @{$directories{$dir}{target}}) {
@@ -781,10 +808,22 @@ EOT
 EOT
 		for my $item (@{$directories{$dir}{subdir}}) {
 			print "<LI><A HREF=\"$item/$no_auto_refresh_href\">$item/</A>\n";
+            $summary->{subdir}++;
 		}
 
 		print "</UL>\n";
 	}
+
+    # print summary
+    print '<div id="summary">';
+    $summary->{graphs} and
+        print '<h1>', $summary->{graphs}, ' Graph(s)</h1>';
+    $summary->{subdir} and
+        print '<h1>', $summary->{subdir}, ' Subdirectories</h1>';
+    $summary->{suppress}
+        and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
+    print '</div>';
+
 	if (defined @{$directories{$dir}{target}}) {
 		print "<HR>\n" if defined $subdirs_printed;
         my $switch_auto_refresh =
