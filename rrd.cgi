@@ -698,8 +698,8 @@ Only
 EOT
     } if $mode !~ m/^(archive|daily|monthly|yearly)$/o;
 
-    # crude check to see if archive mode being requested via the web
-    if( $mode eq 'archive' and $ENV{REQUEST_URI} ) {
+    # check to see if archive mode being requested via the web
+    if( $mode eq 'archive' and $ENV{GATEWAY_INTERFACE} ) {
         print_error(<<EOT);
 <h2>Should be used offline only</h2>
 Invoke from command line as:
