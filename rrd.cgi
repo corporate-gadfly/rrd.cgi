@@ -896,7 +896,8 @@ EOT
 	}
 
     print <<EOT;
-<h3><a href="/mrtg/special/">Issues/Problem events</a></h3>
+<h3><a href="/mrtg/special/">Issues/Problem events</a> | <a
+    href="/mrtg/scripts/">About This Site</a></h3>
 <a href="http://www.rrdtool.org/"><img
     src="$directories{$dir}{config}{icondir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
