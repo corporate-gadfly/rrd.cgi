@@ -415,7 +415,7 @@ sub do_image($$$$)
         $seconds = timelocal(@t);
         $back = 396*86400;  # 365 + 31 days
         $oldsec = $seconds - 365*86400; # FIXME (the right # of days!!)
-        $bg_time = 2*31*24*60*60;   # 2 months
+        $bg_time = 2*30*24*60*60;   # 2 months
     } else {
         print_error("Unknown file extension: $ext");
     }
