@@ -581,10 +581,9 @@ sub do_custom_image($$$) {
         }
         close $fh;
         unlink $filename;
-    } else {
-        my $rrd_error = RRDs::error;
-        print_error("RRDs::graph failed, $rrd_error") if defined $rrd_error;
     }
+    my $rrd_error = RRDs::error;
+    print_error("RRDs::graph failed, $rrd_error") if defined $rrd_error;
 }
 
 sub common_args($$$)
