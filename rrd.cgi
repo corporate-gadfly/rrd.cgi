@@ -3,7 +3,8 @@
 # mrtg-rrd.cgi: The script for generating graphs for rrdtool statistics.
 #
 # Closely modelled after the Jan "Yenya" Kasprzak <kas@fi.muni.cz>'s
-# mrtg-rrd.cgi
+# mrtg-rrd.cgi available at: http://www.fi.muni.cz/~kas/mrtg-rrd/
+# I didn't like its limitations and tight coupling with MRTG
 #
 
 use strict;
