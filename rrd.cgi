@@ -518,6 +518,9 @@ sub do_custom_image($$$) {
         my( $interval, $type ) = ($start =~ m/(\-\d+)([hdwm])/);
                 # regular -1d, -1m, -2w style start interval with no end
         if( defined $interval && defined $type ) {
+                # work around a bug in RRD's time parsing code which
+                # interprets -6m as -6 minutes instead of -6 months
+            $type = 'mon' if $type eq 'm';
                 # start time is just interval-1
             $start_time = $interval-1 . $type;
                 # for hourly interval type just go back three hours
