@@ -821,15 +821,17 @@ EOT
 
     for my $target ( @targets ) {
         if(
-                $targets{$target}{suppress} =~ /d/ and $mode eq 'daily'
+                exists $targets{$target}{suppress} and
+                ($targets{$target}{suppress} =~ /d/ and $mode eq 'daily'
                 or
                 $targets{$target}{suppress} =~ /m/ and $mode eq 'monthly'
                 or
-                $targets{$target}{suppress} =~ /y/ and $mode eq 'yearly'
+                $targets{$target}{suppress} =~ /y/ and $mode eq 'yearly')
                 ) {
             # target is suppressed for this mode
-            print 'Target ', $targets{$target}{title},
-                    ' is suppressed for archive mode: ', $mode;
+            print '<b>', $targets{$target}{title},
+                    '</b><br> Suppressed for <b>', $mode,
+                    '</b> archive mode: <br>';
             next;
         }
 
@@ -852,7 +854,7 @@ EOT
             print '<b>', $targets{$target}{title},
                     '</b> does not have a <b>', $mode,
                     '</b> archived image for <b>',
-                    $error_date, '</b>';
+                    $error_date, '</b><br>';
             next;
         }
         print <<EOT;
@@ -869,6 +871,10 @@ EOT
 EOT
 }
 
+# generate code for JavaScript calendar
+#   remember that, in JavaScript, the 2nd argument to
+#   Date($y,@{[$m-1]},$d) needs to have 1 subtracted from it as the
+#   JavaScript months go from 0 to 11
 sub generate_calendar($$$$$) {
     my $mode = shift;
     my $m = shift;
@@ -877,9 +883,79 @@ sub generate_calendar($$$$$) {
     my $icon_dir = shift;
 
     print <<EOT;
+<script type="text/javascript" language="JavaScript">
+var cal = new CalendarPopup('calDiv');
+
+EOT
+
+    print <<EOT if $mode eq 'daily';
+        // get today's date
+var today = new Date();
+        // disabled dates later than today
+cal.addDisabledDates(formatDate(today,'MM-dd-yyyy'),null);
+cal.setReturnFunction('set_href');
+EOT
+
+    print <<EOT if $mode eq 'monthly';
+cal.setDisplayType("month")
+cal.setReturnMonthFunction('set_href');
+cal.showYearNavigation();
+EOT
+    
+    print <<EOT if $mode eq 'yearly';
+cal.setDisplayType("year");
+cal.setReturnYearFunction('set_href');
+cal.showYearNavigation();
+EOT
+    
+    print <<EOT;
+
+try {
+    cal.currentDate = new Date($y,@{[$m-1]},$d);
+} catch( err ) {
+    /* ignore */
+}
+
+/* since calendar is now in a div, let's print the necessary css */
+document.write(cal.getStyles());
+
+/* function to get input back from calendar popup
+ * sanitizes the output by adding leading zeros LZ and sets the
+ * location.href property
+ */
+function set_href(y, m, d) {
+EOT
+
+    print <<EOT if $mode eq 'daily';
+    location.href = '?date='+LZ(m)+'-'+LZ(d)+'-'+y+'&mode=daily';
+EOT
+
+    print <<EOT if $mode eq 'monthly';
+    location.href = '?date='+LZ(m)+'-01-'+y+'&mode=monthly';
+EOT
+
+    print <<EOT if $mode eq 'yearly';
+    location.href = '?date='+'01-01-'+y+'&mode=yearly';
+EOT
+
+    print <<EOT;
+}
+</script>
+
 <form method="post">
     <input style="margin-left: 75px;" type="text" name="date"
+EOT
+
+    print <<EOT if $mode eq 'daily';
         value="$m-$d-$y" size="10">
+EOT
+    print <<EOT if $mode eq 'monthly';
+        value="$m-$y" size="7">
+EOT
+    print <<EOT if $mode eq 'yearly';
+        value="$y" size="4">
+EOT
+    print <<EOT;
     <a href="#"
         onClick="cal.showCalendar(this.id); return false;"
         name="calAnchor" id="calAnchor"><img
@@ -1177,6 +1253,19 @@ EOT
         print @text;
         print "</TABLE>\n";
     }
+
+    print <<EOT if @{$directories{$dir}{target}};
+<br>
+<b><a name="Archived">Archived Graphs</a></b>
+<small>These are archived snapshots kept on the filesystem. Serving them
+up via a web-viewable directory carries a very low performance hit.</small>
+<br>
+Display of
+<a href="?mode=daily">daily</a>,
+<a href="?mode=monthly">monthly</a>,
+<a href="?mode=yearly">yearly</a> archival modes is supported.
+<br>
+EOT
 
     print <<EOT;
 <h3><a href="/rrd/special/">Issues/Problem events</a> | <a
