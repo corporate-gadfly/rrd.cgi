@@ -640,6 +640,15 @@ sub print_dir($$) {
 
 	my $dir1 = $dir . '/';
 
+	if (defined @{$directories{$dir}{target}}) {
+		for my $item (@{$directories{$dir}{target}}) {
+            if( $targets{$item}{config}{interval} eq '1'
+                    && $targets{$item}{suppress} !~ /h/ ) {
+                $directories{$dir}{config}{refresh} = 60;
+                last;
+            }
+        }
+    }
 	http_headers('text/html', $directories{$dir}{config});
 
 	print <<EOT;
@@ -678,27 +687,40 @@ EOT
 		for my $item (@{$directories{$dir}{target}}) {
 			my $itemname = $item;
             common_args($item, $targets{$item}, $q);
-            my( undef, $xsize, $ysize )
-                = do_image($targets{$item}, 'day', 0, 0);
+            my( $freq, $freqtext );
+            if( $targets{$item}{config}{interval} eq '1'
+                    && $targets{$item}{suppress} !~ /h/ ) {
+                $targets{$item}{config}{refresh} = 60;
+                $freq = 'hour';
+                $freqtext = 'Hourly';
+            } else {
+                $freq = 'day';
+                $freqtext = 'Daily';
+            }
+            my( undef, $xsize, $ysize ) =
+                do_image($targets{$item}, $freq, 0, 0);
 			$itemname = $targets{$item}{title}
 				if defined $targets{$item}{title};
                     # for each graph store its item and name in an
                     # anonymous hash and push onto the array @graphs
             push @graphs, {item => $item, name => $itemname};
-            do {
+            if( ($targets{$item}{suppress} =~ /d/ &&
+                    $targets{$item}{config}{interval} ne '1') ||
+                    ($targets{$item}{suppress} =~ /h/ &&
+                     $targets{$item}{config}{interval} eq '1') ) {
                 push @text, <<EOT;
 <TR>
 <TD><a name="$item">&nbsp;</a><a href="$item.html">$itemname</a><br>
-&nbsp;&nbsp;&nbsp;&nbsp;Daily Graphic suppressed. More data is available
+&nbsp;&nbsp;&nbsp;&nbsp;$freqtext Graphic suppressed. More data is available
 <a href="$item.html">here</a>.
 </TR>
 EOT
                 next;
-            } if $targets{$item}{suppress} =~ /d/;
+            };
 			push @text, <<EOT;
 <TR>
    <TD><a name="$item">&nbsp;</a><a href="$item.html">$itemname</a><br>
-	<a href="$item.html"><img src="$item-day.$imagetype"
+	<a href="$item.html"><img src="$item-$freq.$imagetype"
     width="$xsize" height="$ysize"
     border="0" align="top" vspace="10" alt="$item"></a><br clear="all">
    </TD>
