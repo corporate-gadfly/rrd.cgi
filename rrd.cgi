@@ -688,9 +688,7 @@ EOT
 			my $itemname = $item;
             common_args($item, $targets{$item}, $q);
             my( $freq, $freqtext );
-            if( $targets{$item}{config}{interval} eq '1'
-                    && $targets{$item}{suppress} !~ /h/ ) {
-                $targets{$item}{config}{refresh} = 60;
+            if( $targets{$item}{config}{interval} eq '1' ) {
                 $freq = 'hour';
                 $freqtext = 'Hourly';
             } else {
