@@ -128,11 +128,11 @@ EOT
 	
 	print $tgt->{pagetop} if defined $tgt->{pagetop};
 
-    my @st = stat $tgt->{rrd};
+    my $mtime = (stat $tgt->{rrd})[9];
 
     print "The statistics were last updated ",
         strftime("<B>%A, %e %B, %T %Z</B>\n",
-            localtime($st[9]));
+            localtime($mtime));
     print <<EOT;
 <p>
 <small>Scroll to:
@@ -495,8 +495,8 @@ sub try_read_config($)
 		$read_cfg = 1;
 	} else {
 		for my $file (@all_config_files) {
-			my @stat = stat $file;
-			if ($config_time < $stat[9]) {
+			my $mtime = (stat $file)[9];
+			if ($config_time < $mtime) {
 				$read_cfg = 1;
 				last;
 			}
