@@ -17,6 +17,8 @@ use Time::Local;
 use Text::ParseWords;
 use Date::Manip;
 use CGI;
+use LWP::UserAgent;
+use HTTP::Request::Common qw(GET);
 
 # Force 5.8.0 because of different handling of %.1f/%.1lf in sprintf() in 5.6.x
 require 5.008;
@@ -676,11 +678,14 @@ Only
 EOT
     } if $mode !~ m/^(archive|daily|monthly|yearly)$/o;
 
-    if( $mode eq 'archive' ) {
+    if( $mode eq 'archive' and $ENV{REQUEST_URI} ) {
         http_headers('text/html', undef);
-        print '<pre>', "\n";
+        print '<h2>Should be used offline only</h2>', "\n";
+        print 'Invoke from command line as:', "\n";
+        print '<pre>rrd.cgi mode=archive</pre>', "\n";
+        return;
+    } elsif( $mode eq 'archive' ) {
         archive_directory(undef, undef);
-        print '</pre>', "\n";
         return;
     }
     print_error('Not implemented yet');
@@ -1002,42 +1007,86 @@ sub archive_directory($$) {
     if( exists $directories{$dir} ) {
         my $archive_dir =  $directories{$dir}{config}{archivedir}
             . '/' . $dir;
-        my $archive_url =  $directories{$dir}{config}{archiveurl};
+        my $archive_url =  $directories{$dir}{config}{archiveurl}
+            . '/' . $dir;
         do {
-            print 'Undefined archivedir for ', $dir, '/', "\n";
+            warn 'Undefined archivedir for ', $dir, '/', "\n";
             return;
         } unless defined $archive_dir;
         do {
-            print 'Nonexistent directory ', $archive_dir, "\n";
+            warn 'Nonexistent directory ', $archive_dir, "\n";
             return;
         } unless -d $archive_dir;
         do {
-            print 'Undefined archiveurl for ', $dir, '/', "\n";
+            warn 'Undefined archiveurl for ', $dir, '/', "\n";
             return;
         } unless defined $directories{$dir}{config}{archiveurl};
 
         my( $m, $d, $y ) = split /-/, $date;
 
-        # check to see if proper directory hierarchy exists
-        do {
-            mkdir "$archive_dir/$y"
-                or print_error("mkdir $archive_dir/$y failed: $!")
-                unless -d "$archive_dir/$y";
-            mkdir "$archive_dir/$y/$m"
-                or print_error("mkdir $archive_dir/$y/$m: failed $!")
-                unless -d "$archive_dir/$y/$m";
-            mkdir "$archive_dir/$y/$m/$d"
-                or print_error("mkdir $archive_dir/$y/$m/$d: failed $!")
-                unless -d "$archive_dir/$y/$m/$d";
-        } unless -d "$archive_dir/$y/$m/$d";
+        if( exists $directories{$dir}{target} ) {
+            # check to see if proper directory hierarchy exists
+            # for directories with non-zero number of targets
+            do {
+                mkdir "$archive_dir/$y"
+                    or die "mkdir $archive_dir/$y failed: $!"
+                    unless -d "$archive_dir/$y";
+                mkdir "$archive_dir/$y/$m"
+                    or die "mkdir $archive_dir/$y/$m: failed $!";
+            } unless !@{$directories{$dir}{target}} or
+                        -d "$archive_dir/$y/$m";
 
-        for my $target ( @{$directories{$dir}{target}} ) {
-            print 'Archiving Target: ', $dir, '/', $target, "\n";
+            # user agent
+            my $ua = new LWP::UserAgent;
+            for my $target ( @{$directories{$dir}{target}} ) {
+
+                ## capture daily images
+                # file location for storing image
+                my $file = "$archive_dir/$y/$m/$target-$y-$m-$d.png";
+                # url
+                my $url = $archive_url .'/' . $target . '-day.png';
+                save_image_url($ua, $file, $url);
+
+                ## capture monthly images if its the first day of the month
+                if( $d eq '01' ) {
+                    # file location for storing image
+                    my $file = "$archive_dir/$y/$target-$y-$m.png";
+                    # url
+                    my $url = $archive_url .'/' . $target . '-month.png';
+                    save_image_url($ua, $file, $url);
+                }
+
+                ## capture yearly images if its the first day of the year
+                if( $d eq '01' and $m eq '01' ) {
+                    # file location for storing image
+                    my $file = "$archive_dir/$target-$y.png";
+                    # url
+                    my $url = $archive_url .'/' . $target . '-year.png';
+                    save_image_url($ua, $file, $url);
+                }
+            }
         }
-        for my $subdir ( @{$directories{$dir}{subdir}} ) {
-            archive_directory($subdir, $date);
+        if( exists $directories{$dir}{subdir} ) {
+            for my $subdir ( @{$directories{$dir}{subdir}} ) {
+                archive_directory($subdir, $date);
+            }
         }
     }
+}
+
+# save an image from a URL to a file location
+sub save_image_url($$$) {
+    my $ua = shift;         # user agent
+    my $file = shift;       # file location for saving image
+    my $url = shift;        # url to get
+
+    # request
+    my $req = GET $url;
+    # repsonse
+    my $res = $ua->request($req, $file);
+    die 'Error while getting ' . $res->request->uri
+            . ' ' . $res->status_line
+        unless $res->is_success;
 }
 
 # forward declaration needed for recursive call
