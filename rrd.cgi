@@ -704,50 +704,51 @@ EOT
         archive_directory(undef, undef);
         return;
     }
-    my ($dir, $stat, $ext) = ($q->path_info() =~
-            /^(.*)\/([^\/]+)(\.html)$/);
-    if( !defined $dir or !defined $stat or !defined $ext ) {
-        print_error('Undefined statistic ', $q->path_info(),
-                ' for archive mode: ', $mode);
-    } else {
-        my $date;
-        my( $m, $d, $y );
-        if( $q->param('date') ) {
-            $date = $q->param('date');
-            ( $m, $d, $y ) = split /-/, $date;
-            unless( defined $m and defined $d and defined $y
-                    and $m =~ /\d{2}/
-                    and $d =~ /\d{2}/
-                    and $y =~ /\d{4}/ ) {
-                print_error(<<EOT)
+    my $date;
+    my( $m, $d, $y );
+    if( $q->param('date') ) {
+        $date = $q->param('date');
+        ( $m, $d, $y ) = split /-/, $date;
+        unless( defined $m and defined $d and defined $y
+                and $m =~ /\d{2}/
+                and $d =~ /\d{2}/
+                and $y =~ /\d{4}/ ) {
+            print_error(<<EOT)
 <h3>Invalid date >>>$date<<<<</h3>
 <b>Date parameter must be in mm-dd-yyyy format</b>
 EOT
-            }
-        } else {
-                # no date provided - so default to yesterday
-            ( $m, $d, $y ) = UnixDate('yesterday', '%m', '%d', '%Y');
         }
-        my $parse_date = ParseDate($m.'/'.$d.'/'.$y);
-        my $parse_time = UnixDate($parse_date, "%s");
+    } else {
+            # no date provided - so default to yesterday
+        ( $m, $d, $y ) = UnixDate('yesterday', '%m', '%d', '%Y');
+    }
+    my $parse_date = ParseDate($m.'/'.$d.'/'.$y);
+    my $parse_time = UnixDate($parse_date, "%s");
 
-        unless( defined $parse_time and
-                $parse_time < UnixDate(ParseDate('today 12:00am'), "%s") ) {
-            print_error(<<EOT)
+    unless( defined $parse_time and
+            $parse_time < UnixDate(ParseDate('today 12:00am'), "%s") ) {
+        print_error(<<EOT)
 <h3>We're sorry. Archived snapshots for $m-$d-$y are not available</h3>
 We only carry Archived snapshots uptil yesterday.
 EOT
-        }
-        display_archived_images($dir, $stat, $m, $d, $y);
     }
+    display_archived_images($q, $m, $d, $y);
 }
 
-sub display_archived_images($$$$$) {
-    my $dir = shift;
-    my $stat = shift;
+sub display_archived_images($$$$) {
+    my $q = shift;
     my $m = shift;
     my $d = shift;
     my $y = shift;
+
+    my ($dir, $stat, $ext) = ($q->path_info() =~
+            /^(.*)\/([^\/]+)(\.html)$/);
+
+    if( !defined $dir or !defined $stat or !defined $ext ) {
+        print_error('Undefined statistic ', $q->path_info(),
+                ' for archive mode: ', $q->param('mode'));
+    }
+
     http_headers('text/html', undef);
     print <<EOT;
 <img src="/rrd/archive$dir/$y/$m/$stat-$y-$m-$d.png">
