@@ -187,7 +187,8 @@ EOT
 @{[ $tgt->{suppress} =~ /w/ ? '' : '<a href="#Weekly">Weekly</a>|' ]}
 @{[ $tgt->{suppress} =~ /m/ ? '' : '<a href="#Monthly">Monthly</a>|' ]}
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
-<a href="#Historical">Historical</a> Graphs</small>
+<a href="#Historical">Historical</a>|
+<a href="#Archived">Archived</a> Graphs</small>
 <br>
 <small>Go: <a href="./$no_auto_refresh_href">up to parent level</a>, or<br>
 Go to $switch_auto_refresh.</small>
@@ -218,7 +219,8 @@ EOT
     html_graph($tgt, 'year', 'Yearly', '1 Day', $xy, $yy, $avy);
 
     print <<EOT;
-<h4><a name="Historical">Historical Graphs</a></h4>
+<br>
+<b><a name="Historical">Run-time Historical Graphs</a></b>
 <small>These historical graphs produce images that are not cached at
 all and hence carry a performance hit every time they are requested,
 so be gentle</small>
@@ -268,6 +270,19 @@ End Date: <input type="text" name="end" length="6" maxlength="40">
 <dd>..., etc.
 </dl>
 </small>
+EOT
+
+    print <<EOT;
+<br>
+<b><a name="Archived">Archived Graphs</a></b>
+<small>These are archived snapshots kept on the filesystem. Serving them
+up via a web-viewable directory carries a very low performance hit.</small>
+<br>
+Display of
+<a href="?mode=daily">daily</a>,
+<a href="?mode=monthly">monthly</a>,
+<a href="?mode=yearly">yearly</a> archival modes is supported.
+<br>
 EOT
 
     print <<EOT;
