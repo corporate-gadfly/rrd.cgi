@@ -1042,26 +1042,26 @@ sub archive_directory($$) {
 
                 ## capture daily images
                 # file location for storing image
-                my $file = "$archive_dir/$y/$m/$target-$y-$m-$d.png";
+                my $file = "$archive_dir/$y/$m/$target-$y-$m-$d.$imagetype";
                 # url
-                my $url = $archive_url .'/' . $target . '-day.png';
+                my $url = "$archive_url/$target-day.$imagetype";
                 save_image_url($ua, $file, $url);
 
                 ## capture monthly images if its the first day of the month
                 if( $d eq '01' ) {
                     # file location for storing image
-                    my $file = "$archive_dir/$y/$target-$y-$m.png";
+                    my $file = "$archive_dir/$y/$target-$y-$m.$imagetype";
                     # url
-                    my $url = $archive_url .'/' . $target . '-month.png';
+                    my $url = "$archive_url/$target-month.$imagetype";
                     save_image_url($ua, $file, $url);
                 }
 
                 ## capture yearly images if its the first day of the year
                 if( $d eq '01' and $m eq '01' ) {
                     # file location for storing image
-                    my $file = "$archive_dir/$target-$y.png";
+                    my $file = "$archive_dir/$target-$y.$imagetype";
                     # url
-                    my $url = $archive_url .'/' . $target . '-year.png';
+                    my $url = "$archive_url/$target-year.$imagetype";
                     save_image_url($ua, $file, $url);
                 }
             }
