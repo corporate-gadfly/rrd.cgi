@@ -16,6 +16,7 @@ use POSIX qw(strftime);
 use Time::Local;
 use Text::ParseWords;
 use Date::Manip;
+use CGI;
 
 # Force 5.8.0 because of different handling of %.1f/%.1lf in sprintf() in 5.6.x
 require 5.008;
@@ -40,7 +41,7 @@ $imagetype = 'png'; # or make this 'gif';
 $percent_h = '%-H';
 $percent_h = '%H' if (strftime('%-H', gmtime(0)) !~ /^\d+$/);
 
-sub handler ($)
+sub main ($)
 {
 	my ($q) = @_;
 
@@ -947,27 +948,14 @@ sub print_error(@)
 	exit 0;
 }
 
-#--BEGIN CGI--
-#For CGI, use this:
-
-use CGI;
-my $q = new CGI;
-
-handler($q);
-
-#--END CGI--
-#--BEGIN FCGI--
-# For FastCGI, uncomment this and comment out the above:
-#-# use FCGI;
-#-# use CGI;
-#-# 
-#-# my $req = FCGI::Request();
-#-# 
-#-# while ($req->Accept >= 0) {
-#-# 	my $q = new CGI;
-#-# 	handler($q);
-#-# }
-#--END FCGI--
+my $q;
+if( $ENV{MOD_PERL} ) {
+    my $r = shift;
+    $q = new CGI($r);
+} else {
+    $q = new CGI;
+}
+main($q);
 
 1;
 
