@@ -983,8 +983,11 @@ sub dump_targets() {
     }
 }
 
+# forward declaration needed for recursive call
+sub dump_directories($$);
+
 # recursive subroutine to print all directories
-sub dump_directories {
+sub dump_directories($$) {
     my $dir = shift;
     my $indent = shift;
     $dir ||= '';
