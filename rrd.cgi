@@ -24,7 +24,7 @@ require 5.008;
 use RRDs;
 
 use vars qw(@config_files @all_config_files %targets $config_time
-	%directories $imagetype $percent_h);
+    %directories $imagetype $percent_h);
 
 # EDIT THIS to reflect all your RRD config files
 BEGIN { @config_files = qw(
@@ -42,45 +42,45 @@ $percent_h = '%H' if (strftime('%-H', gmtime(0)) !~ /^\d+$/);
 
 sub main ($)
 {
-	my ($q) = @_;
+    my ($q) = @_;
 
-	try_read_config($q->url());
+    try_read_config($q->url());
 
-	my $path = $q->path_info();
-	$path =~ s/^\///;
-	$path =~ s/\/$//;
-	if (defined $directories{$path}) {
-		if ($q->path_info() =~ /\/$/) {
-			print_dir($path, $q);
-		} else {
-			print "Location: ", $q->url(-path_info=>1), "/\n\n";
-		}
-		return;
-	}
+    my $path = $q->path_info();
+    $path =~ s/^\///;
+    $path =~ s/\/$//;
+    if (defined $directories{$path}) {
+        if ($q->path_info() =~ /\/$/) {
+            print_dir($path, $q);
+        } else {
+            print "Location: ", $q->url(-path_info=>1), "/\n\n";
+        }
+        return;
+    }
 
-	my ($dir, $stat, $ext) = ($q->path_info() =~
-		/^(.*)\/([^\/]+)(\.html|-(hour|day|week|month|year)\.($imagetype|src))$/);
+    my ($dir, $stat, $ext) = ($q->path_info() =~
+        /^(.*)\/([^\/]+)(\.html|-(hour|day|week|month|year)\.($imagetype|src))$/);
 
-	$dir && $dir =~ s/^\///;
+    $dir && $dir =~ s/^\///;
 
-	print_error('Undefined statistic: ' . $q->path_info())
-		unless defined $stat and defined $targets{$stat};
+    print_error('Undefined statistic: ' . $q->path_info())
+        unless defined $stat and defined $targets{$stat};
 
-	print_error('Incorrect directory: ' . $q->path_info())
+    print_error('Incorrect directory: ' . $q->path_info())
         unless defined $targets{$stat}{directory} ||
         $targets{$stat}{directory} eq $dir;
 
-	my $tgt = $targets{$stat};
+    my $tgt = $targets{$stat};
 
-	common_args($stat, $tgt, $q);
+    common_args($stat, $tgt, $q);
 
-	# We may be running under mod_perl or something. Do not destroy
-	# the original settings of timezone.
-	my $oldtz; 
-	if (defined $tgt->{timezone}) {
-		$oldtz = $ENV{TZ};
-		$ENV{TZ} = $tgt->{timezone};
-	}
+    # We may be running under mod_perl or something. Do not destroy
+    # the original settings of timezone.
+    my $oldtz; 
+    if (defined $tgt->{timezone}) {
+        $oldtz = $ENV{TZ};
+        $ENV{TZ} = $tgt->{timezone};
+    }
 
     my $start = $q->param('start');
     my $end = $q->param('end');
@@ -89,63 +89,63 @@ sub main ($)
         return;
     }
 
-	if ($ext eq '.html') {
-		do_html($tgt, $q);
-	} elsif ($ext eq '-hour.' . $imagetype) {
-		do_image($tgt, 'hour', 0, 1);
-	} elsif ($ext eq '-day.' . $imagetype) {
-		do_image($tgt, 'day', 0, 1);
-	} elsif ($ext eq '-week.' . $imagetype) {
-		do_image($tgt, 'week', 0, 1);
-	} elsif ($ext eq '-month.' . $imagetype) {
-		do_image($tgt, 'month', 0, 1);
-	} elsif ($ext eq '-year.' . $imagetype) {
-		do_image($tgt, 'year', 0, 1);
-	} elsif ($ext eq '-hour.src') {
-		do_image($tgt, 'hour', 1, 0);
-	} elsif ($ext eq '-day.src') {
-		do_image($tgt, 'day', 1, 0);
-	} elsif ($ext eq '-week.src') {
-		do_image($tgt, 'week', 1, 0);
-	} elsif ($ext eq '-month.src') {
-		do_image($tgt, 'month', 1, 0);
-	} elsif ($ext eq '-year.src') {
-		do_image($tgt, 'year', 1, 0);
-	} else {
-		print_error('Unknown extension: ' . $ext);
-	}
-	$ENV{TZ} = $oldtz
-		if defined $oldtz;
+    if ($ext eq '.html') {
+        do_html($tgt, $q);
+    } elsif ($ext eq '-hour.' . $imagetype) {
+        do_image($tgt, 'hour', 0, 1);
+    } elsif ($ext eq '-day.' . $imagetype) {
+        do_image($tgt, 'day', 0, 1);
+    } elsif ($ext eq '-week.' . $imagetype) {
+        do_image($tgt, 'week', 0, 1);
+    } elsif ($ext eq '-month.' . $imagetype) {
+        do_image($tgt, 'month', 0, 1);
+    } elsif ($ext eq '-year.' . $imagetype) {
+        do_image($tgt, 'year', 0, 1);
+    } elsif ($ext eq '-hour.src') {
+        do_image($tgt, 'hour', 1, 0);
+    } elsif ($ext eq '-day.src') {
+        do_image($tgt, 'day', 1, 0);
+    } elsif ($ext eq '-week.src') {
+        do_image($tgt, 'week', 1, 0);
+    } elsif ($ext eq '-month.src') {
+        do_image($tgt, 'month', 1, 0);
+    } elsif ($ext eq '-year.src') {
+        do_image($tgt, 'year', 1, 0);
+    } else {
+        print_error('Unknown extension: ' . $ext);
+    }
+    $ENV{TZ} = $oldtz
+        if defined $oldtz;
 }
 
 sub do_html($$)
 {
-	my ($tgt, $q) = @_;
+    my ($tgt, $q) = @_;
 
-	my( $avh, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
+    my( $avh, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
         unless $tgt->{suppress} =~ /h/ or
         $tgt->{config}{interval} ne '1';
-	my( $avd, $xd, $yd ) = do_image($tgt, 'day',   0, 0);
-	my( $avw, $xw, $yw ) = do_image($tgt, 'week',  0, 0);
-	my( $avm, $xm, $ym ) = do_image($tgt, 'month', 0, 0);
-	my( $avy, $xy, $yy ) = do_image($tgt, 'year',  0, 0);
+    my( $avd, $xd, $yd ) = do_image($tgt, 'day',   0, 0);
+    my( $avw, $xw, $yw ) = do_image($tgt, 'week',  0, 0);
+    my( $avm, $xm, $ym ) = do_image($tgt, 'month', 0, 0);
+    my( $avy, $xy, $yy ) = do_image($tgt, 'year',  0, 0);
 
             # change the refresh interval only if hourly is enabled
-	$tgt->{config}{refresh} = 60
+    $tgt->{config}{refresh} = 60
         if $tgt->{config}{interval} eq '1' and $tgt->{suppress} !~ /h/;
-	http_headers('text/html', $tgt->{config});
-	print <<EOT;
+    http_headers('text/html', $tgt->{config});
+    print <<EOT;
 <HTML>
 <HEAD>
 <link type="text/css" rel="stylesheet" href="$tgt->{config}{icondir}/style.css">
 <TITLE>
 EOT
-	print $tgt->{title} if defined $tgt->{title};
-	print "</TITLE>\n";
+    print $tgt->{title} if defined $tgt->{title};
+    print "</TITLE>\n";
 
-	print "</HEAD>\n<BODY BGCOLOR=#ffffff>\n";
-	
-	print $tgt->{pagetop} if defined $tgt->{pagetop};
+    print "</HEAD>\n<BODY BGCOLOR=#ffffff>\n";
+    
+    print $tgt->{pagetop} if defined $tgt->{pagetop};
 
     my $mtime = (stat $tgt->{rrd})[9];
 
@@ -196,18 +196,18 @@ EOT
         and print '<p>', length($suppressed_graphs), ' graph(s) suppressed</p>';
     print '</div>';
 
-	my $dayavg = $tgt->{config}->{interval};
+    my $dayavg = $tgt->{config}->{interval};
 
 #    print '<!--';
 #    use Data::Dumper;
 #    print Dumper(%targets);
 #    print '-->', "\n";
 
-	html_graph($tgt, 'hour', 'Hourly', $dayavg . ' Minute', $xh, $yh, $avh);
-	html_graph($tgt, 'day', 'Daily', '5 Minute', $xd, $yd, $avd);
-	html_graph($tgt, 'week', 'Weekly', '30 Minute', $xw, $yw, $avw);
-	html_graph($tgt, 'month', 'Monthly', '2 Hour', $xm, $ym, $avm);
-	html_graph($tgt, 'year', 'Yearly', '1 Day', $xy, $yy, $avy);
+    html_graph($tgt, 'hour', 'Hourly', $dayavg . ' Minute', $xh, $yh, $avh);
+    html_graph($tgt, 'day', 'Daily', '5 Minute', $xd, $yd, $avd);
+    html_graph($tgt, 'week', 'Weekly', '30 Minute', $xw, $yw, $avw);
+    html_graph($tgt, 'month', 'Monthly', '2 Hour', $xm, $ym, $avm);
+    html_graph($tgt, 'year', 'Yearly', '1 Day', $xy, $yy, $avy);
 
     print <<EOT;
 <h4><a name="Historical">Historical Graphs</a></h4>
@@ -262,14 +262,14 @@ End Date: <input type="text" name="end" length="6" maxlength="40">
 </small>
 EOT
 
-	print <<EOT;
+    print <<EOT;
 <a href="http://www.rrdtool.org/"><img
     src="$tgt->{config}{icondir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
 EOT
 
     print '<!-- $Id$ -->', "\n";
-	print <<EOT;
+    print <<EOT;
 </body>
 </html>
 EOT
@@ -278,11 +278,11 @@ EOT
 
 sub html_graph($$$$$$$)
 {
-	my ($tgt, $ext, $freq, $period, $xsize, $ysize, $av) = @_;
+    my ($tgt, $ext, $freq, $period, $xsize, $ysize, $av) = @_;
 
-	return unless defined $tgt->{$ext};
+    return unless defined $tgt->{$ext};
 
-	print <<EOT;
+    print <<EOT;
 <br><a name="$freq"><b>"$freq" Graph ($period Average)</b></a><br>
 <img src="$tgt->{url}-$ext.$imagetype"
 width="$xsize" height="$ysize"
@@ -308,7 +308,7 @@ EOT
 
 sub http_headers($$)
 {
-	my ($content_type, $cfg) = @_;
+    my ($content_type, $cfg) = @_;
 
     print <<EOT;
 Content-Type: $content_type
@@ -321,33 +321,33 @@ EOT
 Refresh: $cfg->{refresh}
 EOT
 
-	# Expires header calculation stolen from CGI.pm
-	print strftime("Expires: %a, %d %b %Y %H:%M:%S GMT\n",
-		gmtime(time+60*$cfg->{interval}));
+    # Expires header calculation stolen from CGI.pm
+    print strftime("Expires: %a, %d %b %Y %H:%M:%S GMT\n",
+        gmtime(time+60*$cfg->{interval}));
 
-	print "\n";
+    print "\n";
 }
 
 sub do_image($$$$)
 {
-	my ($target, $ext, $wantsrc, $wantimage) = @_;
+    my ($target, $ext, $wantsrc, $wantimage) = @_;
 
-	my $file = $target->{$ext};
+    my $file = $target->{$ext};
 
     do {
         print_error("Target '$ext' suppressed for this target") if $wantimage;
         return;
     } unless defined $file;
 
-	# Now the vertical rule at the end of the day
-	my @t = localtime(time);
+    # Now the vertical rule at the end of the day
+    my @t = localtime(time);
     # set seconds, minutes, hours to zero
-	$t[0] = $t[1] = $t[2] = 0 unless $ext eq 'hour';
+    $t[0] = $t[1] = $t[2] = 0 unless $ext eq 'hour';
 
-	my $seconds;
-	my $oldsec;
-	my $back;
-	my $xgrid = '';
+    my $seconds;
+    my $oldsec;
+    my $back;
+    my $xgrid = '';
 
     if ($ext eq 'hour') {
         $seconds = timelocal(@t);
@@ -355,38 +355,38 @@ sub do_image($$$$)
         $oldsec = $seconds - $t[2]*3600 - $t[1]*60 - $t[0];     # FIXME: where to set the VRULE
         $seconds = 0;
     } elsif ($ext eq 'day') {
-		$seconds = timelocal(@t);
-		$back = 30*3600;	# 30 hours
-		$oldsec = $seconds - 86400;
-		# We need this only for day graph. The other ones
-		# are magically correct.
-		$xgrid = 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h;
-	} elsif ($ext eq 'week') {
-		$seconds = timelocal(@t);
-		$t[6] = ($t[6]+6) % 7;
-		$seconds -= $t[6]*86400;
-		$back = 8*86400;	# 8 days
-		$oldsec = $seconds - 7*86400;
-	} elsif ($ext eq 'month') {
-		$t[3] = 1;
-		$seconds = timelocal(@t);
-		$back = 36*86400;	# 36 days
-		$oldsec = $seconds - 30*86400; # FIXME (the right # of days!!)
-	} elsif ($ext eq 'year') {
-		$t[3] = 1;
-		$t[4] = 0;
-		$seconds = timelocal(@t);
-		$back = 396*86400;	# 365 + 31 days
-		$oldsec = $seconds - 365*86400; # FIXME (the right # of days!!)
-	} else {
-		print_error("Unknown file extension: $ext");
-	}
+        $seconds = timelocal(@t);
+        $back = 30*3600;    # 30 hours
+        $oldsec = $seconds - 86400;
+        # We need this only for day graph. The other ones
+        # are magically correct.
+        $xgrid = 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h;
+    } elsif ($ext eq 'week') {
+        $seconds = timelocal(@t);
+        $t[6] = ($t[6]+6) % 7;
+        $seconds -= $t[6]*86400;
+        $back = 8*86400;    # 8 days
+        $oldsec = $seconds - 7*86400;
+    } elsif ($ext eq 'month') {
+        $t[3] = 1;
+        $seconds = timelocal(@t);
+        $back = 36*86400;   # 36 days
+        $oldsec = $seconds - 30*86400; # FIXME (the right # of days!!)
+    } elsif ($ext eq 'year') {
+        $t[3] = 1;
+        $t[4] = 0;
+        $seconds = timelocal(@t);
+        $back = 396*86400;  # 365 + 31 days
+        $oldsec = $seconds - 365*86400; # FIXME (the right # of days!!)
+    } else {
+        print_error("Unknown file extension: $ext");
+    }
 
-	my @local_args;
+    my @local_args;
 
-	if ($xgrid) {
-		push @local_args, '-x', $xgrid;
-	}
+    if ($xgrid) {
+        push @local_args, '-x', $xgrid;
+    }
 
     my @graph_args = get_graph_args($target);
     if( exists $target->{percentilevalue} ) {
@@ -400,7 +400,7 @@ sub do_image($$$$)
         }
     }
     do {
-	    http_headers("text/html", $target->{config});
+        http_headers("text/html", $target->{config});
         print '<pre>RRDs::graph(',
                 join(",\n",
                 $file, '-s', "-$back", @local_args,
@@ -410,30 +410,30 @@ sub do_image($$$$)
         return;
     } if $wantsrc;
 
-	my( $averages, $xsize, $ysize ) =
+    my( $averages, $xsize, $ysize ) =
         RRDs::graph($file, '-s', "-$back", @local_args,
-		@{$target->{args}}, @graph_args, "VRULE:$oldsec#ff0000",
-		"VRULE:$seconds#ff0000");
+        @{$target->{args}}, @graph_args, "VRULE:$oldsec#ff0000",
+        "VRULE:$seconds#ff0000");
 
-	my $rrd_error = RRDs::error;
-	print_error("RRDs::graph failed, $rrd_error") if defined $rrd_error;
+    my $rrd_error = RRDs::error;
+    print_error("RRDs::graph failed, $rrd_error") if defined $rrd_error;
 
-	# Do not proceed unless image is wanted
-	return( $averages, $xsize, $ysize ) unless $wantimage;
+    # Do not proceed unless image is wanted
+    return( $averages, $xsize, $ysize ) unless $wantimage;
 
-	# Return the exact image straight from the file
-	open PNG, "<$file" or print_error("Can't open $file: $!");
+    # Return the exact image straight from the file
+    open PNG, "<$file" or print_error("Can't open $file: $!");
 
     binmode PNG;
 
-	http_headers("image/$imagetype", $target->{config});
-		
-	my $buf;
+    http_headers("image/$imagetype", $target->{config});
+        
+    my $buf;
         # could be sendfile in Linux ;-)
         while(sysread PNG, $buf, 8192) {
                 print $buf;
         }
-	close PNG;
+    close PNG;
 }
 
 sub calc_percentile($$$) {
@@ -589,53 +589,53 @@ sub do_custom_image($$$) {
 
 sub common_args($$$)
 {
-	my ($name, $target, $q) = @_;
+    my ($name, $target, $q) = @_;
 
-	return @{$target->{args}} if defined @{$target->{args}};
+    return @{$target->{args}} if defined @{$target->{args}};
 
-	$target->{name} = $name;
+    $target->{name} = $name;
 
-	$target->{directory} = ''
-		unless defined $target->{directory};
+    $target->{directory} = ''
+        unless defined $target->{directory};
 
-	my $tdir = $target->{directory};
-	$tdir .= '/'
-		unless $tdir eq '' || $tdir =~ /\/$/;
+    my $tdir = $target->{directory};
+    $tdir .= '/'
+        unless $tdir eq '' || $tdir =~ /\/$/;
 
-	$target->{url} = $q->url . '/' . $tdir . $name;
+    $target->{url} = $q->url . '/' . $tdir . $name;
 
-	my $cfg = $target->{config};
+    my $cfg = $target->{config};
 
     my $autorefresh = $q->param('autorefresh') || '';
     $cfg->{autorefresh} = 'no' if $autorefresh eq 'no';
 
-	my $dir = $cfg->{workdir};
-	$dir = $cfg->{logdir}
-		if defined $cfg->{logdir};
+    my $dir = $cfg->{workdir};
+    $dir = $cfg->{logdir}
+        if defined $cfg->{logdir};
 
-	$target->{rrd} = $dir . '/' . $tdir . $name . '.rrd';
+    $target->{rrd} = $dir . '/' . $tdir . $name . '.rrd';
 
-	$dir = $cfg->{workdir};
-	$dir = $cfg->{imagedir}
-		if defined $cfg->{imagedir};
+    $dir = $cfg->{workdir};
+    $dir = $cfg->{imagedir}
+        if defined $cfg->{imagedir};
 
     $target->{suppress} ||= '';
 
     $target->{hour}   = $dir . '/' . $tdir . $name
         . '-hour.' . $imagetype unless
         $target->{suppress} =~ /h/ or $cfg->{interval} ne '1';
-	$target->{day}   = $dir . '/' . $tdir . $name
-		. '-day.' . $imagetype unless $target->{suppress} =~ /d/;
-	$target->{week}  = $dir . '/' . $tdir . $name
-		. '-week.' . $imagetype unless $target->{suppress} =~ /w/;
-	$target->{month} = $dir . '/' . $tdir . $name
-		. '-month.' . $imagetype unless $target->{suppress} =~ /m/;
-	$target->{year}  = $dir . '/' . $tdir . $name
-		. '-year.' . $imagetype unless $target->{suppress} =~ /y/;
+    $target->{day}   = $dir . '/' . $tdir . $name
+        . '-day.' . $imagetype unless $target->{suppress} =~ /d/;
+    $target->{week}  = $dir . '/' . $tdir . $name
+        . '-week.' . $imagetype unless $target->{suppress} =~ /w/;
+    $target->{month} = $dir . '/' . $tdir . $name
+        . '-month.' . $imagetype unless $target->{suppress} =~ /m/;
+    $target->{year}  = $dir . '/' . $tdir . $name
+        . '-year.' . $imagetype unless $target->{suppress} =~ /y/;
 
-	my @args = ();
+    my @args = ();
 
-	push @args, '--lazy',
+    push @args, '--lazy',
         '-a', uc $imagetype,
         '-h', '120',
         '-w', '500',
@@ -645,139 +645,139 @@ sub common_args($$$)
         '-c', 'BACK#f5f5f5',
         '-c', 'ARROW#000000';
 
-	@{$target->{args}} = @args;
+    @{$target->{args}} = @args;
 
-	@args;
+    @args;
 }
 
 sub try_read_config($)
 {
-	my ($prefix) = (@_);
-	$prefix =~ s/\/[^\/]*$//;
+    my ($prefix) = (@_);
+    $prefix =~ s/\/[^\/]*$//;
 
-	# Verify the version of RRDtool:
-	if (!defined $RRDs::VERSION || $RRDs::VERSION < 1.000331) {
-		print_error("Please install more up-to date RRDtool - need at least 1.000331");
-	}
-	
-	my $read_cfg;
-	if (!defined $config_time) {
-		$read_cfg = 1;
-	} else {
-		for my $file (@all_config_files) {
-			my $mtime = (stat $file)[9];
-			if ($config_time < $mtime) {
-				$read_cfg = 1;
-				last;
-			}
-		}
-	}
+    # Verify the version of RRDtool:
+    if (!defined $RRDs::VERSION || $RRDs::VERSION < 1.000331) {
+        print_error("Please install more up-to date RRDtool - need at least 1.000331");
+    }
+    
+    my $read_cfg;
+    if (!defined $config_time) {
+        $read_cfg = 1;
+    } else {
+        for my $file (@all_config_files) {
+            my $mtime = (stat $file)[9];
+            if ($config_time < $mtime) {
+                $read_cfg = 1;
+                last;
+            }
+        }
+    }
 
-	return unless $read_cfg;
+    return unless $read_cfg;
 
-	%targets = ();
+    %targets = ();
 
-	@all_config_files = @config_files;
+    @all_config_files = @config_files;
 
-	my $order = 0;
-	for my $cfgfile (@config_files) {
-		my $cfgref = {
-			refresh => 300,
-			interval => 5,
-			icondir => $prefix
-		};
+    my $order = 0;
+    for my $cfgfile (@config_files) {
+        my $cfgref = {
+            refresh => 300,
+            interval => 5,
+            icondir => $prefix
+        };
 
-		read_rrd_config($cfgfile, $cfgref, \$order);
-	}
+        read_rrd_config($cfgfile, $cfgref, \$order);
+    }
 
     delete $targets{_};
 
-	parse_directories();
+    parse_directories();
 
-	$config_time = time;
+    $config_time = time;
 }
 
 sub read_rrd_config($$$)
 {
-	my ($file, $cfgref, $order) = @_;
+    my ($file, $cfgref, $order) = @_;
 
-	my @lines;
+    my @lines;
 
-	open(CFG, "<$file") || print_error("Cannot open config file $file: $!");
-	while (<CFG>) {
-		chomp;                    # remove newline
-		s/\s+$//;                 # remove trailing space
-		s/\s+/ /g;                # collapse white spaces to ' '
-		next if /^ *\#/;           # skip comment lines
-		next if /^\s*$/;          # skip empty lines
-		if (/^ \S/) {             # multiline options
-			$lines[$#lines] .= $_;
-		} else {
-			push @lines, $_;
-		}
-	}
-	close CFG;
+    open(CFG, "<$file") || print_error("Cannot open config file $file: $!");
+    while (<CFG>) {
+        chomp;                    # remove newline
+        s/\s+$//;                 # remove trailing space
+        s/\s+/ /g;                # collapse white spaces to ' '
+        next if /^ *\#/;           # skip comment lines
+        next if /^\s*$/;          # skip empty lines
+        if (/^ \S/) {             # multiline options
+            $lines[$#lines] .= $_;
+        } else {
+            push @lines, $_;
+        }
+    }
+    close CFG;
 
-	foreach (@lines) {
-		if (/^\s*([\w\d]+)\[(\S+)\]\s*:\s*(.*)$/) {
-			my ($opt, $tgt, $val) = (lc($1), lc($2), $3);
-			unless (exists $targets{$tgt}) {
+    foreach (@lines) {
+        if (/^\s*([\w\d]+)\[(\S+)\]\s*:\s*(.*)$/) {
+            my ($opt, $tgt, $val) = (lc($1), lc($2), $3);
+            unless (exists $targets{$tgt}) {
                 $targets{$tgt}{name} = $tgt;
                 $targets{$tgt}{directory} = '';
-				$targets{$tgt}{order} = ++$$order;
-				$targets{$tgt}{config} = $cfgref;
-			}
+                $targets{$tgt}{order} = ++$$order;
+                $targets{$tgt}{config} = $cfgref;
+            }
             $targets{$tgt}{$opt} = $val;
-			next;
-		} elsif (/^([\w\d]+)\s*:\s*(\S.*)$/) {
-			my ($opt, $val) = (lc($1), $2);
-			$cfgref->{$opt} = $val;
-			next;
-		}
-		print_error("Parse error in $file near $_");
-	}
+            next;
+        } elsif (/^([\w\d]+)\s*:\s*(\S.*)$/) {
+            my ($opt, $val) = (lc($1), $2);
+            $cfgref->{$opt} = $val;
+            next;
+        }
+        print_error("Parse error in $file near $_");
+    }
 }
 
 sub parse_directories {
-	%directories = ();
+    %directories = ();
 
-	# FIXME: the sort is expensive
-	for my $name (sort { $targets{$a}{order} <=> $targets{$b}{order} } keys %targets) {
-		my $dir = $targets{$name}{directory}
-			if defined $targets{$name}{directory};
-		$dir = '' unless defined $dir;
+    # FIXME: the sort is expensive
+    for my $name (sort { $targets{$a}{order} <=> $targets{$b}{order} } keys %targets) {
+        my $dir = $targets{$name}{directory}
+            if defined $targets{$name}{directory};
+        $dir = '' unless defined $dir;
 
-		my $prefix = '';
-		for my $component (split /\/+/, $dir) {
-			unless (defined $directories{$prefix.$component}) {
-				push (@{$directories{$prefix}{subdir}},
-					$component);
+        my $prefix = '';
+        for my $component (split /\/+/, $dir) {
+            unless (defined $directories{$prefix.$component}) {
+                push (@{$directories{$prefix}{subdir}},
+                    $component);
 
-				# For the directory, get the global parameters
-				# from the # config of the first item of the
-				# directory:
-				$directories{$prefix}{config} =
-					$targets{$name}{config};
-				$directories{$prefix}{bodytag} =
-					$targets{$name}{bodytag};
-			}
-			$prefix .= $component . '/';
-		}
-		unless (defined $directories{$dir}) {
-			$directories{$dir}{config} =
-				$targets{$name}{config};
-			$directories{$dir}{bodytag} =
-				$targets{$name}{bodytag};
-		}
+                # For the directory, get the global parameters
+                # from the # config of the first item of the
+                # directory:
+                $directories{$prefix}{config} =
+                    $targets{$name}{config};
+                $directories{$prefix}{bodytag} =
+                    $targets{$name}{bodytag};
+            }
+            $prefix .= $component . '/';
+        }
+        unless (defined $directories{$dir}) {
+            $directories{$dir}{config} =
+                $targets{$name}{config};
+            $directories{$dir}{bodytag} =
+                $targets{$name}{bodytag};
+        }
 
-		push (@{$directories{$dir}{target}}, $name);
-	}
+        push (@{$directories{$dir}{target}}, $name);
+    }
 }
 
 sub print_dir($$) {
-	my ($dir, $q) = @_;
+    my ($dir, $q) = @_;
 
-	my $dir1 = $dir . '/';
+    my $dir1 = $dir . '/';
 
     my( $summary ) = {graphs => 0, suppress => 0, subdir => 0};
     # run over all the targets in this directory for summary stats
@@ -798,8 +798,8 @@ sub print_dir($$) {
 
     # run over all the targets in this directory to see if any of them
     # has interval eq '1' meaning a refresh of 60
-	if (defined @{$directories{$dir}{target}}) {
-		for my $item (@{$directories{$dir}{target}}) {
+    if (defined @{$directories{$dir}{target}}) {
+        for my $item (@{$directories{$dir}{target}}) {
             common_args($item, $targets{$item}, $q);
             if( $targets{$item}{config}{interval} eq '1'
                     && $targets{$item}{suppress} !~ /h/ ) {
@@ -808,9 +808,9 @@ sub print_dir($$) {
             }
         }
     }
-	http_headers('text/html', $directories{$dir}{config});
+    http_headers('text/html', $directories{$dir}{config});
 
-	print <<EOT;
+    print <<EOT;
 <HTML>
 <HEAD>
 <link type="text/css" rel="stylesheet" href="$directories{$dir}{config}{icondir}/style.css">
@@ -826,24 +826,24 @@ EOT
             :
         '';
 
-	my $subdirs_printed;
+    my $subdirs_printed;
     my( @graphs, @text );
-	if (defined @{$directories{$dir}{subdir}}) {
-		$subdirs_printed = 1;
-		print <<EOT;
+    if (defined @{$directories{$dir}{subdir}}) {
+        $subdirs_printed = 1;
+        print <<EOT;
 <small>All graphics are in PNG format. Make sure your browser supports
     PNG format.</small>
 <H1>RRD subdirectories in the directory $dir1</H1>
 
 <UL>
 EOT
-		for my $item (@{$directories{$dir}{subdir}}) {
-			print "<LI><A HREF=\"$item/$no_auto_refresh_href\">$item/</A>\n";
+        for my $item (@{$directories{$dir}{subdir}}) {
+            print "<LI><A HREF=\"$item/$no_auto_refresh_href\">$item/</A>\n";
             $summary->{subdir}++;
-		}
+        }
 
-		print "</UL>\n";
-	}
+        print "</UL>\n";
+    }
 
     # print summary
     print '<div id="summary">';
@@ -855,23 +855,23 @@ EOT
         and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
     print '</div>';
 
-	if (defined @{$directories{$dir}{target}}) {
-		print "<HR>\n" if defined $subdirs_printed;
+    if (defined @{$directories{$dir}{target}}) {
+        print "<HR>\n" if defined $subdirs_printed;
         my $switch_auto_refresh =
             $no_auto_refresh_href
             ?
             '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
             :
             '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
-		print <<EOT;
+        print <<EOT;
 <H1>RRD graphs in the directory $dir1</H1>
 <small>Click on a graphic below to go to a deeper level, or<br>
 Go up to <a href="../$no_auto_refresh_href">parent level</a>, or<br>
 Go to $switch_auto_refresh.</small>
 EOT
 
-		for my $item (@{$directories{$dir}{target}}) {
-			my $itemname = $item;
+        for my $item (@{$directories{$dir}{target}}) {
+            my $itemname = $item;
             common_args($item, $targets{$item}, $q);
             my( $freq, $freqtext );
             if( $targets{$item}{config}{interval} eq '1' ) {
@@ -883,8 +883,8 @@ EOT
             }
             my( undef, $xsize, $ysize ) =
                 do_image($targets{$item}, $freq, 0, 0);
-			$itemname = $targets{$item}{title}
-				if defined $targets{$item}{title};
+            $itemname = $targets{$item}{title}
+                if defined $targets{$item}{title};
                     # for each graph store its item and name in an
                     # anonymous hash and push onto the array @graphs
             push @graphs, {item => $item, name => $itemname};
@@ -901,17 +901,17 @@ EOT
 EOT
                 next;
             };
-			push @text, <<EOT;
+            push @text, <<EOT;
 <TR>
    <TD><a name="$item">&nbsp;</a><a
     href="$item.html$no_auto_refresh_href">$itemname</a><br>
-	<a href="$item.html$no_auto_refresh_href"><img src="$item-$freq.$imagetype"
+    <a href="$item.html$no_auto_refresh_href"><img src="$item-$freq.$imagetype"
     width="$xsize" height="$ysize"
     border="0" align="top" vspace="10" alt="$item"></a><br clear="all">
    </TD>
 </TR>
 EOT
-		} 
+        } 
         print '<ul>', "\n";
         foreach my $graph( @graphs ) {
             print <<EOT;
@@ -921,8 +921,8 @@ EOT
         print '</ul>', "\n";
         print '<TABLE BORDER=0 WIDTH=100%>', "\n";
         print @text;
-		print "</TABLE>\n";
-	}
+        print "</TABLE>\n";
+    }
 
     print <<EOT;
 <h3><a href="/rrd/special/">Issues/Problem events</a> | <a
@@ -933,36 +933,36 @@ EOT
 EOT
 
     print '<!-- $Id$ -->', "\n";
-	print <<EOT;
+    print <<EOT;
 </BODY>
 </HTML>
 EOT
 }
 
 sub dump_targets() {
-	for my $tgt (keys %targets) {
-		print "Target $tgt:\n";
-		for my $opt (keys %{$targets{$tgt}}) {
-			print "\t$opt: ", $targets{$tgt}{$opt}, "\n";
-		}
-	}
+    for my $tgt (keys %targets) {
+        print "Target $tgt:\n";
+        for my $opt (keys %{$targets{$tgt}}) {
+            print "\t$opt: ", $targets{$tgt}{$opt}, "\n";
+        }
+    }
 }
 
 sub dump_directories {
-	print "Directories:\n";
+    print "Directories:\n";
 
-	for my $dir (keys %directories) {
-		print "Directory $dir:\n";
-		for my $item (@{$directories{$dir}}) {
-			print "\t$item\n";
-		}
-	}
+    for my $dir (keys %directories) {
+        print "Directory $dir:\n";
+        for my $item (@{$directories{$dir}}) {
+            print "\t$item\n";
+        }
+    }
 }
 
 sub print_error(@)
 {
-	print "Content-Type: text/plain\n\nError: ", join(' ', @_), "\n";
-	exit 0;
+    print "Content-Type: text/plain\n\nError: ", join(' ', @_), "\n";
+    exit 0;
 }
 
 my $q;
