@@ -386,6 +386,8 @@ sub do_image($$$$)
 	# Return the exact image straight from the file
 	open PNG, "<$file" or print_error("Can't open $file: $!");
 
+    binmode PNG;
+
 	http_headers("image/$imagetype", $target->{config});
 		
 	my $buf;
