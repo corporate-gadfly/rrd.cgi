@@ -179,6 +179,7 @@ EOT
     my $total_graphs = $tgt->{config}{interval} ne '1' ? 4 : 5;
                 # How many are suppressed?
     my( $suppressed_graphs ) = $tgt->{suppress} =~ /([hdwmy]+)/;
+    $suppressed_graphs ||= "";
     print '<div id="summary">';
     print '<h1>', $total_graphs-length($suppressed_graphs), ' Graphs(s)</h1>';
     $suppressed_graphs
