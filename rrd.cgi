@@ -46,6 +46,12 @@ sub main ($)
 
     try_read_config($q->url());
 
+    my $mode = $q->param('mode');
+    defined $mode && do {
+        do_archive($q, $mode);
+        return;
+    };
+
     my $path = $q->path_info();
     $path =~ s/^\///;
     $path =~ s/\/$//;
@@ -649,6 +655,26 @@ sub common_args($$$)
     @args;
 }
 
+# store/display images from/to archive
+sub do_archive($$)
+{
+    my $q = shift;
+    my $mode = shift;
+
+    do {
+        print_error(<<EOT);
+<h3>Invalid mode '$mode'</h3>
+Only
+<a href="?mode=archive">archive</a>,
+<a href="?mode=daily">daily</a>,
+<a href="?mode=monthly">monthly</a>,
+<a href="?mode=yearly">yearly</a> modes are supported.
+EOT
+    } if $mode !~ m/^(archive|daily|monthly|yearly)$/o;
+
+    print_error('Not implemented yet');
+}
+
 sub try_read_config($)
 {
     my ($prefix) = (@_);
@@ -966,7 +992,7 @@ sub dump_directories {
 
 sub print_error(@)
 {
-    print "Content-Type: text/plain\n\nError: ", join(' ', @_), "\n";
+    print "Content-Type: text/html\n\nError: ", join(' ', @_), "\n";
     exit 0;
 }
 
