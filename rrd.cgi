@@ -8,6 +8,7 @@
 # mrtg-rrd.cgi available at: http://www.fi.muni.cz/~kas/mrtg-rrd/
 # I didn't like its limitations and tight coupling with MRTG
 #
+# $Id$
 
 use strict;
 
