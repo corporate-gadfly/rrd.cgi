@@ -766,7 +766,8 @@ EOT
 		print <<EOT;
 <H1>RRD graphs in the directory $dir1</H1>
 <small>To get daily, weekly, monthly and yearly stats, click on a
-graphic below to go a level deeper.</small>
+graphic below to go to a deeper level or go
+<a href="../">up to parent level</a>.</small>
 EOT
 
 		for my $item (@{$directories{$dir}{target}}) {
