@@ -344,7 +344,7 @@ EOT
     # Don't print refresh headers for graphics and when asked not to
     my $autorefresh = defined $cfg->{autorefresh}
         ? $cfg->{autorefresh} : '';
-    print <<EOT unless $content_type eq "image/$imagetype" || $autorefresh eq 'no';
+    print <<EOT unless $content_type eq "image/$imagetype" || $autorefresh eq 'no' || !defined $cfg;
 Refresh: $refresh
 EOT
 
