@@ -28,9 +28,9 @@ use vars qw(@config_files @all_config_files %targets $config_time
 
 # EDIT THIS to reflect all your RRD config files
 BEGIN { @config_files = qw(
-    /etc/mrtg/rrd.cfg
-    /etc/mrtg/rrd-tomcat.cfg
-    /etc/mrtg/rrd-network.cfg
+    /etc/rrd/rrd.cfg
+    /etc/rrd/rrd-tomcat.cfg
+    /etc/rrd/rrd-network.cfg
 ); }
 
 # This depends on what image format your libgd (and rrdtool) uses
@@ -907,8 +907,8 @@ EOT
 	}
 
     print <<EOT;
-<h3><a href="/mrtg/special/">Issues/Problem events</a> | <a
-    href="/mrtg/scripts/">About This Site</a></h3>
+<h3><a href="/rrd/special/">Issues/Problem events</a> | <a
+    href="/rrd/scripts/">About This Site</a></h3>
 <a href="http://www.rrdtool.org/"><img
     src="$directories{$dir}{config}{icondir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
