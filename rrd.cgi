@@ -801,8 +801,24 @@ sub display_archived_images($$$$) {
 <head>
 <link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
 <title>RRD: Archived $title</title>
+<script type="text/javascript" src="$icon_dir/CalendarPopup.js">
+</script>
 </head><body bgcolor="#ffffff">
 EOT
+
+    generate_calendar($mode, $m, $d, $y, $icon_dir);
+
+    print 'Switch mode to:';
+    for my $m ('daily', 'monthly', 'yearly') {
+        print $mode eq $m
+            ?
+            ' ' . $m
+            :
+            ' [<a href="?mode=' . $m . '">' . $m . '</a>]';
+    }
+    print '<br>';
+
+
     for my $target ( @targets ) {
         if(
                 $targets{$target}{suppress} =~ /d/ and $mode eq 'daily'
@@ -828,12 +844,15 @@ EOT
         $image_file .= '.' . $imagetype;
 
         unless( -f "$image_dir/$image_file" ) {
+            my $error_date = $mode eq 'daily' ?
+                "$m-$d-$y" : $mode eq 'monthly' ?
+                "$m-$y" : $y;
             # archived image does not exist for this mode
             # perhaps archival of images was started after that date
             print '<b>', $targets{$target}{title},
                     '</b> does not have a <b>', $mode,
                     '</b> archived image for <b>',
-                    $m, '-', $d, '-', $y, '</b>';
+                    $error_date, '</b>';
             next;
         }
         print <<EOT;
@@ -847,6 +866,28 @@ EOT
     print <<EOT;
 </body>
 </html>
+EOT
+}
+
+sub generate_calendar($$$$$) {
+    my $mode = shift;
+    my $m = shift;
+    my $d = shift;
+    my $y = shift;
+    my $icon_dir = shift;
+
+    print <<EOT;
+<form method="post">
+    <input style="margin-left: 75px;" type="text" name="date"
+        value="$m-$d-$y" size="10">
+    <a href="#"
+        onClick="cal.showCalendar(this.id); return false;"
+        name="calAnchor" id="calAnchor"><img
+        width="34" height="21" border="0"
+        src="$icon_dir/calendar.gif"></a>
+</form>
+<div id="calDiv"
+    style="position:absolute; visibility:hidden; background-color:white;layer-background-color:white;"></div>
 EOT
 }
 
