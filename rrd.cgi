@@ -693,12 +693,13 @@ Only
 EOT
     } if $mode !~ m/^(archive|daily|monthly|yearly)$/o;
 
+    # crude check to see if archive mode being requested via the web
     if( $mode eq 'archive' and $ENV{REQUEST_URI} ) {
-        http_headers('text/html', undef);
-        print '<h2>Should be used offline only</h2>', "\n";
-        print 'Invoke from command line as:', "\n";
-        print '<pre>rrd.cgi mode=archive</pre>', "\n";
-        return;
+        print_error(<<EOT);
+<h2>Should be used offline only</h2>
+Invoke from command line as:
+<pre>rrd.cgi mode=archive</pre>
+EOT
     } elsif( $mode eq 'archive' ) {
         archive_directory(undef, undef);
         return;
