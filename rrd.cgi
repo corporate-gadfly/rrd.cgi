@@ -422,8 +422,16 @@ sub do_custom_image($$$) {
         my( $interval, $type ) = ($start =~ m/(\-\d+)([hdwm])/);
                 # regular -1d, -1m, -2w style start interval with no end
         if( defined $interval && defined $type ) {
-                # start time is just interval-1
-            $start_time = $interval-1 . $type;
+                # start time is dependent on interval type
+                # -3h, -30h, -8d, -36d are exactly equal to the
+                # backwards interval in time for the regular graphs
+            for( $type ) {
+                $start_time =  /^h$/ && '-3h'
+                            || /^d$/ && '-30h'
+                            || /^w$/ && '-8d'
+                            || /^m$/ && '-36d';
+            }
+            $start_time = $interval . $type . $start_time;
                 # end time is equal to interval
             $end_time = $interval . $type;
                 # have to fix the x-axis for day interval
