@@ -750,7 +750,7 @@ EOT
 		$subdirs_printed = 1;
 		print <<EOT;
 <small>All graphics are in PNG format. Make sure your browser supports
-    PNG format. (Hint: Netscape 4 does NOT!!)</small>
+    PNG format.</small>
 <H1>RRD subdirectories in the directory $dir1</H1>
 
 <UL>
