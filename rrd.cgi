@@ -204,6 +204,10 @@ EOT
 <a href="http://www.rrdtool.org/"><img
     src="$tgt->{config}{icondir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
+EOT
+
+    print '<!-- $Id$ -->', "\n";
+	print <<EOT;
 </body>
 </html>
 EOT
@@ -686,6 +690,10 @@ EOT
 <a href="http://www.rrdtool.org/"><img
     src="$directories{$dir}{config}{icondir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
+EOT
+
+    print '<!-- $Id$ -->', "\n";
+	print <<EOT;
 </BODY>
 </HTML>
 EOT
