@@ -24,7 +24,7 @@ require 5.008;
 use RRDs;
 
 use vars qw(@config_files @all_config_files %targets $config_time
-	%directories $version $imagetype);
+	%directories $version $imagetype $percent_h);
 
 # EDIT THIS to reflect all your RRD config files
 BEGIN { @config_files = qw(
@@ -37,6 +37,10 @@ $version = '0.6';
 
 # This depends on what image format your libgd (and rrdtool) uses
 $imagetype = 'png'; # or make this 'gif';
+
+# strftime(3) compatability test
+$percent_h = '%-H';
+$percent_h = '%H' if (strftime('%-H', gmtime(0)) !~ /^\d+$/);
 
 sub handler ($)
 {
@@ -351,7 +355,7 @@ sub do_image($$$$)
 		$oldsec = $seconds - 86400;
 		# We need this only for day graph. The other ones
 		# are magically correct.
-		$xgrid = 'HOUR:1:HOUR:6:HOUR:2:0:%-H';
+		$xgrid = 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h;
 	} elsif ($ext eq 'week') {
 		$seconds = timelocal(@t);
 		$t[6] = ($t[6]+6) % 7;
@@ -513,7 +517,7 @@ sub do_custom_image($$$) {
         print_error("start \"$start\" should be less than end \"$end\"")
             if $start_time >= $end_time;
                 # have to fix the x-axis for day interval
-        push @{$target->{args}}, '-x', 'HOUR:1:HOUR:6:HOUR:2:0:%-H'
+        push @{$target->{args}}, '-x', 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h
             if ($start_time-$end_time) <= 86400;
     } elsif( defined $start ) {
         my( $interval, $type ) = ($start =~ m/(\-\d+)([hdwm])/);
@@ -529,7 +533,7 @@ sub do_custom_image($$$) {
                 # end time is equal to interval
             $end_time = $interval . $type;
                 # have to fix the x-axis for day interval
-            push @{$target->{args}}, '-x', 'HOUR:1:HOUR:6:HOUR:2:0:%-H'
+            push @{$target->{args}}, '-x', 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h
                 if $type eq 'd';
         }
     }
