@@ -817,7 +817,7 @@ EOT
     # print summary
     print '<div id="summary">';
     $summary->{graphs} and
-        print '<h1>', $summary->{graphs}, ' Graph(s)</h1>';
+        print '<h1>', $summary->{graphs}-$summary->{suppress}, ' Graph(s)</h1>';
     $summary->{subdir} and
         print '<h1>', $summary->{subdir}, ' Subdirectories</h1>';
     $summary->{suppress}
