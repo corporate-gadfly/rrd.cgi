@@ -710,11 +710,39 @@ EOT
         print_error('Undefined statistic ', $q->path_info(),
                 ' for archive mode: ', $mode);
     } else {
+        my $date;
+        my( $m, $d, $y );
+        if( $q->param('date') ) {
+            $date = $q->param('date');
+            ( $m, $d, $y ) = split /-/, $date;
+            unless( defined $m and defined $d and defined $y
+                    and $m =~ /\d{2}/
+                    and $d =~ /\d{2}/
+                    and $y =~ /\d{4}/ ) {
+                print_error(<<EOT)
+<h3>Invalid date >>>$date<<<<</h3>
+<b>Date parameter must be in mm-dd-yyyy format</b>
+EOT
+            }
+        } else {
+                # no date provided - so default to yesterday
+            ( $m, $d, $y ) = UnixDate('yesterday', '%m', '%d', '%Y');
+        }
+        my $parse_date = ParseDate($m.'/'.$d.'/'.$y);
+        my $parse_time = UnixDate($parse_date, "%s");
+
+        unless( defined $parse_time and
+                $parse_time < UnixDate(ParseDate('today 12:00am'), "%s") ) {
+            print_error(<<EOT)
+<h3>We're sorry. Snapshots for $m-$d-$y are not available</h3>
+We only carry snapshots uptil yesterday.
+EOT
+        }
+
         http_headers('text/html', undef);
         print <<EOT;
-<img src="/rrd/archive/$dir/2004/10/$stat-2004-10-26.png">
+<img src="/rrd/archive$dir/$y/$m/$stat-$y-$m-$d.png">
 EOT
-        print_error('Not implemented yet');
     }
 }
 
