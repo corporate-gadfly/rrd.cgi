@@ -266,7 +266,10 @@ sub do_image($$$$)
 
 	my $file = $target->{$ext};
 
-	return unless defined $file;
+    do {
+        print_error("Target '$ext' suppressed for this target") if $wantimage;
+        return;
+    } unless defined $file;
 
 	# Now the vertical rule at the end of the day
 	my @t = localtime(time);
