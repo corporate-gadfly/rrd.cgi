@@ -760,6 +760,14 @@ sub print_dir($$) {
 </HEAD><BODY BGCOLOR=#ffffff>
 EOT
 
+    my $no_auto_refresh_href =
+        ($q->param('autorefresh') and
+        $q->param('autorefresh') eq 'no')
+            ?
+        '?autorefresh=no'
+            :
+        '';
+
 	my $subdirs_printed;
     my( @graphs, @text );
 	if (defined @{$directories{$dir}{subdir}}) {
@@ -772,20 +780,13 @@ EOT
 <UL>
 EOT
 		for my $item (@{$directories{$dir}{subdir}}) {
-			print "<LI><A HREF=\"$item/\">$item/</A>\n";
+			print "<LI><A HREF=\"$item/$no_auto_refresh_href\">$item/</A>\n";
 		}
 
 		print "</UL>\n";
 	}
 	if (defined @{$directories{$dir}{target}}) {
 		print "<HR>\n" if defined $subdirs_printed;
-        my $no_auto_refresh_href =
-            ($q->param('autorefresh') and
-            $q->param('autorefresh') eq 'no')
-                ?
-            '?autorefresh=no'
-                :
-            '';
         my $switch_auto_refresh =
             $no_auto_refresh_href
             ?
