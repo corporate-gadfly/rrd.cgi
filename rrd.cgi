@@ -1034,26 +1034,31 @@ sub archive_directory($$) {
     my $date = shift;
     $date ||= strftime "%m-%d-%Y", localtime;   # default to today
     if( exists $directories{$dir} ) {
-        my $archive_dir =  $directories{$dir}{config}{archivedir}
-            . '/' . $dir;
-        my $archive_url =  $directories{$dir}{config}{archiveurl}
-            . '/' . $dir;
-        do {
-            warn 'Undefined archivedir for ', $dir, '/', "\n";
-            return;
-        } unless defined $archive_dir;
-        do {
-            warn 'Nonexistent directory ', $archive_dir, "\n";
-            return;
-        } unless -d $archive_dir;
-        do {
-            warn 'Undefined archiveurl for ', $dir, '/', "\n";
-            return;
-        } unless defined $directories{$dir}{config}{archiveurl};
-
-        my( $m, $d, $y ) = split /-/, $date;
-
         if( exists $directories{$dir}{target} ) {
+            my( $archive_dir, $archive_url );
+            if( !defined $directories{$dir}{config}{archivedir} ) {
+                warn 'Undefined archivedir for ', $dir, '/', "\n";
+                $archive_dir = '';
+            } else {
+                $archive_dir =
+                    $directories{$dir}{config}{archivedir} . '/' . $dir;
+            }
+            if( !defined $directories{$dir}{config}{archiveurl} ) {
+                warn 'Undefined archiveurl for ', $dir, '/', "\n";
+                $archive_url = '';
+            } else {
+                $archive_url =
+                    $directories{$dir}{config}{archiveurl} . '/' . $dir;
+            }
+
+            unless( -d $archive_dir ) {
+                warn 'Nonexistent directory ', $archive_dir, ' for ',
+                     $dir, '/', "\n";
+                return;
+            }
+
+            my( $m, $d, $y ) = split /-/, $date;
+
             # check to see if proper directory hierarchy exists
             # for directories with non-zero number of targets
             do {
