@@ -781,7 +781,19 @@ sub display_archived_images($$$$) {
         push @targets, $stat;
     }
 
+    my $icon_dir = defined $directories{$dir}{config}{icondir}
+        ?
+            $directories{$dir}{config}{icondir}
+        :
+            $directories{$directories{$dir}{subdir}[0]}{config}{icondir};
     http_headers('text/html', undef);
+    print <<EOT;
+<html>
+<head>
+<link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
+<title>RRD: Archived Images</title>
+</head><body bgcolor="#ffffff">
+EOT
     for my $target ( @targets ) {
         if(
                 $targets{$target}{suppress} =~ /d/ and $mode eq 'daily'
@@ -815,9 +827,10 @@ sub display_archived_images($$$$) {
         unless( -f "$image_dir/$image_file" ) {
             # archived image does not exist for this mode
             # perhaps archival of images was started after that date
-            print 'Target ', $targets{$target}{title},
-                    ' does not have an archived image for archive mode: ',
-                    $mode;
+            print '<b>', $targets{$target}{title},
+                    '</b> does not have a <b>', $mode,
+                    '</b> archived image for <b>',
+                    $m, '-', $d, '-', $y, '</b>';
             next;
         }
         print <<EOT;
@@ -827,6 +840,11 @@ sub display_archived_images($$$$) {
 <br>
 EOT
     }
+    print '<!-- $Id$ -->', "\n";
+    print <<EOT;
+</body>
+</html>
+EOT
 }
 
 sub try_read_config($)
