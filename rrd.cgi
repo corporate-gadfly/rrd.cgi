@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #
-# mrtg-rrd.cgi: The script for generating graphs for rrdtool statistics.
+# rrd.cgi: The script for generating graphs for rrdtool statistics.
 #
 # Closely modelled after the Jan "Yenya" Kasprzak <kas@fi.muni.cz>'s
 # mrtg-rrd.cgi available at: http://www.fi.muni.cz/~kas/mrtg-rrd/
@@ -24,7 +24,7 @@ use RRDs;
 use vars qw(@config_files @all_config_files %targets $config_time
 	%directories $version $imagetype);
 
-# EDIT THIS to reflect all your MRTG config files
+# EDIT THIS to reflect all your RRD config files
 BEGIN { @config_files = qw(/etc/mrtg/rrd-broker.cfg /etc/mrtg/rrd.cfg
 /etc/mrtg/rrd-etb030.cfg ); }
 #); }
@@ -738,7 +738,7 @@ sub print_dir($$) {
 <HTML>
 <HEAD>
 <link type="text/css" rel="stylesheet" href="$directories{$dir}{config}{icondir}/style.css">
-<TITLE>MRTG: Directory $dir1</TITLE>
+<TITLE>RRD: Directory $dir1</TITLE>
 </HEAD><BODY BGCOLOR=#ffffff>
 EOT
 
@@ -749,7 +749,7 @@ EOT
 		print <<EOT;
 <small>All graphics are in PNG format. Make sure your browser supports
     PNG format. (Hint: Netscape 4 does NOT!!)</small>
-<H1>MRTG subdirectories in the directory $dir1</H1>
+<H1>RRD subdirectories in the directory $dir1</H1>
 
 <UL>
 EOT
@@ -762,7 +762,7 @@ EOT
 	if (defined @{$directories{$dir}{target}}) {
 		print "<HR>\n" if defined $subdirs_printed;
 		print <<EOT;
-<H1>MRTG graphs in the directory $dir1</H1>
+<H1>RRD graphs in the directory $dir1</H1>
 <small>To get daily, weekly, monthly and yearly stats, click on a
 graphic below to go a level deeper.</small>
 EOT
