@@ -146,7 +146,7 @@ EOT
     print <<EOT;
 <p>
 <small>Scroll to:
-@{[ $tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1' ? '' : '<a href="#Hourly">Hourly</a>|' ]}
+@{[ ($tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1') ? '' : '<a href="#Hourly">Hourly</a>|' ]}
 @{[ $tgt->{suppress} =~ /d/ ? '' : '<a href="#Daily">Daily</a>|' ]}
 @{[ $tgt->{suppress} =~ /w/ ? '' : '<a href="#Weekly">Weekly</a>|' ]}
 @{[ $tgt->{suppress} =~ /m/ ? '' : '<a href="#Monthly">Monthly</a>|' ]}
