@@ -734,8 +734,8 @@ EOT
         unless( defined $parse_time and
                 $parse_time < UnixDate(ParseDate('today 12:00am'), "%s") ) {
             print_error(<<EOT)
-<h3>We're sorry. Snapshots for $m-$d-$y are not available</h3>
-We only carry snapshots uptil yesterday.
+<h3>We're sorry. Archived snapshots for $m-$d-$y are not available</h3>
+We only carry Archived snapshots uptil yesterday.
 EOT
         }
 
