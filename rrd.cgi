@@ -51,12 +51,12 @@ sub handler ($)
 	}
 
 	my ($dir, $stat, $ext) = ($q->path_info() =~
-		/^(.*)\/([^\/]+)(\.html|-(day|week|month|year)\.($imagetype|src))$/);
+		/^(.*)\/([^\/]+)(\.html|-(hour|day|week|month|year)\.($imagetype|src))$/);
 
 	$dir =~ s/^\///;
 
 	print_error("Undefined statistics")
-		unless defined $targets{$stat};
+		unless defined $stat and defined $targets{$stat};
 
 	print_error("Incorrect directory")
 		unless defined $targets{$stat}{directory} || $targets{$stat}{directory} eq $dir;
@@ -82,6 +82,8 @@ sub handler ($)
 
 	if ($ext eq '.html') {
 		do_html($tgt);
+	} elsif ($ext eq '-hour.' . $imagetype) {
+		do_image($tgt, 'hour', 0, 1);
 	} elsif ($ext eq '-day.' . $imagetype) {
 		do_image($tgt, 'day', 0, 1);
 	} elsif ($ext eq '-week.' . $imagetype) {
@@ -90,6 +92,8 @@ sub handler ($)
 		do_image($tgt, 'month', 0, 1);
 	} elsif ($ext eq '-year.' . $imagetype) {
 		do_image($tgt, 'year', 0, 1);
+	} elsif ($ext eq '-hour.src') {
+		do_image($tgt, 'hour', 1, 0);
 	} elsif ($ext eq '-day.src') {
 		do_image($tgt, 'day', 1, 0);
 	} elsif ($ext eq '-week.src') {
@@ -109,11 +113,17 @@ sub do_html($)
 {
 	my ($tgt) = @_;
 
+	my( $avh, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
+        unless $tgt->{suppress} =~ /h/ or
+        $tgt->{config}{interval} ne '1';
 	my( $avd, $xd, $yd ) = do_image($tgt, 'day',   0, 0);
 	my( $avw, $xw, $yw ) = do_image($tgt, 'week',  0, 0);
 	my( $avm, $xm, $ym ) = do_image($tgt, 'month', 0, 0);
 	my( $avy, $xy, $yy ) = do_image($tgt, 'year',  0, 0);
 
+            # change the refresh interval only if hourly is enabled
+	$tgt->{config}{refresh} = 60
+        if $tgt->{config}{interval} eq '1' and $tgt->{suppress} !~ /h/;
 	http_headers('text/html', $tgt->{config});
 	print <<EOT;
 <HTML>
@@ -136,6 +146,7 @@ EOT
     print <<EOT;
 <p>
 <small>Scroll to:
+@{[ $tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1' ? '' : '<a href="#Hourly">Hourly</a>|' ]}
 @{[ $tgt->{suppress} =~ /d/ ? '' : '<a href="#Daily">Daily</a>|' ]}
 @{[ $tgt->{suppress} =~ /w/ ? '' : '<a href="#Weekly">Weekly</a>|' ]}
 @{[ $tgt->{suppress} =~ /m/ ? '' : '<a href="#Monthly">Monthly</a>|' ]}
@@ -151,7 +162,8 @@ EOT
 #    print Dumper(%targets);
 #    print '-->', "\n";
 
-	html_graph($tgt, 'day', 'Daily', $dayavg . ' Minute', $xd, $yd, $avd);
+	html_graph($tgt, 'hour', 'Hourly', $dayavg . ' Minute', $xh, $yh, $avh);
+	html_graph($tgt, 'day', 'Daily', '5 Minute', $xd, $yd, $avd);
 	html_graph($tgt, 'week', 'Weekly', '30 Minute', $xw, $yw, $avw);
 	html_graph($tgt, 'month', 'Monthly', '2 Hour', $xm, $ym, $avm);
 	html_graph($tgt, 'year', 'Yearly', '1 Day', $xy, $yy, $avy);
@@ -163,6 +175,14 @@ all and hence carry a performance hit every time they are requested,
 so be gentle</small>
 <br>
 EOT
+    foreach my $i (1..6) {
+        last if $tgt->{suppress} =~ /h/ or
+            $tgt->{config}{interval} ne '1';
+        print '<a href="?start=', -$i, 'h">',
+            $i, ' hour', $i > 1 ? 's' : '', ' ago',
+            '</a>', "\n";
+    }
+    print '<br>', "\n";
     foreach my $i (1..7) {
         print '<a href="?start=', -$i, 'd">',
             $i, ' day', $i > 1 ? 's' : '', ' ago',
@@ -278,14 +298,20 @@ sub do_image($$$$)
 
 	# Now the vertical rule at the end of the day
 	my @t = localtime(time);
-	$t[0] = $t[1] = $t[2] = 0;
+    # set seconds, minutes, hours to zero
+	$t[0] = $t[1] = $t[2] = 0 unless $ext eq 'hour';
 
 	my $seconds;
 	my $oldsec;
 	my $back;
 	my $xgrid = '';
 
-	if ($ext eq 'day') {
+    if ($ext eq 'hour') {
+        $seconds = timelocal(@t);
+        $back = 3*3600;     # 3 hours
+        $oldsec = $seconds - $t[2]*3600 - $t[1]*60 - $t[0];     # FIXME: where to set the VRULE
+        $seconds = 0;
+    } elsif ($ext eq 'day') {
 		$seconds = timelocal(@t);
 		$back = 30*3600;	# 30 hours
 		$oldsec = $seconds - 86400;
@@ -393,7 +419,7 @@ sub do_custom_image($$$) {
         push @{$target->{args}}, '-x', 'HOUR:1:HOUR:6:HOUR:2:0:%-H'
             if ($start_time-$end_time) <= 86400;
     } elsif( defined $start ) {
-        my( $interval, $type ) = ($start =~ m/(\-\d+)([dwm])/);
+        my( $interval, $type ) = ($start =~ m/(\-\d+)([hdwm])/);
                 # regular -1d, -1m, -2w style start interval with no end
         if( defined $interval && defined $type ) {
                 # start time is just interval-1
@@ -454,6 +480,9 @@ sub common_args($$$)
 
     $target->{suppress} ||= '';
 
+    $target->{hour}   = $dir . '/' . $tdir . $name
+        . '-hour.' . $imagetype unless
+        $target->{suppress} =~ /h/ or $cfg->{interval} ne '1';
 	$target->{day}   = $dir . '/' . $tdir . $name
 		. '-day.' . $imagetype unless $target->{suppress} =~ /d/;
 	$target->{week}  = $dir . '/' . $tdir . $name
