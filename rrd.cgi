@@ -147,7 +147,9 @@ EOT
     print "The statistics were last updated ",
         strftime("<B>%A, %e %B, %T %Z</B>\n",
             localtime($mtime));
-    my $auto_href = $tgt->{config}{autorefresh} eq 'no'
+    my $auto_href =
+        (defined $tgt->{config}{autorefresh} and
+         $tgt->{config}{autorefresh} eq 'no')
         ?
         '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
         :
@@ -770,7 +772,9 @@ EOT
 	}
 	if (defined @{$directories{$dir}{target}}) {
 		print "<HR>\n" if defined $subdirs_printed;
-        my $auto_href = $q->param('autorefresh') eq 'no'
+        my $auto_href =
+            ($q->param('autorefresh') and
+             $q->param('autorefresh') eq 'no')
             ?
             '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
             :
