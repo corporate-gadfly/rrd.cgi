@@ -796,10 +796,36 @@ sub display_archived_images($$$$) {
             next;
         }
 
+        my $image_file;
+        my $image_dir = $directories{$dir}{config}{archivedir} . '/' . $dir;
+        SWITCH: for( $mode ) {
+            /daily/     && do {
+                $image_file = "$y/$m/$target-$y-$m-$d.$imagetype";
+                last SWITCH;
+            };
+            /monthly/   && do {
+                $image_file = "$y/$target-$y-$m.$imagetype";
+                last SWITCH;
+            };
+            /yearly/    && do {
+                $image_file = "$target-$y.$imagetype";
+                last SWITCH;
+            };
+            print_error('Undefined mode, ', $mode);
+        }
+
+        unless( -f "$image_dir/$image_file" ) {
+            # archived image does not exist for this mode
+            # perhaps archival of images was started after that date
+            print 'Target ', $targets{$target}{title},
+                    ' does not have an archived image for archive mode: ',
+                    $mode;
+            next;
+        }
         print <<EOT;
 <b>$targets{$target}{title}</b>
 <br>
-<img src="$archive_url/$dir/$y/$m/$target-$y-$m-$d.$imagetype">
+<img src="$archive_url/$dir/$image_file">
 <br>
 EOT
     }
