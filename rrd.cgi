@@ -27,9 +27,9 @@ use vars qw(@config_files @all_config_files %targets $config_time
 	%directories $version $imagetype);
 
 # EDIT THIS to reflect all your RRD config files
-BEGIN { @config_files = qw(/etc/mrtg/rrd-broker.cfg /etc/mrtg/rrd.cfg
-/etc/mrtg/rrd-etb030.cfg ); }
-#); }
+BEGIN { @config_files = qw(
+        /etc/mrtg/rrd.cfg
+); }
 
 $version = '0.6';
 
