@@ -559,15 +559,32 @@ sub do_custom_image($$$) {
             }
         }
     }
-        # unbuffered output
-    $| = 1;
+    my( $fh, $filename );
+    if( $ENV{MOD_PERL} ) {
+        use File::Temp qw/ tempfile /;
+        ( $fh, $filename )= tempfile( );
+    } else {
+            # unbuffered output
+        $| = 1;
+        $filename = '-';
+    }
     http_headers("image/$imagetype", $target->{config});
-    RRDs::graph('-',
+    RRDs::graph($filename,
             '-s', $start_time,
             '-e', $end_time,
             @{$target->{args}}, @graph_args);
-	my $rrd_error = RRDs::error;
-	print_error("RRDs::graph failed, $rrd_error") if defined $rrd_error;
+    if( $ENV{MOD_PERL} ) {
+        binmode $fh;
+        my $buf;
+        while(sysread $fh, $buf, 8192) {
+            print $buf;
+        }
+        close $fh;
+        unlink $filename;
+    } else {
+        my $rrd_error = RRDs::error;
+        print_error("RRDs::graph failed, $rrd_error") if defined $rrd_error;
+    }
 }
 
 sub common_args($$$)
