@@ -846,6 +846,8 @@ EOT
         $image_file .= '.' . $imagetype;
 
         unless( -f "$image_dir/$image_file" ) {
+            my $current_month_year = strftime "%m-%Y", localtime;
+            my( $cur_m, $cur_y ) = split /-/, $current_month_year;
             my $error_date = $mode eq 'daily' ?
                 "$m-$d-$y" : $mode eq 'monthly' ?
                 "$m-$y" : $y;
@@ -854,7 +856,24 @@ EOT
             print '<b>', $targets{$target}{title},
                     '</b> does not have a <b>', $mode,
                     '</b> archived image for <b>',
-                    $error_date, '</b><br>';
+                    $error_date, '</b>.<br>';
+            if( $mode eq 'monthly' and $cur_y <= $y and $cur_m <= $m ) {
+                my $avail_month = sprintf("%02d", $m+1); 
+                my $avail_year = $y;
+                # be careful when incrementing months beyond 12
+                if( $m eq '12' ) {
+                    $avail_month = '01';
+                    $avail_year = $y+1;
+                }
+                print 'It will become available on <b>',
+                      $avail_month, '-01-', $avail_year,
+                      '</b>.<br>', "\n";
+            }
+            if( $mode eq 'yearly' and $cur_y <= $y ) {
+                print 'It will become available on <b>',
+                      '01-01-', $y+1,
+                      '</b>.<br>', "\n";
+            }
             next;
         }
         print <<EOT;
@@ -1349,24 +1368,24 @@ sub archive_directory($$) {
 
                 ## capture monthly images if its the first day of the month
                 if( $d eq '01' ) {
-                    my( $save_year, $save_month );
+                    my( $save_y, $save_m );
                     if( $m ne '01' ) {
-                        $save_month = $m - 1;
-                        $save_year = $y;
+                        $save_m = $m - 1;
+                        $save_y = $y;
                     } else {
                         # year rolled over to previous
-                        $save_month = '12';
-                        $save_year = $y - 1;
+                        $save_m = '12';
+                        $save_y = $y - 1;
                     }
                     # add leading zero if less than 10
-                    $save_month < 10 and $save_month = '0' . $save_month;
+                    $save_m < 10 and $save_m = '0' . $save_m;
                     $file =
-                        "$archive_dir/$save_year/$target-$save_year-$save_month.$imagetype";
+                        "$archive_dir/$save_y/$target-$save_y-$save_m.$imagetype";
                     $url = "$archive_url/$target-month.$imagetype";
                     save_image_url($ua, $file, $url);
                     ## capture yearly images if its the first day of the year
                     if( $m eq '01' ) {
-                        $file = "$archive_dir/$target-$save_year.$imagetype";
+                        $file = "$archive_dir/$target-$save_y.$imagetype";
                         $url = "$archive_url/$target-year.$imagetype";
                         save_image_url($ua, $file, $url);
                     }
