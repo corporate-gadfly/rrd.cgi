@@ -85,7 +85,7 @@ sub handler ($)
     }
 
 	if ($ext eq '.html') {
-		do_html($tgt);
+		do_html($tgt, $q);
 	} elsif ($ext eq '-hour.' . $imagetype) {
 		do_image($tgt, 'hour', 0, 1);
 	} elsif ($ext eq '-day.' . $imagetype) {
@@ -113,9 +113,9 @@ sub handler ($)
 		if defined $oldtz;
 }
 
-sub do_html($)
+sub do_html($$)
 {
-	my ($tgt) = @_;
+	my ($tgt, $q) = @_;
 
 	my( $avh, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
         unless $tgt->{suppress} =~ /h/ or
@@ -147,6 +147,11 @@ EOT
     print "The statistics were last updated ",
         strftime("<B>%A, %e %B, %T %Z</B>\n",
             localtime($mtime));
+    my $auto_href = $tgt->{config}{autorefresh} eq 'no'
+        ?
+        '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
+        :
+        '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
     print <<EOT;
 <p>
 <small>Scroll to:
@@ -157,7 +162,8 @@ EOT
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a> Graphs</small>
 <br>
-<small>Go: <a href="./">up to parent level</a></small>
+<small>Go: <a href="./">up to parent level</a>, or<br>
+Go to $auto_href.</small>
 EOT
 
 	my $dayavg = $tgt->{config}->{interval};
@@ -764,10 +770,16 @@ EOT
 	}
 	if (defined @{$directories{$dir}{target}}) {
 		print "<HR>\n" if defined $subdirs_printed;
+        my $auto_href = $q->param('autorefresh') eq 'no'
+            ?
+            '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
+            :
+            '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
 		print <<EOT;
 <H1>RRD graphs in the directory $dir1</H1>
-<small>Click on a graphic below to go to a deeper level or go
-<a href="../">up to parent level</a>.</small>
+<small>Click on a graphic below to go to a deeper level, or<br>
+Go up to <a href="../">parent level</a>, or<br>
+Go to $auto_href.</small>
 EOT
 
 		for my $item (@{$directories{$dir}{target}}) {
