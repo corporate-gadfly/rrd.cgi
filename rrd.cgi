@@ -148,9 +148,15 @@ EOT
     print "The statistics were last updated ",
         strftime("<B>%A, %e %B, %T %Z</B>\n",
             localtime($mtime));
-    my $auto_href =
-        (defined $tgt->{config}{autorefresh} and
-         $tgt->{config}{autorefresh} eq 'no')
+    my $no_auto_refresh_href =
+        ($q->param('autorefresh') and
+        $q->param('autorefresh') eq 'no')
+            ?
+        '?autorefresh=no'
+            :
+        '';
+    my $switch_auto_refresh =
+        $no_auto_refresh_href
         ?
         '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
         :
@@ -165,8 +171,8 @@ EOT
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a> Graphs</small>
 <br>
-<small>Go: <a href="./">up to parent level</a>, or<br>
-Go to $auto_href.</small>
+<small>Go: <a href="./$no_auto_refresh_href">up to parent level</a>, or<br>
+Go to $switch_auto_refresh.</small>
 EOT
 
 	my $dayavg = $tgt->{config}->{interval};
@@ -773,9 +779,15 @@ EOT
 	}
 	if (defined @{$directories{$dir}{target}}) {
 		print "<HR>\n" if defined $subdirs_printed;
-        my $auto_href =
+        my $no_auto_refresh_href =
             ($q->param('autorefresh') and
-             $q->param('autorefresh') eq 'no')
+            $q->param('autorefresh') eq 'no')
+                ?
+            '?autorefresh=no'
+                :
+            '';
+        my $switch_auto_refresh =
+            $no_auto_refresh_href
             ?
             '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
             :
@@ -783,8 +795,8 @@ EOT
 		print <<EOT;
 <H1>RRD graphs in the directory $dir1</H1>
 <small>Click on a graphic below to go to a deeper level, or<br>
-Go up to <a href="../">parent level</a>, or<br>
-Go to $auto_href.</small>
+Go up to <a href="../$no_auto_refresh_href">parent level</a>, or<br>
+Go to $switch_auto_refresh.</small>
 EOT
 
 		for my $item (@{$directories{$dir}{target}}) {
@@ -811,7 +823,7 @@ EOT
                      $targets{$item}{config}{interval} eq '1') ) {
                 push @text, <<EOT;
 <TR>
-<TD><a name="$item">&nbsp;</a><a href="$item.html">$itemname</a><br>
+<TD><a name="$item">&nbsp;</a><a href="$item.html$no_auto_refresh_href">$itemname</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;$freqtext Graphic suppressed. More data is available
 <a href="$item.html">here</a>.
 </TR>
@@ -820,8 +832,9 @@ EOT
             };
 			push @text, <<EOT;
 <TR>
-   <TD><a name="$item">&nbsp;</a><a href="$item.html">$itemname</a><br>
-	<a href="$item.html"><img src="$item-$freq.$imagetype"
+   <TD><a name="$item">&nbsp;</a><a
+    href="$item.html$no_auto_refresh_href">$itemname</a><br>
+	<a href="$item.html$no_auto_refresh_href"><img src="$item-$freq.$imagetype"
     width="$xsize" height="$ysize"
     border="0" align="top" vspace="10" alt="$item"></a><br clear="all">
    </TD>
