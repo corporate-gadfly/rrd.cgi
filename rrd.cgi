@@ -983,13 +983,19 @@ sub dump_targets() {
     }
 }
 
+# recursive subroutine to print all directories
 sub dump_directories {
-    print "Directories:\n";
-
-    for my $dir (keys %directories) {
-        print "Directory $dir:\n";
-        for my $item (@{$directories{$dir}}) {
-            print "\t$item\n";
+    my $dir = shift;
+    my $indent = shift;
+    $dir ||= '';
+    $indent ||= 0;
+    print '    ' x $indent, 'Directory: ', $dir, "/", "\n";
+    if( exists $directories{$dir} ) {
+        for my $target ( @{$directories{$dir}{target}} ) {
+            print '    ' x $indent, '    Target: ', $target, "\n";
+        }
+        for my $subdir ( @{$directories{$dir}{subdir}} ) {
+            dump_directories($subdir, $indent+1);
         }
     }
 }
