@@ -157,6 +157,7 @@ EOT
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a> Graphs</small>
 <br>
+<small>Go: <a href="./">up to parent level</a></small>
 EOT
 
 	my $dayavg = $tgt->{config}->{interval};
