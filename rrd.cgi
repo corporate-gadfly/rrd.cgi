@@ -1071,12 +1071,11 @@ sub archive_directory($$) {
                 $archive_dir =
                     $directories{$dir}{config}{archivedir} . '/' . $dir;
             }
-            if( !defined $directories{$dir}{config}{archiveurl} ) {
-                warn 'Undefined archiveurl for ', $dir, '/', "\n";
-                $archive_url = '';
+            if( !defined $directories{$dir}{config}{archivecgi} ) {
+                die 'Undefined archivecgi for ', $dir, '/', "\n";
             } else {
                 $archive_url =
-                    $directories{$dir}{config}{archiveurl} . '/' . $dir;
+                    $directories{$dir}{config}{archivecgi} . '/' . $dir;
             }
 
             unless( -d $archive_dir ) {
