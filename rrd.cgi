@@ -740,8 +740,14 @@ sub read_rrd_config($$$)
 sub parse_directories {
     %directories = ();
 
-    # FIXME: the sort is expensive
-    for my $name (sort { $targets{$a}{order} <=> $targets{$b}{order} } keys %targets) {
+    # sorted names using the Schwartzian Transform (read comments backwards)
+    my @names =
+        map { $_->[0] }                         # restore original values
+        sort { $a->[1] <=> $b->[1] }            # sort
+        map { [ $_, $targets{$_}{order} ] }     # transform: value, sortkey
+        keys %targets;
+
+    for my $name (@names) {
         my $dir = $targets{$name}{directory}
             if defined $targets{$name}{directory};
         $dir = '' unless defined $dir;
