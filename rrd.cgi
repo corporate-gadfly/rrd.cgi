@@ -348,6 +348,16 @@ sub do_image($$$$)
 	}
 
     my @graph_args = get_graph_args($target);
+    if( exists $target->{percentilevalue} ) {
+        my @percentile = calc_percentile($target, -$back, 'now');
+        my @ds = split / +/, $target->{percentilesources};
+        foreach my $i(0 .. (scalar @ds)-1) {
+            for( @graph_args ) {
+                s/%PERCENTILE${i}%/$percentile[$i]/g;
+                s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
+            }
+        }
+    }
     do {
 	    http_headers("text/html", $target->{config});
         print 'RRDs::graph(',
@@ -383,6 +393,57 @@ sub do_image($$$$)
 	close PNG;
 }
 
+sub calc_percentile($$$) {
+    use Statistics::Descriptive;
+    my $target = shift;     # target
+    my $start = shift;      # start time
+    my $end = shift;        # end time
+                            # sources separated by spaces
+    my @ds = split / +/, $target->{percentilesources};
+    my( undef, undef, undef, $data ) = RRDs::fetch($target->{rrd},
+            'AVERAGE',
+            '-s', $start,
+            '-e', $end);
+    my( @averages );
+    my( @percentile );
+    $target->{percentilemultiplier} = 1
+        unless exists $target->{percentilemultiplier};
+    foreach my $i(0 .. (scalar @ds)-1) {
+        my $compound = 0;
+        $compound = 1 if $ds[$i] =~ /\+/; 
+DATAPOINT: {
+            foreach my $d( @$data ) {
+                if( $compound ) {
+                    my $val = 0;
+                    foreach my $index(split /\+/, $ds[$i]) {
+                        next DATAPOINT unless defined $d->[$index];
+                        $val += $d->[$index];
+                    }
+                    push @{$averages[$i]}, $val;
+                } else {
+                        # only add defined values to array
+                    next unless defined $d->[$ds[$i]];
+                    push @{$averages[$i]}, $d->[$ds[$i]];
+                }
+            }
+        }
+ 
+        # empty percentile value if averages array is empty
+        do {
+            $percentile[$i] = 0;
+            next;
+        } unless exists $averages[$i] && scalar @{$averages[$i]};
+        my $stat = Statistics::Descriptive::Full->new();
+        $stat->add_data(@{$averages[$i]});
+                    # get percentile for given data
+        $percentile[$i] =
+            $stat->percentile($target->{percentilevalue})*
+            $target->{percentilemultiplier};
+        $percentile[$i] = sprintf("%.1f", $percentile[$i]);
+    }
+    return @percentile;
+}
+ 
 sub get_graph_args($) {
     my $target = shift;
             # Use space as a delimeter to break up {graph} into a list
@@ -442,6 +503,16 @@ sub do_custom_image($$$) {
     } unless defined $start_time && defined $end_time;
 
     my @graph_args = get_graph_args($target);
+    if( exists $target->{percentilevalue} ) {
+        my @percentile = calc_percentile($target, $start_time, $end_time);
+        my @ds = split / +/, $target->{percentilesources};
+        foreach my $i(0 .. (scalar @ds)-1) {
+            for( @graph_args ) {
+                s/%PERCENTILE${i}%/$percentile[$i]/g;
+                s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
+            }
+        }
+    }
         # unbuffered output
     $| = 1;
     http_headers("image/$imagetype", $target->{config});
