@@ -791,11 +791,14 @@ sub display_archived_images($$$$) {
                 $targets{$target}{suppress} =~ /y/ and $mode eq 'yearly'
                 ) {
             # target is suppressed for this mode
-            print 'Target ', $target,
+            print 'Target ', $targets{$target}{title},
                     ' is suppressed for archive mode: ', $mode;
+            next;
         }
 
         print <<EOT;
+<b>$targets{$target}{title}</b>
+<br>
 <img src="$archive_url/$dir/$y/$m/$target-$y-$m-$d.$imagetype">
 <br>
 EOT
