@@ -653,7 +653,7 @@ EOT
                 push @text, <<EOT;
 <TR>
 <TD><a name="$item">&nbsp;</a><a href="$item.html">$itemname</a><br>
-Daily Graphic suppressed. More data is available
+&nbsp;&nbsp;&nbsp;&nbsp;Daily Graphic suppressed. More data is available
 <a href="$item.html">here</a>.
 </TR>
 EOT
