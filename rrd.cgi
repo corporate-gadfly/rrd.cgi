@@ -273,8 +273,10 @@ sub http_headers($$)
 Content-Type: $content_type
 Pragma: no-cache
 EOT
-    # Don't print refresh headers for graphics
-    print <<EOT unless $content_type eq "image/$imagetype";
+    # Don't print refresh headers for graphics and when asked not to
+    my $autorefresh = defined $cfg->{autorefresh}
+        ? $cfg->{autorefresh} : '';
+    print <<EOT unless $content_type eq "image/$imagetype" || $autorefresh eq 'no';
 Refresh: $cfg->{refresh}
 EOT
 
@@ -470,6 +472,9 @@ sub common_args($$$)
 
 	my $cfg = $target->{config};
 
+    my $autorefresh = $q->param('autorefresh') || '';
+    $cfg->{autorefresh} = 'no' if $autorefresh eq 'no';
+
 	my $dir = $cfg->{workdir};
 	$dir = $cfg->{logdir}
 		if defined $cfg->{logdir};
@@ -640,8 +645,11 @@ sub print_dir($$) {
 
 	my $dir1 = $dir . '/';
 
+    # run over all the targets in this directory to see if any of them
+    # has interval eq '1' meaning a refresh of 60
 	if (defined @{$directories{$dir}{target}}) {
 		for my $item (@{$directories{$dir}{target}}) {
+            common_args($item, $targets{$item}, $q);
             if( $targets{$item}{config}{interval} eq '1'
                     && $targets{$item}{suppress} !~ /h/ ) {
                 $directories{$dir}{config}{refresh} = 60;
