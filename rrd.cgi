@@ -655,7 +655,7 @@ sub read_rrd_config($$$)
 
 	my @lines;
 
-	open(CFG, "<$file") || print_error("Cannot open config file: $!");
+	open(CFG, "<$file") || print_error("Cannot open config file $file: $!");
 	while (<CFG>) {
 		chomp;                    # remove newline
 		s/\s+$//;                 # remove trailing space
