@@ -135,10 +135,10 @@ EOT
     print <<EOT;
 <p>
 <small>Scroll to:
-<a href="#Daily">Daily</a>|
-<a href="#Weekly">Weekly</a>|
-<a href="#Monthly">Monthly</a>|
-<a href="#Yearly">Yearly</a>|
+@{[ $tgt->{suppress} =~ /d/ ? '' : '<a href="#Daily">Daily</a>|' ]}
+@{[ $tgt->{suppress} =~ /w/ ? '' : '<a href="#Weekly">Weekly</a>|' ]}
+@{[ $tgt->{suppress} =~ /m/ ? '' : '<a href="#Monthly">Monthly</a>|' ]}
+@{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a> Graphs</small>
 <br>
 EOT
@@ -635,10 +635,8 @@ EOT
 <small>To get daily, weekly, monthly and yearly stats, click on a
 graphic below to go a level deeper.</small>
 EOT
+
 		for my $item (@{$directories{$dir}{target}}) {
-			push @text, <<EOT;
-<TABLE BORDER=0 WIDTH=100%>
-EOT
 			my $itemname = $item;
             common_args($item, $targets{$item}, $q);
             my( undef, $xsize, $ysize )
@@ -648,6 +646,16 @@ EOT
                     # for each graph store its item and name in an
                     # anonymous hash and push onto the array @graphs
             push @graphs, {item => $item, name => $itemname};
+            do {
+                push @text, <<EOT;
+<TR>
+<TD><a name="$item">&nbsp;</a><a href="$item.html">$itemname</a><br>
+Daily Graphic suppressed. More data is available
+<a href="$item.html">here</a>.
+</TR>
+EOT
+                next;
+            } if $targets{$item}{suppress} =~ /d/;
 			push @text, <<EOT;
 <TR>
    <TD><a name="$item">&nbsp;</a><a href="$item.html">$itemname</a><br>
@@ -665,6 +673,7 @@ EOT
 EOT
         }
         print '</ul>', "\n";
+        print '<TABLE BORDER=0 WIDTH=100%>', "\n";
         print @text;
 		print "</TABLE>\n";
 	}
