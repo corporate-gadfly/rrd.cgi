@@ -148,6 +148,12 @@ EOT
 
     my $mtime = (stat $tgt->{rrd})[9];
 
+    if( !defined $mtime ) {
+        $mtime = 0;
+        print STDERR
+            'Could not get status info for ', $tgt->{rrd}, '. ',
+            'Missing symbolic link or incorrect permissions!', "\n";
+    }
     print "The statistics were last updated ",
         strftime("<B>%A, %d %B, %H:%M:%S %Z</B>\n",
             localtime($mtime));
