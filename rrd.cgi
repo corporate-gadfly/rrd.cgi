@@ -704,7 +704,18 @@ EOT
         archive_directory(undef, undef);
         return;
     }
-    print_error('Not implemented yet');
+    my ($dir, $stat, $ext) = ($q->path_info() =~
+            /^(.*)\/([^\/]+)(\.html)$/);
+    if( !defined $dir or !defined $stat or !defined $ext ) {
+        print_error('Undefined statistic ', $q->path_info(),
+                ' for archive mode: ', $mode);
+    } else {
+        http_headers('text/html', undef);
+        print <<EOT;
+<img src="/rrd/archive/$dir/2004/10/$stat-2004-10-26.png">
+EOT
+        print_error('Not implemented yet');
+    }
 }
 
 sub try_read_config($)
