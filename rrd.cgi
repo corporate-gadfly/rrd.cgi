@@ -151,7 +151,7 @@ EOT
     my $mtime = (stat $tgt->{rrd})[9];
 
     print "The statistics were last updated ",
-        strftime("<B>%A, %e %B, %T %Z</B>\n",
+        strftime("<B>%A, %d %B, %H:%M:%S %Z</B>\n",
             localtime($mtime));
     my $no_auto_refresh_href =
         ($q->param('autorefresh') and
