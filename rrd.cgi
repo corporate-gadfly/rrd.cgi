@@ -392,12 +392,12 @@ sub do_image($$$$)
     }
     do {
 	    http_headers("text/html", $target->{config});
-        print 'RRDs::graph(',
+        print '<pre>RRDs::graph(',
                 join(",\n",
                 $file, '-s', "-$back", @local_args,
                 @{$target->{args}}, @graph_args, "VRULE:$oldsec#ff0000",
                 "VRULE:$seconds#ff0000"),
-                ')';
+                ')</pre>';
         return;
     } if $wantsrc;
 
