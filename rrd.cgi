@@ -444,14 +444,16 @@ sub common_args($$$)
 	$dir = $cfg->{imagedir}
 		if defined $cfg->{imagedir};
 
+    $target->{suppress} ||= '';
+
 	$target->{day}   = $dir . '/' . $tdir . $name
-		. '-day.' . $imagetype;
+		. '-day.' . $imagetype unless $target->{suppress} =~ /d/;
 	$target->{week}  = $dir . '/' . $tdir . $name
-		. '-week.' . $imagetype;
+		. '-week.' . $imagetype unless $target->{suppress} =~ /w/;
 	$target->{month} = $dir . '/' . $tdir . $name
-		. '-month.' . $imagetype;
+		. '-month.' . $imagetype unless $target->{suppress} =~ /m/;
 	$target->{year}  = $dir . '/' . $tdir . $name
-		. '-year.' . $imagetype;
+		. '-year.' . $imagetype unless $target->{suppress} =~ /y/;
 
 	my @args = ();
 
