@@ -679,7 +679,7 @@ EOT
     if( $mode eq 'archive' ) {
         http_headers('text/html', undef);
         print '<pre>', "\n";
-        archive_directory(undef);
+        archive_directory(undef, undef);
         print '</pre>', "\n";
         return;
     }
@@ -991,20 +991,51 @@ sub dump_targets() {
 }
 
 # forward declaration needed for recursive call
-sub archive_directory($);
+sub archive_directory($$);
 
 # recursive subroutine to archive all targets in a directory
-sub archive_directory($) {
+sub archive_directory($$) {
     my $dir = shift;
     $dir ||= '';            # default to top-level directory
+    my $date = shift;
+    $date ||= strftime "%m-%d-%Y", localtime;   # default to today
     if( exists $directories{$dir} ) {
-        print 'Undefined archivedir for ', $dir, '/', "\n"
-            unless defined $directories{$dir}{config}{archivedir};
+        my $archive_dir =  $directories{$dir}{config}{archivedir}
+            . '/' . $dir;
+        my $archive_url =  $directories{$dir}{config}{archiveurl};
+        do {
+            print 'Undefined archivedir for ', $dir, '/', "\n";
+            return;
+        } unless defined $archive_dir;
+        do {
+            print 'Nonexistent directory ', $archive_dir, "\n";
+            return;
+        } unless -d $archive_dir;
+        do {
+            print 'Undefined archiveurl for ', $dir, '/', "\n";
+            return;
+        } unless defined $directories{$dir}{config}{archiveurl};
+
+        my( $m, $d, $y ) = split /-/, $date;
+
+        # check to see if proper directory hierarchy exists
+        do {
+            mkdir "$archive_dir/$y"
+                or print_error("mkdir $archive_dir/$y failed: $!")
+                unless -d "$archive_dir/$y";
+            mkdir "$archive_dir/$y/$m"
+                or print_error("mkdir $archive_dir/$y/$m: failed $!")
+                unless -d "$archive_dir/$y/$m";
+            mkdir "$archive_dir/$y/$m/$d"
+                or print_error("mkdir $archive_dir/$y/$m/$d: failed $!")
+                unless -d "$archive_dir/$y/$m/$d";
+        } unless -d "$archive_dir/$y/$m/$d";
+
         for my $target ( @{$directories{$dir}{target}} ) {
             print 'Archiving Target: ', $dir, '/', $target, "\n";
         }
         for my $subdir ( @{$directories{$dir}{subdir}} ) {
-            archive_directory($subdir);
+            archive_directory($subdir, $date);
         }
     }
 }
