@@ -628,7 +628,7 @@ sub try_read_config($)
 			icondir => $prefix
 		};
 
-		read_mrtg_config($cfgfile, $cfgref, \$order);
+		read_rrd_config($cfgfile, $cfgref, \$order);
 	}
 
     delete $targets{_};
@@ -638,7 +638,7 @@ sub try_read_config($)
 	$config_time = time;
 }
 
-sub read_mrtg_config($$$)
+sub read_rrd_config($$$)
 {
 	my ($file, $cfgref, $order) = @_;
 
