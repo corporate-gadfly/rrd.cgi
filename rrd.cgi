@@ -746,19 +746,21 @@ sub display_archived_images($$$$) {
     my $d = shift;
     my $y = shift;
 
+    my $mode = $q->param('mode');
+
     my ($dir, undef, $stat, $ext) = ($q->path_info() =~
             m#^(.*)/(([^/]+)(\.html))?$#);
 
     if( !defined $dir ) {
         print_error('Undefined statistic ', $q->path_info(),
-                ' for archive mode: ', $q->param('mode'));
+                ' for archive mode: ', $mode);
     }
     # now that $dir is verified immediately strip the leading slash
     $dir =~ s/^\///g;
 
     unless( defined $directories{$dir}{config}{archiveurl} ) {
         print_error('Missing Archiveurl for ', $dir,
-                ' for archive mode: ', $q->param('mode'));
+                ' for archive mode: ', $mode);
     }
 
     my $archive_url = $directories{$dir}{config}{archiveurl};
@@ -769,6 +771,18 @@ sub display_archived_images($$$$) {
     }
 
     # single target
+    if(
+            $targets{$stat}{suppress} =~ /d/ and $mode eq 'daily'
+            or
+            $targets{$stat}{suppress} =~ /m/ and $mode eq 'monthly'
+            or
+            $targets{$stat}{suppress} =~ /y/ and $mode eq 'yearly'
+            ) {
+        # target is suppressed for this mode
+        print_error('Target ', $stat,
+                ' is suppressed for archive mode: ', $mode);
+    }
+
     http_headers('text/html', undef);
     print <<EOT;
 <img src="$archive_url/$dir/$y/$m/$stat-$y-$m-$d.$imagetype">
