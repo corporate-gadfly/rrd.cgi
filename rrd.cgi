@@ -24,7 +24,7 @@ require 5.008;
 use RRDs;
 
 use vars qw(@config_files @all_config_files %targets $config_time
-	%directories $version $imagetype $percent_h);
+	%directories $imagetype $percent_h);
 
 # EDIT THIS to reflect all your RRD config files
 BEGIN { @config_files = qw(
@@ -32,8 +32,6 @@ BEGIN { @config_files = qw(
     /etc/mrtg/rrd-tomcat.cfg
     /etc/mrtg/rrd-network.cfg
 ); }
-
-$version = '0.6';
 
 # This depends on what image format your libgd (and rrdtool) uses
 $imagetype = 'png'; # or make this 'gif';
