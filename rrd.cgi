@@ -741,17 +741,32 @@ sub display_archived_images($$$$) {
     my $d = shift;
     my $y = shift;
 
-    my ($dir, $stat, $ext) = ($q->path_info() =~
-            /^(.*)\/([^\/]+)(\.html)$/);
+    my ($dir, undef, $stat, $ext) = ($q->path_info() =~
+            m#^(.*)/(([^/]+)(\.html))?$#);
 
-    if( !defined $dir or !defined $stat or !defined $ext ) {
+    if( !defined $dir ) {
         print_error('Undefined statistic ', $q->path_info(),
                 ' for archive mode: ', $q->param('mode'));
     }
+    # now that $dir is verified immediately strip the leading slash
+    $dir =~ s/^\///g;
 
+    unless( defined $directories{$dir}{config}{archiveurl} ) {
+        print_error('Missing Archiveurl for ', $dir,
+                ' for archive mode: ', $q->param('mode'));
+    }
+
+    my $archive_url = $directories{$dir}{config}{archiveurl};
+
+    if( !defined $stat or !defined $ext ) {
+        # multiple targets in the entire directory
+        print_error('Multiple graphs requested for the whole directory');
+    }
+
+    # single target
     http_headers('text/html', undef);
     print <<EOT;
-<img src="/rrd/archive$dir/$y/$m/$stat-$y-$m-$d.png">
+<img src="$archive_url/$dir/$y/$m/$stat-$y-$m-$d.$imagetype">
 EOT
 }
 
