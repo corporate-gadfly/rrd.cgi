@@ -765,28 +765,41 @@ sub display_archived_images($$$$) {
 
     my $archive_url = $directories{$dir}{config}{archiveurl};
 
-    if( !defined $stat or !defined $ext ) {
-        # multiple targets in the entire directory
-        print_error('Multiple graphs requested for the whole directory');
-    }
+    my @targets = ();
 
-    # single target
-    if(
-            $targets{$stat}{suppress} =~ /d/ and $mode eq 'daily'
-            or
-            $targets{$stat}{suppress} =~ /m/ and $mode eq 'monthly'
-            or
-            $targets{$stat}{suppress} =~ /y/ and $mode eq 'yearly'
-            ) {
-        # target is suppressed for this mode
-        print_error('Target ', $stat,
-                ' is suppressed for archive mode: ', $mode);
+    # if only $dir is defined it means user is requesting archived
+    # images for the whole directory. Otherwise, if all of $dir, $stat
+    # and $ext are defined, then the user is requesting a single
+    # archived image
+    if( !defined $stat or !defined $ext ) {
+        # multiple archived images
+        for my $target ( @{$directories{$dir}{target}} ) {
+            push @targets, $target;
+        }
+    } else {
+        # single archived image
+        push @targets, $stat;
     }
 
     http_headers('text/html', undef);
-    print <<EOT;
-<img src="$archive_url/$dir/$y/$m/$stat-$y-$m-$d.$imagetype">
+    for my $target ( @targets ) {
+        if(
+                $targets{$target}{suppress} =~ /d/ and $mode eq 'daily'
+                or
+                $targets{$target}{suppress} =~ /m/ and $mode eq 'monthly'
+                or
+                $targets{$target}{suppress} =~ /y/ and $mode eq 'yearly'
+                ) {
+            # target is suppressed for this mode
+            print 'Target ', $target,
+                    ' is suppressed for archive mode: ', $mode;
+        }
+
+        print <<EOT;
+<img src="$archive_url/$dir/$y/$m/$target-$y-$m-$d.$imagetype">
+<br>
 EOT
+    }
 }
 
 sub try_read_config($)
