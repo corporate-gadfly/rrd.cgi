@@ -676,6 +676,13 @@ Only
 EOT
     } if $mode !~ m/^(archive|daily|monthly|yearly)$/o;
 
+    if( $mode eq 'archive' ) {
+        http_headers('text/html', undef);
+        print '<pre>', "\n";
+        archive_directory(undef);
+        print '</pre>', "\n";
+        return;
+    }
     print_error('Not implemented yet');
 }
 
@@ -984,15 +991,34 @@ sub dump_targets() {
 }
 
 # forward declaration needed for recursive call
+sub archive_directory($);
+
+# recursive subroutine to archive all targets in a directory
+sub archive_directory($) {
+    my $dir = shift;
+    $dir ||= '';            # default to top-level directory
+    if( exists $directories{$dir} ) {
+        print 'Undefined archivedir for ', $dir, '/', "\n"
+            unless defined $directories{$dir}{config}{archivedir};
+        for my $target ( @{$directories{$dir}{target}} ) {
+            print 'Archiving Target: ', $dir, '/', $target, "\n";
+        }
+        for my $subdir ( @{$directories{$dir}{subdir}} ) {
+            archive_directory($subdir);
+        }
+    }
+}
+
+# forward declaration needed for recursive call
 sub dump_directories($$);
 
 # recursive subroutine to print all directories
 sub dump_directories($$) {
     my $dir = shift;
     my $indent = shift;
-    $dir ||= '';
+    $dir ||= '';            # default to top-level directory
     $indent ||= 0;
-    print '    ' x $indent, 'Directory: ', $dir, "/", "\n";
+    print '    ' x $indent, 'Directory: ', $dir, '/', "\n";
     if( exists $directories{$dir} ) {
         for my $target ( @{$directories{$dir}{target}} ) {
             print '    ' x $indent, '    Target: ', $target, "\n";
