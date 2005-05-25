@@ -380,14 +380,12 @@ sub do_image($$$$)
     my $oldsec;
     my $back;
     my $xgrid = '';
-    my $bg_time;
 
     if ($ext eq 'hour') {
         $seconds = timelocal(@t);
         $back = 3*3600;     # 3 hours
         $oldsec = $seconds - $t[2]*3600 - $t[1]*60 - $t[0];     # FIXME: where to set the VRULE
         $seconds = 0;
-        $bg_time = 10*60;           # 10 minutes
     } elsif ($ext eq 'day') {
         $seconds = timelocal(@t);
         $back = 30*3600;    # 30 hours
@@ -395,27 +393,23 @@ sub do_image($$$$)
         # We need this only for day graph. The other ones
         # are magically correct.
         $xgrid = 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h;
-        $bg_time = 2*60*60;         # 2 hours
     } elsif ($ext eq 'week') {
         $seconds = timelocal(@t);
         $t[6] = ($t[6]+6) % 7;
         $seconds -= $t[6]*86400;
         $back = 8*86400;    # 8 days
         $oldsec = $seconds - 7*86400;
-        $bg_time = 2*24*60*60;      # 2 days
     } elsif ($ext eq 'month') {
         $t[3] = 1;
         $seconds = timelocal(@t);
         $back = 36*86400;   # 36 days
         $oldsec = $seconds - 30*86400; # FIXME (the right # of days!!)
-        $bg_time = 2*7*24*60*60;    # 2 weeks
     } elsif ($ext eq 'year') {
         $t[3] = 1;
         $t[4] = 0;
         $seconds = timelocal(@t);
         $back = 396*86400;  # 365 + 31 days
         $oldsec = $seconds - 365*86400; # FIXME (the right # of days!!)
-        $bg_time = 2*30*24*60*60;   # 2 months
     } else {
         print_error("Unknown file extension: $ext");
     }
@@ -436,11 +430,6 @@ sub do_image($$$$)
                 s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
             }
         }
-    }
-    my $half_time = $bg_time / 2;
-    for( @graph_args ) {
-        s/%BGTIME%/$bg_time/g;
-        s/%BGTIME_DIV2%/$half_time/g;
     }
     do {
         http_headers("text/html", $target->{config});
@@ -601,14 +590,6 @@ sub do_custom_image($$$) {
                 s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
             }
         }
-    }
-    # in the case of custom images alternating background doesn't make
-    # sense (because it won't be exact) so make it impossibly large
-    my $bg_time = 12*31*24*60*60;   # 12 months
-    my $half_time = $bg_time / 2;
-    for( @graph_args ) {
-        s/%BGTIME%/$bg_time/g;
-        s/%BGTIME_DIV2%/$half_time/g;
     }
     my( $fh, $filename );
     if( $ENV{MOD_PERL} ) {
