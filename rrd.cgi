@@ -1167,8 +1167,6 @@ EOT
     my( @graphs, @text );
     if (defined @{$directories{$dir}{subdir}}) {
         print <<EOT;
-<small>All graphics are in PNG format. Make sure your browser supports
-    PNG format.</small>
 <H1>RRD subdirectories in $dir1</H1>
 <small>More graphs are available in the following subdirectories</small>
 
