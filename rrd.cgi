@@ -1095,7 +1095,13 @@ sub parse_directories {
                 push (@{$directories{$prefix}{subdir}},
                     $component);
             }
-            $prefix .= $component . '/';
+            if( $prefix eq '' ) {
+                # with an empty prefix, use the component itself as the
+                # next prefix
+                $prefix = $component;
+            } else {
+                $prefix .= $component . '/';
+            }
         }
         push (@{$directories{$dir}{target}}, $name);
     }
