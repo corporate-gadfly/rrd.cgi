@@ -1094,26 +1094,9 @@ sub parse_directories {
             unless (defined $directories{$prefix.$component}) {
                 push (@{$directories{$prefix}{subdir}},
                     $component);
-
-                # For the directory, get the global parameters
-                # from the config of the first item of the
-                # directory:
-                unless( $prefix eq '' ) {
-                    $directories{$prefix}{config} =
-                        $targets{$name}{config};
-                    $directories{$prefix}{bodytag} =
-                        $targets{$name}{bodytag};
-                }
             }
             $prefix .= $component . '/';
         }
-        unless (defined $directories{$dir}) {
-            $directories{$dir}{config} =
-                $targets{$name}{config};
-            $directories{$dir}{bodytag} =
-                $targets{$name}{bodytag};
-        }
-
         push (@{$directories{$dir}{target}}, $name);
     }
 }
