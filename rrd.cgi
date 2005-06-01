@@ -143,15 +143,15 @@ sub do_html($$)
         if $tgt->{config}{interval} eq '1' and $tgt->{suppress} !~ /h/;
     http_headers('text/html', $tgt->{config});
     print <<EOT;
-<HTML>
-<HEAD>
+<html>
+<head>
 <link type="text/css" rel="stylesheet" href="$tgt->{config}{icondir}/style.css">
-<TITLE>
+<title>
 EOT
     print $tgt->{title} if defined $tgt->{title};
-    print "</TITLE>\n";
+    print "</title>\n";
 
-    print "</HEAD>\n<BODY BGCOLOR=#ffffff>\n";
+    print "</head>\n<body bgcolor=#ffffff>\n";
     
     print $tgt->{pagetop} if defined $tgt->{pagetop};
 
@@ -164,7 +164,7 @@ EOT
             'Missing symbolic link or incorrect permissions!', "\n";
     }
     print "The statistics were last updated ",
-        strftime("<B>%A, %d %B, %H:%M:%S %Z</B>\n",
+        strftime("<b>%A, %d %B, %H:%M:%S %Z</b>\n",
             localtime($mtime));
     my $no_auto_refresh_href =
         ($q->param('autorefresh') and
@@ -1149,11 +1149,11 @@ sub print_dir($$) {
         :
             $directories{$directories{$dir}{subdir}[0]}{config}{icondir};
     print <<EOT;
-<HTML>
-<HEAD>
+<html>
+<head>
 <link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
-<TITLE>RRD: Directory $dir1</TITLE>
-</HEAD><BODY BGCOLOR=#ffffff>
+<title>RRD: Directory $dir1</title>
+</head><body bgcolor=#ffffff>
 EOT
 
     my $no_auto_refresh_href =
@@ -1167,17 +1167,17 @@ EOT
     my( @graphs, @text );
     if (defined @{$directories{$dir}{subdir}}) {
         print <<EOT;
-<H1>RRD subdirectories in $dir1</H1>
+<h1>RRD subdirectories in $dir1</h1>
 <small>More graphs are available in the following subdirectories</small>
 
-<UL>
+<ul>
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
-            print "<LI><A HREF=\"$item/$no_auto_refresh_href\">$item/</A>\n";
+            print "<li><a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
             $summary->{subdir}++;
         }
 
-        print "</UL>\n";
+        print "</ul>\n";
     }
 
     # print summary
@@ -1200,7 +1200,7 @@ EOT
             :
             '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
         print <<EOT;
-<H1>RRD graphs in $dir1</H1>
+<h1>RRD graphs in $dir1</h1>
 <small>Click on a graphic below to go to a deeper level, or<br>
 Go up to <a href="../$no_auto_refresh_href">parent level</a>, or<br>
 Go to $switch_auto_refresh.</small>
@@ -1229,23 +1229,23 @@ EOT
                     ($targets{$item}{suppress} =~ /h/ &&
                      $targets{$item}{config}{interval} eq '1') ) {
                 push @text, <<EOT;
-<TR>
-<TD><a name="$item">&nbsp;</a><a href="$item.html$no_auto_refresh_href">$itemname</a><br>
+<tr>
+<td><a name="$item">&nbsp;</a><a href="$item.html$no_auto_refresh_href">$itemname</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;$freqtext Graphic suppressed. More data is available
 <a href="$item.html">here</a>.
-</TR>
+</tr>
 EOT
                 next;
             };
             push @text, <<EOT;
-<TR>
-   <TD><a name="$item">&nbsp;</a><a
+<tr>
+   <td><a name="$item">&nbsp;</a><a
     href="$item.html$no_auto_refresh_href">$itemname</a><br>
     <a href="$item.html$no_auto_refresh_href"><img src="$item-$freq.$imagetype"
     width="$xsize" height="$ysize"
     border="0" align="top" vspace="10" alt="$item"></a><br clear="all">
-   </TD>
-</TR>
+   </td>
+</tr>
 EOT
         } 
         print '<ul>', "\n";
@@ -1255,9 +1255,9 @@ EOT
 EOT
         }
         print '</ul>', "\n";
-        print '<TABLE BORDER=0 WIDTH=100%>', "\n";
+        print '<table border=0 width=100%>', "\n";
         print @text;
-        print "</TABLE>\n";
+        print "</table>\n";
     }
 
     print <<EOT if @{$directories{$dir}{target}};
@@ -1283,8 +1283,8 @@ EOT
 
     print '<!-- $Id$ -->', "\n";
     print <<EOT;
-</BODY>
-</HTML>
+</body>
+</html>
 EOT
 }
 
