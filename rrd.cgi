@@ -1267,12 +1267,12 @@ EOT
 <li><a href="#$graph->{item}">$graph->{name}</a>
 EOT
         }
-        print '</ul></td><td style="padding-top: 40px;">', "\n";
+        print '</ul></td><td style="padding-top: 60px;">', "\n";
         print '<table border=0 width=100%>', "\n";
         print @text;
         print "</table>\n";
     } else {
-        print '</td><td style="padding-top: 40px;">&nbsp;', "\n";
+        print '</td><td style="padding-top: 60px;">&nbsp;', "\n";
     }
     print '</td></tr></table>', "\n";
 
