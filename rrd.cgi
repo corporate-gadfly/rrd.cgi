@@ -1169,7 +1169,7 @@ EOT
         print <<EOT;
 <small>All graphics are in PNG format. Make sure your browser supports
     PNG format.</small>
-<H1>RRD subdirectories in the directory $dir1</H1>
+<H1>RRD subdirectories in $dir1</H1>
 <small>More graphs are available in the following subdirectories</small>
 
 <UL>
@@ -1202,7 +1202,7 @@ EOT
             :
             '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
         print <<EOT;
-<H1>RRD graphs in the directory $dir1</H1>
+<H1>RRD graphs in $dir1</H1>
 <small>Click on a graphic below to go to a deeper level, or<br>
 Go up to <a href="../$no_auto_refresh_href">parent level</a>, or<br>
 Go to $switch_auto_refresh.</small>
