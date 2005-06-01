@@ -1183,7 +1183,7 @@ EOT
 <h1>RRD subdirectories in $dir1</h1>
 <small>More graphs are available in the following subdirectories</small>
 
-<ul>
+<ul class="listAsTable">
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
             print "<li><a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
@@ -1261,7 +1261,7 @@ EOT
 </tr>
 EOT
         } 
-        print '<ul>', "\n";
+        print '<ul class="listAsTable">', "\n";
         foreach my $graph( @graphs ) {
             print <<EOT;
 <li><a href="#$graph->{item}">$graph->{name}</a>
