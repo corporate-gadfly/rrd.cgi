@@ -1164,14 +1164,13 @@ EOT
             :
         '';
 
-    my $subdirs_printed;
     my( @graphs, @text );
     if (defined @{$directories{$dir}{subdir}}) {
-        $subdirs_printed = 1;
         print <<EOT;
 <small>All graphics are in PNG format. Make sure your browser supports
     PNG format.</small>
 <H1>RRD subdirectories in the directory $dir1</H1>
+<small>More graphs are available in the following subdirectories</small>
 
 <UL>
 EOT
@@ -1188,13 +1187,14 @@ EOT
     $summary->{graphs} and
         print '<h1>', $summary->{graphs}-$summary->{suppress}, ' Graph(s)</h1>';
     $summary->{subdir} and
-        print '<h1>', $summary->{subdir}, ' Subdirectories</h1>';
+        print '<h1>', $summary->{subdir},
+            $summary->{subdir} > 1 ? ' Subdirectories' : ' Subdirectory',
+            '</h1>';
     $summary->{suppress}
         and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
     print '</div>';
 
     if (defined @{$directories{$dir}{target}}) {
-        print "<HR>\n" if defined $subdirs_printed;
         my $switch_auto_refresh =
             $no_auto_refresh_href
             ?
