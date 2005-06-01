@@ -149,10 +149,15 @@ sub do_html($$)
 <title>
 EOT
     print $tgt->{title} if defined $tgt->{title};
-    print "</title>\n";
+    print <<EOT;
+</title>
+</head>
+<body bgcolor=#ffffff>
+<table border="0">
+     <tr align="left" valign="top">
+         <td>
+EOT
 
-    print "</head>\n<body bgcolor=#ffffff>\n";
-    
     print $tgt->{pagetop} if defined $tgt->{pagetop};
 
     my $mtime = (stat $tgt->{rrd})[9];
@@ -192,6 +197,8 @@ EOT
 <br>
 <small>Go: <a href="./$no_auto_refresh_href">up to parent level</a>, or<br>
 Go to $switch_auto_refresh.</small>
+        </td>
+        <td style="padding-top: 50px;">
 EOT
 
                 # total number of graphs (either 4 or 5)
@@ -219,6 +226,9 @@ EOT
     html_graph($tgt, 'year', 'Yearly', '1 Day', $xy, $yy, $avy);
 
     print <<EOT;
+        </td>
+    </tr>
+</table>
 <br>
 <b><a name="Historical">Run-time Historical Graphs</a></b>
 <small>These historical graphs produce images that are not cached at
