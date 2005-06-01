@@ -1154,6 +1154,9 @@ sub print_dir($$) {
 <link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
 <title>RRD: Directory $dir1</title>
 </head><body bgcolor=#ffffff>
+<table border="0">
+    <tr align="left" valign="top">
+        <td>
 EOT
 
     my $no_auto_refresh_href =
@@ -1177,7 +1180,7 @@ EOT
             $summary->{subdir}++;
         }
 
-        print "</ul>\n";
+        print '</ul>', "\n";
     }
 
     # print summary
@@ -1201,7 +1204,7 @@ EOT
             '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
         print <<EOT;
 <h1>RRD graphs in $dir1</h1>
-<small>Click on a graphic below to go to a deeper level, or<br>
+<small>Click on a graphic to the right to go to a deeper level, or<br>
 Go up to <a href="../$no_auto_refresh_href">parent level</a>, or<br>
 Go to $switch_auto_refresh.</small>
 EOT
@@ -1254,11 +1257,14 @@ EOT
 <li><a href="#$graph->{item}">$graph->{name}</a>
 EOT
         }
-        print '</ul>', "\n";
+        print '</ul></td><td style="padding-top: 40px;">', "\n";
         print '<table border=0 width=100%>', "\n";
         print @text;
         print "</table>\n";
+    } else {
+        print '</td><td style="padding-top: 40px;">&nbsp;', "\n";
     }
+    print '</td></tr></table>', "\n";
 
     print <<EOT if @{$directories{$dir}{target}};
 <br>
