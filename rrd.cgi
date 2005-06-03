@@ -145,7 +145,7 @@ sub do_html($$)
     print <<EOT;
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="$tgt->{config}{icondir}/style.css">
+<link type="text/css" rel="stylesheet" href="$tgt->{config}{resourcedir}/style.css">
 <title>
 EOT
     print $tgt->{title} if defined $tgt->{title};
@@ -297,7 +297,7 @@ EOT
 
     print <<EOT;
 <a href="http://www.rrdtool.org/"><img
-    src="$tgt->{config}{icondir}/rrdtool.gif" width="120"
+    src="$tgt->{config}{resourcedir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
 EOT
 
@@ -800,23 +800,23 @@ sub display_archived_images($$$$) {
         /yearly/    && do { $title .= " yearly mode for $y"; last; };
     }
 
-    my $icon_dir = defined $directories{$dir}{config}{icondir}
+    my $resource_dir = defined $directories{$dir}{config}{resourcedir}
         ?
-            $directories{$dir}{config}{icondir}
+            $directories{$dir}{config}{resourcedir}
         :
-            $directories{$directories{$dir}{subdir}[0]}{config}{icondir};
+            $directories{$directories{$dir}{subdir}[0]}{config}{resourcedir};
     http_headers('text/html', undef);
     print <<EOT;
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
+<link type="text/css" rel="stylesheet" href="$resource_dir/style.css">
 <title>RRD: Archived $title</title>
-<script type="text/javascript" src="$icon_dir/CalendarPopup.js">
+<script type="text/javascript" src="$resource_dir/CalendarPopup.js">
 </script>
 </head><body bgcolor="#ffffff">
 EOT
 
-    generate_calendar($mode, $m, $d, $y, $icon_dir);
+    generate_calendar($mode, $m, $d, $y, $resource_dir);
 
     print 'Switch mode to:';
     for my $m ('daily', 'monthly', 'yearly') {
@@ -909,7 +909,7 @@ sub generate_calendar($$$$$) {
     my $m = shift;
     my $d = shift;
     my $y = shift;
-    my $icon_dir = shift;
+    my $resource_dir = shift;
 
     print <<EOT;
 <script type="text/javascript" language="JavaScript">
@@ -989,7 +989,7 @@ EOT
         onClick="cal.showCalendar(this.id); return false;"
         name="calAnchor" id="calAnchor"><img
         width="34" height="21" border="0"
-        src="$icon_dir/calendar.gif"></a>
+        src="$resource_dir/calendar.gif"></a>
 </form>
 <div id="calDiv"
     style="position:absolute; visibility:hidden; background-color:white;layer-background-color:white;"></div>
@@ -1030,7 +1030,7 @@ sub try_read_config($)
         my $cfgref = {
             refresh => 300,
             interval => 5,
-            icondir => $prefix
+            resourcedir => $prefix
         };
 
         read_rrd_config($cfgfile, $cfgref, \$order);
@@ -1158,15 +1158,15 @@ sub print_dir($$) {
     }
     http_headers('text/html', $directories{$dir}{config});
 
-    my $icon_dir = defined $directories{$dir}{config}{icondir}
+    my $resource_dir = defined $directories{$dir}{config}{resourcedir}
         ?
-            $directories{$dir}{config}{icondir}
+            $directories{$dir}{config}{resourcedir}
         :
-            $directories{$directories{$dir}{subdir}[0]}{config}{icondir};
+            $directories{$directories{$dir}{subdir}[0]}{config}{resourcedir};
     print <<EOT;
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="$icon_dir/style.css">
+<link type="text/css" rel="stylesheet" href="$resource_dir/style.css">
 <title>RRD: Directory $dir1</title>
 </head><body bgcolor=#ffffff>
 <table border="0">
@@ -1298,7 +1298,7 @@ EOT
 <h3><a href="/rrd/special/">Issues/Problem events</a> | <a
     href="/rrd/scripts/">About This Site</a></h3>
 <a href="http://www.rrdtool.org/"><img
-    src="$icon_dir/rrdtool.gif" width="120"
+    src="$resource_dir/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
 EOT
 
