@@ -1110,8 +1110,13 @@ sub parse_directories {
                 # next prefix
                 $prefix = $component;
             } else {
+                $directories{$prefix}{config} = $targets{$name}{config};
                 $prefix .= $component . '/';
             }
+        }
+        unless (defined $directories{$dir}) {
+            $directories{$dir}{config} =
+            $targets{$name}{config};
         }
         push (@{$directories{$dir}{target}}, $name);
     }
