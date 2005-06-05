@@ -1094,6 +1094,7 @@ sub parse_directories {
         map { [ $_, $targets{$_}{order} ] }     # transform: value, sortkey
         keys %targets;
 
+    my %is_in_subdir_list = ();
     for my $name (@names) {
         my $dir = $targets{$name}{directory}
             if defined $targets{$name}{directory};
@@ -1101,9 +1102,11 @@ sub parse_directories {
 
         my $prefix = '';
         for my $component (split /\/+/, $dir) {
-            unless (defined $directories{$prefix.$component}) {
+            unless (defined $directories{$prefix.$component}
+                    or $is_in_subdir_list{$prefix.$component}) {
                 push (@{$directories{$prefix}{subdir}},
                     $component);
+                $is_in_subdir_list{$prefix.$component} = 1;
             }
             if( $prefix eq '' ) {
                 # with an empty prefix, use the component itself as the
