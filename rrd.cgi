@@ -1194,7 +1194,7 @@ EOT
 <ul class="listAsTable">
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
-            print "<li><a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
+            print "<li>&raquo; <a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
             $summary->{subdir}++;
         }
 
@@ -1272,7 +1272,7 @@ EOT
         print '<ul class="listAsTable">', "\n";
         foreach my $graph( @graphs ) {
             print <<EOT;
-<li><a href="#$graph->{item}">$graph->{name}</a>
+<li>&raquo; <a href="#$graph->{item}">$graph->{name}</a>
 EOT
         }
         print '</ul></td><td style="padding-top: 60px;">', "\n";
