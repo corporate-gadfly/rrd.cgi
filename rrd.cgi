@@ -648,7 +648,9 @@ sub common_args($$$)
     my $cfg = $target->{config};
 
     my $autorefresh = $q->param('autorefresh') || '';
-    $cfg->{autorefresh} = 'no' if $autorefresh eq 'no';
+    if( $autorefresh eq 'no' and !defined $cfg->{autorefresh} ) {
+        $cfg->{autorefresh} = 'no';
+    }
 
     my $dir = $cfg->{workdir};
     $dir = $cfg->{logdir}
