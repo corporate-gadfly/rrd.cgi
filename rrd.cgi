@@ -1118,8 +1118,7 @@ sub parse_directories {
             }
         }
         unless (defined $directories{$dir}) {
-            $directories{$dir}{config} =
-            $targets{$name}{config};
+            $directories{$dir}{config} = $targets{$name}{config};
         }
         push (@{$directories{$dir}{target}}, $name);
     }
