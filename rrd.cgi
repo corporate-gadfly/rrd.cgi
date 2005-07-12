@@ -1298,8 +1298,7 @@ Display of
 EOT
 
     print <<EOT;
-<h3><a href="/rrd/special/">Issues/Problem events</a> | <a
-    href="/rrd/scripts/">About This Site</a></h3>
+<h3><a href="/rrd/scripts/">About This Site</a></h3>
 <a href="http://www.rrdtool.org/"><img
     src="$resource_dir/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
