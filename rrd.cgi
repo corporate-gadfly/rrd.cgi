@@ -168,9 +168,6 @@ EOT
             'Could not get status info for ', $tgt->{rrd}, '. ',
             'Missing symbolic link or incorrect permissions!', "\n";
     }
-    print "The statistics were last updated ",
-        strftime("<b>%A, %d %B, %H:%M:%S %Z</b>\n",
-            localtime($mtime));
     my $no_auto_refresh_href =
         ($q->param('autorefresh') and
         $q->param('autorefresh') eq 'no')
@@ -198,6 +195,8 @@ EOT
 <h1>Navigation</h1>
 <a href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
+<h1 class="subheading">Timestamp</h1>
+<span>@{[ strftime("%A, %d %B, %H:%M:%S %Z>", localtime($mtime)) ]}</span>
 </div>
         </td>
         <td style="padding-top: 50px;">
