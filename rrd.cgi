@@ -181,9 +181,9 @@ EOT
     my $switch_auto_refresh =
         $no_auto_refresh_href
         ?
-        '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
+        '<a href="' . $q->url(-absolute=>1,-path=>1) . '">&Theta; Enable Autorefresh</a>'
         :
-        '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
+        '<a href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
     print <<EOT;
 <p>
 <small>Scroll to:
@@ -194,9 +194,11 @@ EOT
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a>|
 <a href="#Archived">Archived</a> Graphs</small>
-<br>
-<small>Go: <a href="./$no_auto_refresh_href">up to parent level</a>, or<br>
-Go to $switch_auto_refresh.</small>
+<div id="nav">
+<h1>Navigation</h1>
+<a href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
+$switch_auto_refresh
+</div>
         </td>
         <td style="padding-top: 50px;">
 EOT
@@ -1217,14 +1219,17 @@ EOT
         my $switch_auto_refresh =
             $no_auto_refresh_href
             ?
-            '<a href="' . $q->url(-absolute=>1,-path=>1) . '">Autorefresh version of this page</a>'
+            '<a href="' . $q->url(-absolute=>1,-path=>1) . '">&Theta; Enable Autorefresh</a>'
             :
-            '<a href="?autorefresh=no">Non-autorefresh version of this page</a>';
+            '<a href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
         print <<EOT;
 <h1>RRD graphs in $dir1</h1>
-<small>Click on a graphic to the right to go to a deeper level, or<br>
-Go up to <a href="../$no_auto_refresh_href">parent level</a>, or<br>
-Go to $switch_auto_refresh.</small>
+<small>Click on a graphic to the right to go to a deeper level</small>
+<div id="nav">
+<h1>Navigation</h1>
+<a href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
+$switch_auto_refresh
+</div>
 EOT
 
         for my $item (@{$directories{$dir}{target}}) {
