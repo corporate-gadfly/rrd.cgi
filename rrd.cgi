@@ -182,7 +182,6 @@ EOT
         :
         '<a href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
     print <<EOT;
-<p>
 <small>Scroll to:
 @{[ ($tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1') ? '' : '<a href="#Hourly">Hourly</a>|' ]}
 @{[ $tgt->{suppress} =~ /d/ ? '' : '<a href="#Daily">Daily</a>|' ]}
