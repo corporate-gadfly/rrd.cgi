@@ -191,7 +191,7 @@ EOT
 <a href="#Historical">Historical</a>|
 <a href="#Archived">Archived</a> Graphs</small>
 <div id="nav">
-<h1>Navigation</h1>
+<h1 class="firstheading">Navigation</h1>
 <a href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
 <h1 class="subheading">Timestamp</h1>
@@ -1224,7 +1224,7 @@ EOT
 <h1>RRD graphs in $dir1</h1>
 <small>Click on a graphic to the right to go to a deeper level</small>
 <div id="nav">
-<h1>Navigation</h1>
+<h1 class="firstheading">Navigation</h1>
 <a href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
 </div>
