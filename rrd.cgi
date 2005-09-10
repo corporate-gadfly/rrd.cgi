@@ -1248,7 +1248,7 @@ EOT
 $switch_auto_refresh
 <h1 class="subheading">Title</h1>
 <span class="menuitem">RRD graphs in: <div id="directory">$dir1</div></span>
-<h1 class="subheading">Graphs</h1>
+<h1 class="subheading">Available Graphs</h1>
 <span class="menuitem">
 EOT
 
