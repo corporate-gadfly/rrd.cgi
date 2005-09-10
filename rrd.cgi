@@ -1240,7 +1240,8 @@ EOT
 $switch_auto_refresh
 <h1 class="subheading">Title</h1>
 <span class="menuitem">RRD graphs in $dir1</span>
-</div>
+<h1 class="subheading">Graphs</h1>
+<span class="menuitem">
 EOT
 
         for my $item (@{$directories{$dir}{target}}) {
@@ -1292,7 +1293,10 @@ EOT
 EOT
         }
         print <<EOT;
-</ul></td><td style="padding-top: 60px;">
+</ul>
+</span>
+</div>
+</td><td style="padding-top: 60px;">
 <table border=0 width=100%>
 <tr><td><small>Click on a graphic to go to a deeper level</small></td></tr>
 @text
