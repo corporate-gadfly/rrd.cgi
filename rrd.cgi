@@ -178,9 +178,10 @@ EOT
     my $switch_auto_refresh =
         $no_auto_refresh_href
         ?
-        '<a href="' . $q->url(-absolute=>1,-path=>1) . '">&Theta; Enable Autorefresh</a>'
+        '<a class="navlink" href="' . $q->url(-absolute=>1,-path=>1) .
+                '">&Theta; Enable Autorefresh</a>'
         :
-        '<a href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
+        '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
     print <<EOT;
 <small>Scroll to:
 @{[ ($tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1') ? '' : '<a href="#Hourly">Hourly</a>|' ]}
@@ -192,7 +193,8 @@ EOT
 <a href="#Archived">Archived</a> Graphs</small>
 <div id="menu">
 <h1 class="firstheading">Navigation</h1>
-<a href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
+<a class="navlink"
+    href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
 <h1 class="subheading">Timestamp</h1>
 <span>@{[ strftime("%A, %d %B, %H:%M:%S %Z", localtime($mtime)) ]}</span>
@@ -1217,15 +1219,17 @@ EOT
         my $switch_auto_refresh =
             $no_auto_refresh_href
             ?
-            '<a href="' . $q->url(-absolute=>1,-path=>1) . '">&Theta; Enable Autorefresh</a>'
+            '<a class="navlink" href="' . $q->url(-absolute=>1,-path=>1)
+                    . '">&Theta; Enable Autorefresh</a>'
             :
-            '<a href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
+            '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
         print <<EOT;
 <h1>RRD graphs in $dir1</h1>
 <small>Click on a graphic to the right to go to a deeper level</small>
 <div id="menu">
 <h1 class="firstheading">Navigation</h1>
-<a href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
+<a class="navlink"
+    href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
 </div>
 EOT
