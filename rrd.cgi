@@ -1204,11 +1204,12 @@ EOT
         push @subdir_text, <<EOT;
 <h1 class="subheading">Subdirectories in $dir1</h1>
 <span class="menuitem">
+<small>More graphs are available in the following subdirectories</small>
 <ul class="listAsTable">
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
             push @subdir_text,
-                "<li><a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
+                "<li>&raquo; <a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
             $summary->{subdir}++;
         }
 
