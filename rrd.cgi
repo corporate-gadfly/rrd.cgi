@@ -190,7 +190,7 @@ EOT
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a>|
 <a href="#Archived">Archived</a> Graphs</small>
-<div id="nav">
+<div id="menu">
 <h1 class="firstheading">Navigation</h1>
 <a href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
@@ -1223,7 +1223,7 @@ EOT
         print <<EOT;
 <h1>RRD graphs in $dir1</h1>
 <small>Click on a graphic to the right to go to a deeper level</small>
-<div id="nav">
+<div id="menu">
 <h1 class="firstheading">Navigation</h1>
 <a href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
