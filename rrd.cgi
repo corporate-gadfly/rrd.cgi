@@ -1247,7 +1247,7 @@ EOT
     href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
 <h1 class="subheading">Title</h1>
-<span class="menuitem">RRD graphs in $dir1</span>
+<span class="menuitem">RRD graphs in: <div id="directory">$dir1</div></span>
 <h1 class="subheading">Graphs</h1>
 <span class="menuitem">
 EOT
