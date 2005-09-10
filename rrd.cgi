@@ -1225,7 +1225,7 @@ EOT
             '</h1>';
     $summary->{suppress}
         and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
-    print '</div>';
+    print '</div>', "\n";
 
     print <<EOT;
 <div id="menu">
