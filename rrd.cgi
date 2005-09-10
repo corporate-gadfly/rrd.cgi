@@ -1233,13 +1233,14 @@ EOT
             :
             '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
         print <<EOT;
-<h1>RRD graphs in $dir1</h1>
 <small>Click on a graphic to the right to go to a deeper level</small>
 <div id="menu">
 <h1 class="firstheading">Navigation</h1>
 <a class="navlink"
     href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
+<h1 class="subheading">Title</h1>
+<span class="menuitem">RRD graphs in $dir1</span>
 </div>
 EOT
 
