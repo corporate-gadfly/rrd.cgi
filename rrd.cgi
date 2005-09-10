@@ -197,7 +197,9 @@ EOT
     href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
 <h1 class="subheading">Timestamp</h1>
-<span>@{[ strftime("%A, %d %B, %H:%M:%S %Z", localtime($mtime)) ]}</span>
+<span class="menuitem">
+@{[ strftime("%A, %d %B, %H:%M:%S %Z", localtime($mtime)) ]}
+</span>
 </div>
         </td>
         <td style="padding-top: 50px;">
