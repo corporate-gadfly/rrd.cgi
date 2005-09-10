@@ -1233,7 +1233,6 @@ EOT
             :
             '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
         print <<EOT;
-<small>Click on a graphic to the right to go to a deeper level</small>
 <div id="menu">
 <h1 class="firstheading">Navigation</h1>
 <a class="navlink"
@@ -1294,6 +1293,7 @@ EOT
         }
         print '</ul></td><td style="padding-top: 60px;">', "\n";
         print '<table border=0 width=100%>', "\n";
+        print '<tr><td>Click on a graphic to go to a deeper level</td></tr>', "\n";
         print @text;
         print "</table>\n";
     } else {
