@@ -158,8 +158,6 @@ EOT
          <td>
 EOT
 
-    print $tgt->{pagetop} if defined $tgt->{pagetop};
-
     my $mtime = (stat $tgt->{rrd})[9];
 
     if( !defined $mtime ) {
@@ -197,6 +195,14 @@ $switch_auto_refresh
 <a href="#Historical">Historical</a>|
 <a href="#Archived">Archived</a> Graphs
 </span>
+EOT
+
+    print <<EOT if defined $tgt->{pagetop};
+<h1 class="subheading">Title</h1>
+<span class="menuitem">$tgt->{pagetop}</span>
+EOT
+
+    print <<EOT;
 <h1 class="subheading">Timestamp</h1>
 <span class="menuitem">
 @{[ strftime("%A, %d %B, %H:%M:%S %Z", localtime($mtime)) ]}
