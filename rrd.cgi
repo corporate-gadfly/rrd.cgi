@@ -183,19 +183,20 @@ EOT
         :
         '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
     print <<EOT;
-<small>Scroll to:
+<div id="menu">
+<h1 class="firstheading">Navigation</h1>
+<a class="navlink"
+    href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
+$switch_auto_refresh
+<span class="menuitem">
 @{[ ($tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1') ? '' : '<a href="#Hourly">Hourly</a>|' ]}
 @{[ $tgt->{suppress} =~ /d/ ? '' : '<a href="#Daily">Daily</a>|' ]}
 @{[ $tgt->{suppress} =~ /w/ ? '' : '<a href="#Weekly">Weekly</a>|' ]}
 @{[ $tgt->{suppress} =~ /m/ ? '' : '<a href="#Monthly">Monthly</a>|' ]}
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a>|
-<a href="#Archived">Archived</a> Graphs</small>
-<div id="menu">
-<h1 class="firstheading">Navigation</h1>
-<a class="navlink"
-    href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
-$switch_auto_refresh
+<a href="#Archived">Archived</a> Graphs
+</span>
 <h1 class="subheading">Timestamp</h1>
 <span class="menuitem">
 @{[ strftime("%A, %d %B, %H:%M:%S %Z", localtime($mtime)) ]}
