@@ -1208,8 +1208,7 @@ EOT
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
             push @subdir_text,
-                '<li>&raquo; <a href="$item/$no_auto_refresh_href">$item/</a>',
-                "\n";
+                "<li><a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
             $summary->{subdir}++;
         }
 
@@ -1228,6 +1227,12 @@ EOT
         and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
     print '</div>';
 
+        print <<EOT;
+<div id="menu">
+<h1 class="firstheading">Navigation</h1>
+@subdir_text
+EOT
+
     if (defined @{$directories{$dir}{target}}) {
         my $switch_auto_refresh =
             $no_auto_refresh_href
@@ -1237,14 +1242,11 @@ EOT
             :
             '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
         print <<EOT;
-<div id="menu">
-<h1 class="firstheading">Navigation</h1>
 <a class="navlink"
     href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
 <h1 class="subheading">Title</h1>
 <span class="menuitem">RRD graphs in $dir1</span>
-@subdir_text
 <h1 class="subheading">Graphs</h1>
 <span class="menuitem">
 EOT
