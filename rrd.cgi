@@ -1291,11 +1291,13 @@ EOT
 <li>&raquo; <a href="#$graph->{item}">$graph->{name}</a>
 EOT
         }
-        print '</ul></td><td style="padding-top: 60px;">', "\n";
-        print '<table border=0 width=100%>', "\n";
-        print '<tr><td>Click on a graphic to go to a deeper level</td></tr>', "\n";
-        print @text;
-        print "</table>\n";
+        print <<EOT;
+</ul></td><td style="padding-top: 60px;">
+<table border=0 width=100%>
+<tr><td>Click on a graphic to go to a deeper level</td></tr>
+@text
+</table>
+EOT
     } else {
         print '</td><td style="padding-top: 60px;">&nbsp;', "\n";
     }
