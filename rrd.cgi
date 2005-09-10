@@ -1197,19 +1197,23 @@ EOT
         '';
 
     my( @graphs, @text );
-    if (defined @{$directories{$dir}{subdir}}) {
-        print <<EOT;
-<h1>RRD subdirectories in $dir1</h1>
-<small>More graphs are available in the following subdirectories</small>
 
+    # are there any subdirectories
+    my( @subdir_text ) = ();
+    if (defined @{$directories{$dir}{subdir}}) {
+        push @subdir_text, <<EOT;
+<h1 class="subheading">Subdirectories in $dir1</h1>
+<span class="menuitem">
 <ul class="listAsTable">
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
-            print "<li>&raquo; <a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
+            push @subdir_text,
+                '<li>&raquo; <a href="$item/$no_auto_refresh_href">$item/</a>',
+                "\n";
             $summary->{subdir}++;
         }
 
-        print '</ul>', "\n";
+        push @subdir_text, '</ul></span>', "\n";
     }
 
     # print summary
@@ -1240,6 +1244,7 @@ EOT
 $switch_auto_refresh
 <h1 class="subheading">Title</h1>
 <span class="menuitem">RRD graphs in $dir1</span>
+@subdir_text
 <h1 class="subheading">Graphs</h1>
 <span class="menuitem">
 EOT
