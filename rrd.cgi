@@ -1294,7 +1294,7 @@ EOT
         print <<EOT;
 </ul></td><td style="padding-top: 60px;">
 <table border=0 width=100%>
-<tr><td>Click on a graphic to go to a deeper level</td></tr>
+<tr><td><small>Click on a graphic to go to a deeper level</small></td></tr>
 @text
 </table>
 EOT
