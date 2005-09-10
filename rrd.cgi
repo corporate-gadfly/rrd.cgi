@@ -1227,7 +1227,7 @@ EOT
         and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
     print '</div>';
 
-        print <<EOT;
+    print <<EOT;
 <div id="menu">
 <h1 class="firstheading">Navigation</h1>
 @subdir_text
