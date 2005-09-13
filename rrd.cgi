@@ -462,8 +462,10 @@ sub do_image($$$$)
             if( !defined $rrd_path ) {
                 # rrd path is relative
                 # replace relative path with absolute by prepending
-                # $target->{config}{logdir} to it
-                s#(DEF:.*?=)(.*?):#$1$target->{config}{logdir}/$2:#i;
+                # $target->{config}{logdir}/$target->{directory} to it
+                s#
+                    (DEF:.*?=)(.*?):
+                #$1$target->{config}{logdir}/$target->{directory}/$2:#ix;
             }
         }
     }
