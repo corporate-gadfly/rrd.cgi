@@ -453,22 +453,8 @@ sub do_image($$$$)
         }
     }
 
-    # make relative paths into absolute paths for DEFs
-    for( @graph_args ) {
-        if( m/^DEF/i ) {
-            # processing a line with DEF directive
-            # check to see if rrd path is absolute
-            my( $rrd_path ) = m#DEF:.*?=(/.*?):#g;
-            if( !defined $rrd_path ) {
-                # rrd path is relative
-                # replace relative path with absolute by prepending
-                # $target->{config}{logdir}/$target->{directory} to it
-                s#
-                    (DEF:.*?=)(.*?):
-                #$1$target->{config}{logdir}/$target->{directory}/$2:#ix;
-            }
-        }
-    }
+    make_def_paths_absolute($target, \@graph_args);
+
     do {
         http_headers("text/html", $target->{config});
         print '<pre>RRDs::graph(',
@@ -556,6 +542,27 @@ DATAPOINT: {
     }
     return @percentile;
 }
+
+sub make_def_paths_absolute($$) {
+    my $target = shift;
+    my $array_ref = shift;
+    # make relative paths into absolute paths for DEFs
+    for( @$array_ref ) {
+        if( m/^DEF/i ) {
+            # processing a line with DEF directive
+            # check to see if rrd path is absolute
+            my( $rrd_path ) = m#DEF:.*?=(/.*?):#g;
+            if( !defined $rrd_path ) {
+                # rrd path is relative
+                # replace relative path with absolute by prepending
+                # $target->{config}{logdir}/$target->{directory} to it
+                s#
+                    (DEF:.*?=)(.*?):
+                #$1$target->{config}{logdir}/$target->{directory}/$2:#ix;
+            }
+        }
+    }
+}
  
 sub get_graph_args($) {
     my $target = shift;
@@ -629,22 +636,9 @@ sub do_custom_image($$$) {
             }
         }
     }
-    # make relative paths into absolute paths for DEFs
-    for( @graph_args ) {
-        if( m/^DEF/i ) {
-            # processing a line with DEF directive
-            # check to see if rrd path is absolute
-            my( $rrd_path ) = m#DEF:.*?=(/.*?):#g;
-            if( !defined $rrd_path ) {
-                # rrd path is relative
-                # replace relative path with absolute by prepending
-                # $target->{config}{logdir}/$target->{directory} to it
-                s#
-                    (DEF:.*?=)(.*?):
-                #$1$target->{config}{logdir}/$target->{directory}/$2:#ix;
-            }
-        }
-    }
+
+    make_def_paths_absolute($target, \@graph_args);
+
     my( $fh, $filename );
     if( $ENV{MOD_PERL} ) {
         use File::Temp qw/ tempfile /;
