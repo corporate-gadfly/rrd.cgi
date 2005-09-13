@@ -544,8 +544,8 @@ DATAPOINT: {
 }
 
 sub make_def_paths_absolute($$) {
-    my $target = shift;
-    my $array_ref = shift;
+    my $target = shift;     # target
+    my $array_ref = shift;  # array reference to the graph arguments
     # make relative paths into absolute paths for DEFs
     for( @$array_ref ) {
         if( m/^DEF/i ) {
