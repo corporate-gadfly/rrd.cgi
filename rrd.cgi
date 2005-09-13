@@ -442,16 +442,8 @@ sub do_image($$$$)
     }
 
     my @graph_args = get_graph_args($target);
-    if( exists $target->{percentilevalue} ) {
-        my @percentile = calc_percentile($target, -$back, 'now');
-        my @ds = split / +/, $target->{percentilesources};
-        foreach my $i(0 .. (scalar @ds)-1) {
-            for( @graph_args ) {
-                s/%PERCENTILE${i}%/$percentile[$i]/g;
-                s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
-            }
-        }
-    }
+
+    expand_percentile($target, -$back, 'now', \@graph_args);
 
     make_def_paths_absolute($target, \@graph_args);
 
@@ -490,6 +482,24 @@ sub do_image($$$$)
                 print $buf;
         }
     close PNG;
+}
+
+sub expand_percentile($$$$) {
+    my $target = shift;     # target
+    my $start = shift;      # start time
+    my $end = shift;        # end time
+    my $array_ref = shift;  # array reference to the graph arguments
+
+    if( exists $target->{percentilevalue} ) {
+        my @percentile = calc_percentile($target, $start, $end);
+        my @ds = split / +/, $target->{percentilesources};
+        foreach my $i(0 .. (scalar @ds)-1) {
+            for( @$array_ref ) {
+                s/%PERCENTILE${i}%/$percentile[$i]/g;
+                s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
+            }
+        }
+    }
 }
 
 sub calc_percentile($$$) {
@@ -626,16 +636,8 @@ sub do_custom_image($$$) {
     } unless defined $start_time && defined $end_time;
 
     my @graph_args = get_graph_args($target);
-    if( exists $target->{percentilevalue} ) {
-        my @percentile = calc_percentile($target, $start_time, $end_time);
-        my @ds = split / +/, $target->{percentilesources};
-        foreach my $i(0 .. (scalar @ds)-1) {
-            for( @graph_args ) {
-                s/%PERCENTILE${i}%/$percentile[$i]/g;
-                s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
-            }
-        }
-    }
+
+    expand_percentile($target, $start_time, $end_time, \@graph_args);
 
     make_def_paths_absolute($target, \@graph_args);
 
