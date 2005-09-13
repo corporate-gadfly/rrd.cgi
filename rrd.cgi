@@ -452,6 +452,21 @@ sub do_image($$$$)
             }
         }
     }
+
+    # make relative paths into absolute paths for DEFs
+    for( @graph_args ) {
+        if( m/^DEF/i ) {
+            # processing a line with DEF directive
+            # check to see if rrd path is absolute
+            my( $rrd_path ) = m#DEF:.*?=(/.*?):#g;
+            if( !defined $rrd_path ) {
+                # rrd path is relative
+                # replace relative path with absolute by prepending
+                # $target->{config}{logdir} to it
+                s#(DEF:.*?=)(.*?):#$1$target->{config}{logdir}/$2:#i;
+            }
+        }
+    }
     do {
         http_headers("text/html", $target->{config});
         print '<pre>RRDs::graph(',
