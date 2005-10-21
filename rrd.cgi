@@ -29,6 +29,8 @@ use vars qw(@config_files @all_config_files %targets $config_time
     %directories $imagetype $percent_h);
 
 # EDIT THIS to reflect all your RRD config files
+# Since this is in a BEGIN block, changes here require a restart in
+# mod_perl to take effect
 BEGIN { @config_files = qw(
     /etc/rrd/rrd.cfg
     /etc/rrd/rrd-tomcat.cfg
