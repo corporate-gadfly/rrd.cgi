@@ -1098,9 +1098,9 @@ sub read_rrd_config($$$)
         chomp;                    # remove newline
         s/\s+$//;                 # remove trailing space
         s/\s+/ /g;                # collapse white spaces to ' '
-        next if /^ *\#/;           # skip comment lines
+        next if /^ *\#/;          # skip comment lines
         next if /^\s*$/;          # skip empty lines
-        if (/^ \S/) {             # multiline options
+        if (/^ \S/) {             # multiline (lines beginning with whitespace)
             $lines[$#lines] .= $_;
         } else {
             push @lines, $_;
