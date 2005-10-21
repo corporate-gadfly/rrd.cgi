@@ -1375,9 +1375,9 @@ EOT
 
 sub dump_targets() {
     for my $tgt (keys %targets) {
-        print "Target $tgt:\n";
+        print STDERR "Target $tgt:\n";
         for my $opt (keys %{$targets{$tgt}}) {
-            print "\t$opt: ", $targets{$tgt}{$opt}, "\n";
+            print STDERR "\t$opt: ", $targets{$tgt}{$opt}, "\n";
         }
     }
 }
@@ -1496,10 +1496,10 @@ sub dump_directories($$) {
     my $indent = shift;
     $dir ||= '';            # default to top-level directory
     $indent ||= 0;
-    print '    ' x $indent, 'Directory: ', $dir, '/', "\n";
+    print STDERR '    ' x $indent, 'Directory: ', $dir, '/', "\n";
     if( exists $directories{$dir} ) {
         for my $target ( @{$directories{$dir}{target}} ) {
-            print '    ' x $indent, '    Target: ', $target, "\n";
+            print STDERR '    ' x $indent, '    Target: ', $target, "\n";
         }
         for my $subdir ( @{$directories{$dir}{subdir}} ) {
             dump_directories($subdir, $indent+1);
