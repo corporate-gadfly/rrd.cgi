@@ -860,7 +860,7 @@ sub display_archived_images($$$$) {
 </head><body bgcolor="#ffffff">
 EOT
 
-    generate_calendar($mode, $m, $d, $y, $resource_dir);
+    generate_calendar($q, $mode, $m, $d, $y, $resource_dir);
 
     print 'Switch mode to:';
     for my $m ('daily', 'monthly', 'yearly') {
@@ -948,7 +948,8 @@ EOT
 #   remember that, in JavaScript, the 2nd argument to
 #   Date($y,@{[$m-1]},$d) needs to have 1 subtracted from it as the
 #   JavaScript months go from 0 to 11
-sub generate_calendar($$$$$) {
+sub generate_calendar($$$$$$) {
+    my $q = shift;
     my $mode = shift;
     my $m = shift;
     my $d = shift;
@@ -1015,7 +1016,9 @@ EOT
 }
 </script>
 
-<form method="post">
+<form method="post"
+    action="@{[ $q->url(-absolute=>1,-path=>1) ]}">
+    <input type="hidden" name="mode" value="$mode">
     <input style="margin-left: 75px;" type="text" name="date"
 EOT
 
