@@ -768,6 +768,19 @@ EOT
     if( $q->param('date') ) {
         $date = $q->param('date');
         ( $m, $d, $y ) = split /-/, $date;
+        unless( defined $m and defined $d and defined $y ) {
+            # initialize missing date parameters
+            if( $mode eq 'monthly' ) {
+                $y = $d;
+                # plug in 01 as the day
+                $d = '01';
+            }
+            if( $mode eq 'yearly' ) {
+                $y = $m;
+                # plug in 01 as the day, 01 as the month
+                $d = $m = '01';
+            }
+        }
         unless( defined $m and defined $d and defined $y
                 and $m =~ /\d{2}/
                 and $d =~ /\d{2}/
