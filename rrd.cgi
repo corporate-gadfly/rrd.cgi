@@ -1482,7 +1482,9 @@ sub archive_directory($$) {
         }
         if( exists $directories{$dir}{subdir} ) {
             for my $subdir ( @{$directories{$dir}{subdir}} ) {
-                archive_directory($subdir, $date);
+                archive_directory(
+                    $dir eq '' ? $subdir : $dir . '/' . $subdir,
+                    $date);
             }
         }
     }
