@@ -1336,7 +1336,7 @@ EOT
     href="$item.html$no_auto_refresh_href">$itemname</a><br>
     <a href="$item.html$no_auto_refresh_href"><img src="$item-$freq.$imagetype"
     width="$xsize" height="$ysize"
-    border="0" align="top" vspace="10" alt="$item"></a><br clear="all">
+    border="0" align="top" alt="$item"></a><br clear="all">
    </td>
 </tr>
 EOT
