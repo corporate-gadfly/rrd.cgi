@@ -332,7 +332,7 @@ sub html_graph($$$$$$$)
 <br><a name="$freq"><b>"$freq" Graph ($period Average)</b></a><br>
 <img src="$tgt->{url}-$ext.$imagetype"
 width="$xsize" height="$ysize"
-alt="$freq Graph" vspace="10" align="top"><br>
+alt="$freq Graph" align="top"><br>
 EOT
     if( defined $av->[0] ) {
         print "<small>";
@@ -348,7 +348,7 @@ EOT
     }
 
     print <<EOT;
-<small><a href="$tgt->{url}-$ext.src">[source]</a></small>
+<div style="font-size: 85%;"><a href="$tgt->{url}-$ext.src">[source]</a></div>
 EOT
 }
 
