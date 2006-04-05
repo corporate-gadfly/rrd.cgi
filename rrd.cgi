@@ -1281,7 +1281,7 @@ EOT
 EOT
 
     print <<EOT if not defined @{$directories{$dir}{target}};
-@subdir_text;
+@subdir_text
 EOT
 
     if (defined @{$directories{$dir}{target}}) {
@@ -1296,7 +1296,7 @@ EOT
 <a class="navlink"
     href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
 $switch_auto_refresh
-@subdir_text;
+@subdir_text
 <h1 class="subheading">Title</h1>
 <span class="menuitem">RRD graphs in: <div id="directory">$dir1</div></span>
 <h1 class="subheading">Available Graphs</h1>
