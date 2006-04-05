@@ -1294,7 +1294,7 @@ EOT
             '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
         print <<EOT;
 <a class="navlink"
-    href="../$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
+    href="../$no_auto_refresh_href">&uArr;&nbsp;Up&nbsp;to&nbsp;parent&nbsp;level&nbsp;(..)</a>
 $switch_auto_refresh
 @subdir_text
 <h1 class="subheading">Title</h1>
