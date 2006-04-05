@@ -186,7 +186,7 @@ EOT
 <div id="menu">
 <h1 class="firstheading">Navigation</h1>
 <a class="navlink"
-    href="./$no_auto_refresh_href">&uArr; Up to parent level (..)</a>
+    href="./$no_auto_refresh_href">&uArr;&nbsp;Up&nbsp;to&nbsp;parent&nbsp;level&nbsp;(..)</a>
 $switch_auto_refresh
 <span class="menuitem">
 @{[ ($tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1') ? '' : '<a href="#Hourly">Hourly</a>|' ]}
