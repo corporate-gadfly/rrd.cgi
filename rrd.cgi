@@ -1052,7 +1052,7 @@ EOT
         src="$resource_dir/calendar.gif"></a>
 </form>
 <div id="calDiv"
-    style="position:absolute; visibility:hidden; background-color:white;layer-background-color:white;"></div>
+    style="position:absolute; visibility:hidden; background-color:white;"></div>
 EOT
 }
 
