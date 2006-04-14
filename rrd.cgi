@@ -1126,6 +1126,7 @@ sub read_rrd_config($$$)
 
     foreach (@lines) {
         if (/^\s*([\w\d]+)\[(\S+)\]\s*:\s*(.*)$/) {
+            # reading a target line with square brackets
             my ($opt, $tgt, $val) = (lc($1), lc($2), $3);
             unless (exists $targets{$tgt}) {
                 $targets{$tgt}{name} = $tgt;
@@ -1136,6 +1137,7 @@ sub read_rrd_config($$$)
             $targets{$tgt}{$opt} = $val;
             next;
         } elsif (/^([\w\d]+)\s*:\s*(\S.*)$/) {
+            # reading a configuration line (e.g., Imagedir, Logdir, etc)
             my ($opt, $val) = (lc($1), $2);
             $cfgref->{$opt} = $val;
             next;
