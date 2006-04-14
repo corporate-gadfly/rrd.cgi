@@ -1399,7 +1399,7 @@ sub dump_targets() {
     for my $tgt (keys %targets) {
         print STDERR "Target $tgt:\n";
         for my $opt (keys %{$targets{$tgt}}) {
-            print STDERR "\t$opt: ", $targets{$tgt}{$opt}, "\n";
+            print STDERR "    $opt: ", $targets{$tgt}{$opt}, "\n";
         }
     }
 }
