@@ -1307,6 +1307,7 @@ EOT
 
         for my $item (@{$directories{$dir}{target}}) {
             my $itemname = $item;
+            common_args($item, $targets{$item}, $q);
             my( $freq, $freqtext );
             if( $targets{$item}{config}{interval} eq '1' ) {
                 $freq = 'hour';
