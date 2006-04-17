@@ -72,17 +72,18 @@ sub main ($)
         /^(.*)\/([^\/]+)(\.html|-(hour|day|week|month|year)\.($imagetype|src))$/);
 
     $dir && $dir =~ s/^\///;
+    $dir .= '/' if $dir;
 
     print_error('Undefined statistic: ' . $q->path_info())
-        unless defined $stat and defined $targets{$stat};
+        unless defined $stat and defined $targets{$dir . $stat};
 
     print_error('Incorrect directory: ' . $q->path_info())
-        unless defined $targets{$stat}{directory} ||
-        $targets{$stat}{directory} eq $dir;
+        unless defined $targets{$dir . $stat}{directory} ||
+        $targets{$dir . $stat}{directory} eq $dir;
 
-    my $tgt = $targets{$stat};
+    my $tgt = $targets{$dir . $stat};
 
-    common_args($stat, $tgt, $q);
+    common_args($dir . $stat, $tgt, $q);
 
     # We may be running under mod_perl or something. Do not destroy
     # the original settings of timezone.
@@ -681,11 +682,7 @@ sub common_args($$$)
     $target->{directory} = ''
         unless defined $target->{directory};
 
-    my $tdir = $target->{directory};
-    $tdir .= '/'
-        unless $tdir eq '' || $tdir =~ /\/$/;
-
-    $target->{url} = $q->url . '/' . $tdir . $name;
+    $target->{url} = $q->url . '/' . $name;
 
     my $cfg = $target->{config};
 
@@ -698,7 +695,7 @@ sub common_args($$$)
     $dir = $cfg->{logdir}
         if defined $cfg->{logdir};
 
-    $target->{rrd} = $dir . '/' . $tdir . $name . '.rrd';
+    $target->{rrd} = $dir . '/' . $name . '.rrd';
 
     $dir = $cfg->{workdir};
     $dir = $cfg->{imagedir}
@@ -706,16 +703,16 @@ sub common_args($$$)
 
     $target->{suppress} ||= '';
 
-    $target->{hour}   = $dir . '/' . $tdir . $name
+    $target->{hour}   = $dir . '/' . $name
         . '-hour.' . $imagetype unless
         $target->{suppress} =~ /h/ or $cfg->{interval} ne '1';
-    $target->{day}   = $dir . '/' . $tdir . $name
+    $target->{day}   = $dir . '/' . $name
         . '-day.' . $imagetype unless $target->{suppress} =~ /d/;
-    $target->{week}  = $dir . '/' . $tdir . $name
+    $target->{week}  = $dir . '/' . $name
         . '-week.' . $imagetype unless $target->{suppress} =~ /w/;
-    $target->{month} = $dir . '/' . $tdir . $name
+    $target->{month} = $dir . '/' . $name
         . '-month.' . $imagetype unless $target->{suppress} =~ /m/;
-    $target->{year}  = $dir . '/' . $tdir . $name
+    $target->{year}  = $dir . '/' . $name
         . '-year.' . $imagetype unless $target->{suppress} =~ /y/;
 
     my @args = ();
@@ -1124,17 +1121,50 @@ sub read_rrd_config($$$)
     }
     close CFG;
 
+    my $dir = '';
     foreach (@lines) {
         if (/^\s*([\w\d]+)\[(\S+)\]\s*:\s*(.*)$/) {
             # reading a target line with square brackets
             my ($opt, $tgt, $val) = (lc($1), lc($2), $3);
-            unless (exists $targets{$tgt}) {
-                $targets{$tgt}{name} = $tgt;
-                $targets{$tgt}{directory} = '';
-                $targets{$tgt}{order} = ++$$order;
-                $targets{$tgt}{config} = $cfgref;
+            if( $opt eq 'directory' ) {
+                if( exists $targets{$tgt} ) {
+                    print_error("Parse error in <pre>$file</pre> ",
+                        "near <pre>$_</pre> ",
+                        "A Directory[] directive must appear before any ",
+                        "other directives for a target.");
+                }
+                $dir = $val . '/';
             }
-            $targets{$tgt}{$opt} = $val;
+            unless( exists $targets{$dir . $tgt} ) {
+                if( $opt ne 'directory' ) {
+                    $dir = '';
+                }
+                $targets{$dir . $tgt}{name} = $dir . $tgt;
+                $targets{$dir . $tgt}{directory} = $dir;
+                $targets{$dir . $tgt}{order} = ++$$order;
+                $targets{$dir . $tgt}{config} = $cfgref;
+            }
+            if( exists $targets{$dir . $tgt}{$opt} ) {
+                # duplicate found, so inform user
+                if( $opt ne 'directory' ) {
+                    if( exists $targets{$tgt}{$opt} ) {
+                        print_error("Parse error in <pre>$file</pre> ",
+                            "near <pre>$_</pre> ",
+                            "Duplicate target entry found (<b>$tgt</b> ",
+                            "exists already as a target). Either change ",
+                            "the target name or provide a ",
+                            "<pre>Directory[$tgt]: some_new_dir</pre> ",
+                            "directive before specifying this line.");
+                    } else {
+                        $dir = '';
+                        $targets{$dir . $tgt}{name} = $dir . $tgt;
+                        $targets{$dir . $tgt}{directory} = $dir;
+                        $targets{$dir . $tgt}{order} = ++$$order;
+                        $targets{$dir . $tgt}{config} = $cfgref;
+                    }
+                }
+            }
+            $targets{$dir . $tgt}{$opt} = $val;
             next;
         } elsif (/^([\w\d]+)\s*:\s*(\S.*)$/) {
             # reading a configuration line (e.g., Imagedir, Logdir, etc)
@@ -1322,25 +1352,29 @@ EOT
                 if defined $targets{$item}{title};
                     # for each graph store its item and name in an
                     # anonymous hash and push onto the array @graphs
-            push @graphs, {item => $item, name => $itemname};
+            my $item_relative = $item;
+            # strip any directories from $item
+            $item_relative =~ s/$targets{$item}{directory}\/?//g;
+            push @graphs, {item => $item_relative, name => $itemname};
             if( ($targets{$item}{suppress} =~ /d/ &&
                     $targets{$item}{config}{interval} ne '1') ||
                     ($targets{$item}{suppress} =~ /h/ &&
                      $targets{$item}{config}{interval} eq '1') ) {
                 push @text, <<EOT;
 <tr>
-<td><a name="$item">&nbsp;</a><a href="$item.html$no_auto_refresh_href">$itemname</a><br>
+<td><a name="$item_relative">&nbsp;</a><a href="$item_relative.html$no_auto_refresh_href">$itemname</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;$freqtext Graphic suppressed. More data is available
-<a href="$item.html">here</a>.
+<a href="$item_relative.html">here</a>.
 </tr>
 EOT
                 next;
             };
             push @text, <<EOT;
 <tr>
-   <td><a name="$item">&nbsp;</a><a
-    href="$item.html$no_auto_refresh_href">$itemname</a><br>
-    <a href="$item.html$no_auto_refresh_href"><img src="$item-$freq.$imagetype"
+   <td><a name="$item_relative">&nbsp;</a><a
+    href="$item_relative.html$no_auto_refresh_href">$itemname</a><br>
+    <a href="$item_relative.html$no_auto_refresh_href"><img
+    src="$item_relative-$freq.$imagetype"
     width="$xsize" height="$ysize"
     border="0" align="top" alt="$item"></a><br clear="all">
    </td>
