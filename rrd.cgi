@@ -1488,12 +1488,14 @@ sub archive_directory($$) {
             # user agent
             my $ua = new LWP::UserAgent;
             for my $target ( @{$directories{$dir}{target}} ) {
+                my $target_relative;
+                ( $target_relative = $target ) =~ s#$dir/?##g;
 
                 ## capture daily images
                 # file location for storing image
-                my $file = "$archive_dir/$y/$m/$target-$y-$m-$d.$imagetype";
+                my $file = "$archive_dir/$y/$m/$target_relative-$y-$m-$d.$imagetype";
                 # url
-                my $url = "$archive_url/$target-day.$imagetype";
+                my $url = "$archive_url/$target_relative-day.$imagetype";
                 save_image_url($ua, $file, $url);
 
                 ## capture monthly images if its the first day of the month
@@ -1510,13 +1512,13 @@ sub archive_directory($$) {
                     # add leading zero if less than 10
                     $save_m < 10 and $save_m = '0' . $save_m;
                     $file =
-                        "$archive_dir/$save_y/$target-$save_y-$save_m.$imagetype";
-                    $url = "$archive_url/$target-month.$imagetype";
+                        "$archive_dir/$save_y/$target_relative-$save_y-$save_m.$imagetype";
+                    $url = "$archive_url/$target_relative-month.$imagetype";
                     save_image_url($ua, $file, $url);
                     ## capture yearly images if its the first day of the year
                     if( $m eq '01' ) {
-                        $file = "$archive_dir/$target-$save_y.$imagetype";
-                        $url = "$archive_url/$target-year.$imagetype";
+                        $file = "$archive_dir/$target_relative-$save_y.$imagetype";
+                        $url = "$archive_url/$target_relative-year.$imagetype";
                         save_image_url($ua, $file, $url);
                     }
                 }
