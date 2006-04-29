@@ -907,6 +907,8 @@ EOT
             /yearly/    && do { $image_file = "$target-$y"; last; };
             print_error('Undefined mode, ', $mode);
         }
+        # strip directory name from the file
+        $image_file =~ s/$dir\/?//g;
         $image_file .= '.' . $imagetype;
 
         unless( -f "$image_dir/$image_file" ) {
