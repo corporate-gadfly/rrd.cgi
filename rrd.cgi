@@ -446,8 +446,6 @@ sub do_image($$$$)
 
     my @graph_args = get_graph_args($target);
 
-    expand_percentile($target, -$back, 'now', \@graph_args);
-
     make_def_paths_absolute($target, \@graph_args);
 
     do {
@@ -485,75 +483,6 @@ sub do_image($$$$)
                 print $buf;
         }
     close PNG;
-}
-
-sub expand_percentile($$$$) {
-    my $target = shift;     # target
-    my $start = shift;      # start time
-    my $end = shift;        # end time
-    my $array_ref = shift;  # array reference to the graph arguments
-
-    if( exists $target->{percentilevalue} ) {
-        my @percentile = calc_percentile($target, $start, $end);
-        my @ds = split / +/, $target->{percentilesources};
-        foreach my $i(0 .. (scalar @ds)-1) {
-            for( @$array_ref ) {
-                s/%PERCENTILE${i}%/$percentile[$i]/g;
-                s/%PERCENTILEVALUE%/$target->{percentilevalue}/g;
-            }
-        }
-    }
-}
-
-sub calc_percentile($$$) {
-    use Statistics::Descriptive;
-    my $target = shift;     # target
-    my $start = shift;      # start time
-    my $end = shift;        # end time
-                            # sources separated by spaces
-    my @ds = split / +/, $target->{percentilesources};
-    my( undef, undef, undef, $data ) = RRDs::fetch($target->{rrd},
-            'AVERAGE',
-            '-s', $start,
-            '-e', $end);
-    my( @averages );
-    my( @percentile );
-    $target->{percentilemultiplier} = 1
-        unless exists $target->{percentilemultiplier};
-    foreach my $i(0 .. (scalar @ds)-1) {
-        my $compound = 0;
-        $compound = 1 if $ds[$i] =~ /\+/; 
-DATAPOINT: {
-            foreach my $d( @$data ) {
-                if( $compound ) {
-                    my $val = 0;
-                    foreach my $index(split /\+/, $ds[$i]) {
-                        next DATAPOINT unless defined $d->[$index];
-                        $val += $d->[$index];
-                    }
-                    push @{$averages[$i]}, $val;
-                } else {
-                        # only add defined values to array
-                    next unless defined $d->[$ds[$i]];
-                    push @{$averages[$i]}, $d->[$ds[$i]];
-                }
-            }
-        }
- 
-        # empty percentile value if averages array is empty
-        do {
-            $percentile[$i] = 0;
-            next;
-        } unless exists $averages[$i] && scalar @{$averages[$i]};
-        my $stat = Statistics::Descriptive::Full->new();
-        $stat->add_data(@{$averages[$i]});
-                    # get percentile for given data
-        $percentile[$i] =
-            $stat->percentile($target->{percentilevalue})*
-            $target->{percentilemultiplier};
-        $percentile[$i] = sprintf("%.1f", $percentile[$i]);
-    }
-    return @percentile;
 }
 
 sub make_def_paths_absolute($$) {
@@ -639,8 +568,6 @@ sub do_custom_image($$$) {
     } unless defined $start_time && defined $end_time;
 
     my @graph_args = get_graph_args($target);
-
-    expand_percentile($target, $start_time, $end_time, \@graph_args);
 
     make_def_paths_absolute($target, \@graph_args);
 
