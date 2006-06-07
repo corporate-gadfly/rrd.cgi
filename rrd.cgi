@@ -602,6 +602,13 @@ sub common_args($$$)
 {
     my ($name, $target, $q) = @_;
 
+    my $cfg = $target->{config};
+
+    my $autorefresh = $q->param('autorefresh') || '';
+    if( $autorefresh eq 'no' ) {
+        $cfg->{autorefresh} = 'no';
+    }
+
     return @{$target->{args}} if defined @{$target->{args}};
 
     $target->{name} = $name;
@@ -610,13 +617,6 @@ sub common_args($$$)
         unless defined $target->{directory};
 
     $target->{url} = $q->url . '/' . $name;
-
-    my $cfg = $target->{config};
-
-    my $autorefresh = $q->param('autorefresh') || '';
-    if( $autorefresh eq 'no' and !defined $cfg->{autorefresh} ) {
-        $cfg->{autorefresh} = 'no';
-    }
 
     my $dir = $cfg->{workdir};
     $dir = $cfg->{logdir}
