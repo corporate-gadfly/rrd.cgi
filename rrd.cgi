@@ -1506,13 +1506,7 @@ sub print_error(@)
     exit 0;
 }
 
-my $q;
-if( $ENV{MOD_PERL} ) {
-    my $r = shift;
-    $q = new CGI($r);
-} else {
-    $q = new CGI;
-}
+my $q = $ENV{MOD_PERL} ? CGI->new(shift @_) : CGI->new();
 main($q);
 
 1;
