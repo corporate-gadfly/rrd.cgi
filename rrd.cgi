@@ -607,6 +607,8 @@ sub common_args($$$)
     my $autorefresh = $q->param('autorefresh') || '';
     if( $autorefresh eq 'no' ) {
         $cfg->{autorefresh} = 'no';
+    } else {
+        delete $cfg->{autorefresh};
     }
 
     return @{$target->{args}} if defined @{$target->{args}};
