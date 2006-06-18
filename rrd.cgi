@@ -339,11 +339,11 @@ EOT
         print "<small>";
         print defined $tgt->{relpercent} ?
             $tgt->{relpercent} : "Relative percentage";
-        print ' Cur: ', $av->[1] != 0 ?
+        print ' Cur: ', !fp_equal($av->[1], 0.0, 2) ?
             sprintf('%.1f%%', $av->[0]/$av->[1]*100) : ' 0.0%';
-        print ' Avg: ', $av->[3] != 0 ?
+        print ' Avg: ', !fp_equal($av->[3], 0.0, 2) ?
             sprintf('%.1f%%', $av->[2]/$av->[3]*100) : ' 0.0%';
-        print ' Max: ', $av->[5] != 0 ? 
+        print ' Max: ', !fp_equal($av->[5], 0.0, 2) ? 
             sprintf('%.1f%%', $av->[4]/$av->[5]*100) : ' 0.0%';
         print "</small><br>";
     }
@@ -351,6 +351,14 @@ EOT
     print <<EOT;
 <div style="font-size: 85%;"><a href="$tgt->{url}-$ext.src">[source]</a></div>
 EOT
+}
+
+sub fp_equal {
+    my ($X, $Y, $POINTS) = @_;
+    my ($tX, $tY);
+    $tX = sprintf("%.${POINTS}g", $X);
+    $tY = sprintf("%.${POINTS}g", $Y);
+    return $tX eq $tY;
 }
 
 sub http_headers($$)
