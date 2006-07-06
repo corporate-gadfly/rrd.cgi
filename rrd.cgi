@@ -20,9 +20,6 @@ use CGI;
 use LWP::UserAgent;
 use HTTP::Request::Common qw(GET);
 
-# Force 5.8.0 because of different handling of %.1f/%.1lf in sprintf() in 5.6.x
-require 5.008;
-
 use RRDs;
 
 use vars qw(@config_files @all_config_files %targets $config_time
