@@ -547,7 +547,7 @@ sub do_custom_image($$$) {
             if $start_time >= $end_time;
                 # have to fix the x-axis for day interval
         push @{$target->{args}}, '-x', 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h
-            if ($start_time-$end_time) <= 86400;
+            if ($end_time-$start_time) <= 86400;
     } elsif( defined $start ) {
         my( $interval, $type ) = ($start =~ m/(\-\d+)([hdwm])/);
                 # regular -1d, -1m, -2w style start interval with no end
