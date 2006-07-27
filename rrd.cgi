@@ -778,8 +778,8 @@ sub display_archived_images($$$$) {
         $title = 'Images for ' . $dir;
     } else {
         # single archived image
-        push @targets, $stat;
-        $title = 'Image for ' . $stat;
+        push @targets, $dir . '/' . $stat;
+        $title = 'Image for ' . $dir . '/' . $stat;
     }
 
     for( $mode ) {
