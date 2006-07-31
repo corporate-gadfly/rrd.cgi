@@ -32,6 +32,7 @@ BEGIN { @config_files = qw(
     /etc/rrd/rrd.cfg
     /etc/rrd/rrd-tomcat.cfg
     /etc/rrd/rrd-network.cfg
+    /etc/rrd/rrd-weather.cfg
 ); }
 
 # This depends on what image format your libgd (and rrdtool) uses
