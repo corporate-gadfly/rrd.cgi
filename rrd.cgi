@@ -652,6 +652,8 @@ sub common_args($$$)
 
     my @args = ();
 
+    my $year = strftime "%Y", localtime;
+
     push @args, '--lazy',
         '-a', uc $imagetype,
         '-h', '120',
@@ -660,7 +662,8 @@ sub common_args($$$)
         '-c', 'MGRID#000000',
         '-c', 'FRAME#000000',
         '-c', 'BACK#f5f5f5',
-        '-c', 'ARROW#000000';
+        '-c', 'ARROW#000000',
+        '-W', '© Haroon Rafique 2003-' . $year . '. All rights reserved. Unauthorised use prohibited.';
 
     @{$target->{args}} = @args;
 
