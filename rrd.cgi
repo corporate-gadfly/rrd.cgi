@@ -658,11 +658,6 @@ sub common_args($$$)
         '-a', uc $imagetype,
         '-h', '120',
         '-w', '500',
-        '-c', 'FONT#000000',
-        '-c', 'MGRID#000000',
-        '-c', 'FRAME#000000',
-        '-c', 'BACK#f5f5f5',
-        '-c', 'ARROW#000000',
         '-W', '© Haroon Rafique 2003-' . $year . '. All rights reserved. Unauthorised use prohibited.';
 
     @{$target->{args}} = @args;
