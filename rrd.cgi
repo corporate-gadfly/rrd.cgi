@@ -935,7 +935,7 @@ try {
     /* ignore */
 }
 
-/* since calendar is now in a div, let's print the necessary css */
+/* since calendar is now in a div, lets print the necessary css */
 document.write(cal.getStyles());
 
 /* function to get input back from calendar popup
