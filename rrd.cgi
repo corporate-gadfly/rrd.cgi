@@ -4,9 +4,9 @@
 #
 # Author: Haroon Rafique <haroon.rafique@utoronto.ca>
 #
-# Closely modelled after the Jan "Yenya" Kasprzak <kas@fi.muni.cz>'s
+# Closely modelled after the script by Jan "Yenya" Kasprzak <kas@fi.muni.cz>
 # mrtg-rrd.cgi available at: http://www.fi.muni.cz/~kas/mrtg-rrd/
-# I didn't like its limitations and tight coupling with MRTG
+# I did not like its limitations and tight coupling with MRTG
 #
 # $Id$
 
@@ -518,7 +518,7 @@ sub get_graph_args($) {
             # of words ignoring spaces inside quotes.
     my @graph_args = ();
     @graph_args =
-            # eliminate all quotes and replace '\ ' with ' '
+            # eliminate all quotes and replace backslash-space with space
             map { s/"//og; s/\\ / /og; $_ }
             # The 2nd parameter is true which signifies that quotes,
             # backslashes, etc are kept in the return array
@@ -553,7 +553,7 @@ sub do_custom_image($$$) {
         my( $interval, $type ) = ($start =~ m/(\-\d+)([hdwm])/);
                 # regular -1d, -1m, -2w style start interval with no end
         if( defined $interval && defined $type ) {
-                # work around a bug in RRD's time parsing code which
+                # work around a bug in time parsing code within rrdtool
                 # interprets -6m as -6 minutes instead of -6 months
             $type = 'mon' if $type eq 'm';
                 # start time is just interval-1
@@ -1045,7 +1045,7 @@ sub read_rrd_config($$$)
     while (<CFG>) {
         chomp;                    # remove newline
         s/\s+$//;                 # remove trailing space
-        s/\s+/ /g;                # collapse white spaces to ' '
+        s/\s+/ /g;                # collapse white spaces to one space
         next if /^ *\#/;          # skip comment lines
         next if /^\s*$/;          # skip empty lines
         if (/^ \S/) {             # multiline (lines beginning with whitespace)
@@ -1173,7 +1173,7 @@ sub print_dir($$) {
     }
 
     # run over all the targets in this directory to see if any of them
-    # has interval eq '1' meaning a refresh of 60
+    # has interval as 1 meaning a refresh of 60
     if (defined @{$directories{$dir}{target}}) {
         for my $item (@{$directories{$dir}{target}}) {
             common_args($item, $targets{$item}, $q);
