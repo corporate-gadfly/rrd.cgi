@@ -1251,11 +1251,7 @@ EOT
 <h1 class="firstheading">Navigation</h1>
 EOT
 
-    print <<EOT if not defined @{$directories{$dir}{target}};
-@subdir_text
-EOT
-
-    if (defined @{$directories{$dir}{target}}) {
+    if ( $dir ne '' ) {
         my $switch_auto_refresh =
             $no_auto_refresh_href
             ?
@@ -1267,7 +1263,15 @@ EOT
 <a class="navlink"
     href="../$no_auto_refresh_href">&uArr;&nbsp;Up&nbsp;to&nbsp;parent&nbsp;level&nbsp;(..)</a>
 $switch_auto_refresh
+EOT
+    }
+
+    print <<EOT if defined @{$directories{$dir}{subdir}};
 @subdir_text
+EOT
+
+    if (defined @{$directories{$dir}{target}}) {
+        print <<EOT;
 <h1 class="subheading">Title</h1>
 <span class="menuitem">RRD graphs in: <div id="directory">$dir1</div></span>
 <h1 class="subheading">Available Graphs</h1>
