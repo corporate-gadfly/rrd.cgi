@@ -994,8 +994,8 @@ sub try_read_config($)
     $prefix =~ s/\/[^\/]*$//;
 
     # Verify the version of RRDtool:
-    if (!defined $RRDs::VERSION || $RRDs::VERSION < 1.000331) {
-        print_error("Please install more up-to date RRDtool - need at least 1.000331");
+    if (!defined $RRDs::VERSION || $RRDs::VERSION < 1.2013) {
+        print_error("Please install more up-to date RRDtool - need at least 1.2013");
     }
     
     my $read_cfg;
