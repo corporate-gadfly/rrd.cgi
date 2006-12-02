@@ -1186,11 +1186,15 @@ sub print_dir($$) {
     }
     http_headers('text/html', $directories{$dir}{config});
 
-    my $resource_dir = defined $directories{$dir}{config}{resourcedir}
-        ?
-            $directories{$dir}{config}{resourcedir}
-        :
-            $directories{$directories{$dir}{subdir}[0]}{config}{resourcedir};
+    my $resource_dir = $directories{$dir}{config}{resourcedir};
+    unless( defined $resource_dir ) {
+        my $first_subdir = $directories{$dir}{subdir}[0];
+        unless( $dir eq '' ) {
+            $first_subdir = $dir . '/' . $first_subdir;
+        }
+        $resource_dir =
+            $directories{$first_subdir}{config}{resourcedir};
+    }
     print <<EOT;
 <html>
 <head>
