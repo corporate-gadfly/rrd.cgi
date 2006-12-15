@@ -1296,8 +1296,8 @@ EOT
                     # for each graph store its item and name in an
                     # anonymous hash and push onto the array @graphs
             my $item_relative = $item;
-            # strip any directories from $item
-            $item_relative =~ s/$targets{$item}{directory}\/?//g;
+            # strip any directories from $item (first occurrence)
+            $item_relative =~ s/$targets{$item}{directory}\/?//;
             push @graphs, {item => $item_relative, name => $itemname};
             if( (exists $targets{$item}{suppress} &&
                     $targets{$item}{suppress} =~ /d/ &&
