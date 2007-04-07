@@ -976,12 +976,44 @@ EOT
     print <<EOT if $mode eq 'yearly';
         value="$y" size="4">
 EOT
+
+    my( $prev, $next, $parse_date );
+    for( $mode ) {
+        /daily/     && do {
+                $parse_date = ParseDate($m.'/'.$d.'/'.$y);
+                $prev = UnixDate(DateCalc($parse_date, '-1 day'), '%m-%d-%Y');
+                $prev = 'date=' . $prev . '&mode=daily';
+                $next = UnixDate(DateCalc($parse_date, '+1 day'), '%m-%d-%Y');
+                $next = 'date=' . $next . '&mode=daily';
+                last;
+        };
+        /monthly/   && do {
+                $parse_date = ParseDate($m.'/01/'.$y);
+                $prev = UnixDate(DateCalc($parse_date, '-1 month'), '%m-%d-%Y');
+                $prev = 'date=' . $prev . '&mode=monthly';
+                $next = UnixDate(DateCalc($parse_date, '+1 month'), '%m-%d-%Y');
+                $next = 'date=' . $next . '&mode=monthly';
+                last;
+        };
+        /yearly/    && do {
+                $parse_date = ParseDate('01/01/'.$y);
+                $prev = UnixDate(DateCalc($parse_date, '-1 year'), '%m-%d-%Y');
+                $prev = 'date=' . $prev . '&mode=yearly';
+                $next = UnixDate(DateCalc($parse_date, '+1 year'), '%m-%d-%Y');
+                $next = 'date=' . $next . '&mode=yearly';
+                last;
+        };
+    }
+
     print <<EOT;
     <a href="#"
         onClick="cal.showCalendar(this.id); return false;"
         name="calAnchor" id="calAnchor"><img
         width="34" height="21" border="0"
         src="$resource_dir/calendar.gif"></a>
+    <span style="margin-left: 20px;">
+        <a href="?$prev">&laquo;prev</a> <a href="?$next">next&raquo;</a>
+    </span>
 </form>
 <div id="calDiv"
     style="position:absolute; visibility:hidden; background-color:white;"></div>
