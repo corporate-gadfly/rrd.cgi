@@ -787,11 +787,8 @@ sub display_archived_images($$$$) {
         /yearly/    && do { $title .= " yearly mode for $y"; last; };
     }
 
-    my $resource_dir = defined $directories{$dir}{config}{resourcedir}
-        ?
-            $directories{$dir}{config}{resourcedir}
-        :
-            $directories{$directories{$dir}{subdir}[0]}{config}{resourcedir};
+    my $resource_dir = $directories{$dir}{config}{resourcedir};
+    $resource_dir = find_resource_dir($dir) unless defined $resource_dir;
     http_headers('text/html', undef);
     print <<EOT;
 <html>
@@ -1175,6 +1172,27 @@ sub parse_directories {
     }
 }
 
+sub find_resource_dir($);
+
+sub find_resource_dir($) {
+    # find resource directory by descending into subdirectories
+    # recursively until found
+    my $dir = shift;
+    my $resource_dir;
+    my $subdirs = $directories{$dir}{subdir};
+    my $first_subdir;
+    if( defined $subdirs ) {
+        $first_subdir = @{$subdirs}[0];
+        $first_subdir = $dir . '/' . $first_subdir unless $dir eq '';
+        $resource_dir =
+            $directories{$first_subdir}{config}{resourcedir};
+        # recurse deeper into next directory level
+        $resource_dir = find_resource_dir($first_subdir)
+            unless defined $resource_dir;
+    }
+    return $resource_dir;
+}
+
 sub print_dir($$) {
     my ($dir, $q) = @_;
 
@@ -1212,14 +1230,7 @@ sub print_dir($$) {
     http_headers('text/html', $directories{$dir}{config});
 
     my $resource_dir = $directories{$dir}{config}{resourcedir};
-    unless( defined $resource_dir ) {
-        my $first_subdir = $directories{$dir}{subdir}[0];
-        unless( $dir eq '' ) {
-            $first_subdir = $dir . '/' . $first_subdir;
-        }
-        $resource_dir =
-            $directories{$first_subdir}{config}{resourcedir};
-    }
+    $resource_dir = find_resource_dir($dir) unless defined $resource_dir;
     print <<EOT;
 <html>
 <head>
