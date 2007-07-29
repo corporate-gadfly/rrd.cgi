@@ -1162,7 +1162,7 @@ sub parse_directories {
                 # next prefix
                 $prefix = $component;
             } else {
-                $prefix .= $component . '/';
+                $prefix .= '/' . $component;
             }
         }
         unless (defined $directories{$dir}) {
