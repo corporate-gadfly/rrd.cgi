@@ -753,7 +753,7 @@ sub display_archived_images($$$$) {
                 ' for archive mode: ', $mode);
     }
     # now that $dir is verified immediately strip the leading slash
-    $dir =~ s/^\///g;
+    $dir =~ s/^\///;
 
     unless( defined $directories{$dir}{config}{archiveurl} ) {
         print_error('Missing Archiveurl for ', $dir,
@@ -838,7 +838,7 @@ EOT
             print_error('Undefined mode, ', $mode);
         }
         # strip directory name from the file
-        $image_file =~ s/$dir\/?//g;
+        $image_file =~ s/$dir\/?//;
         $image_file .= '.' . $imagetype;
 
         unless( -f "$image_dir/$image_file" ) {
@@ -1468,7 +1468,7 @@ sub archive_directory($$) {
             my $ua = new LWP::UserAgent;
             for my $target ( @{$directories{$dir}{target}} ) {
                 my $target_relative;
-                ( $target_relative = $target ) =~ s#$dir/?##g;
+                ( $target_relative = $target ) =~ s#$dir/?##;
 
                 ## capture daily images
                 # file location for storing image
