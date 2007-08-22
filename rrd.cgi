@@ -139,9 +139,6 @@ sub do_html($$)
     my( $avm, $xm, $ym ) = do_image($tgt, 'month', 0, 0);
     my( $avy, $xy, $yy ) = do_image($tgt, 'year',  0, 0);
 
-            # change the refresh interval only if hourly is enabled
-    $tgt->{config}{refresh} = 60
-        if $tgt->{config}{interval} eq '1' and $tgt->{suppress} !~ /h/;
     http_headers('text/html', $tgt->{config});
     print <<EOT;
 <html>
@@ -649,6 +646,14 @@ sub common_args($$$)
         . '-month.' . $imagetype unless $target->{suppress} =~ /m/;
     $target->{year}  = $dir . '/' . $name
         . '-year.' . $imagetype unless $target->{suppress} =~ /y/;
+
+    if( $target->{config}{interval} eq '1' and $target->{suppress} !~ /h/ ) {
+                # change the refresh interval only if hourly is enabled
+        $target->{config}{refresh} = 60;
+    } elsif( $target->{config}{interval} ne '5' ) {
+                # custom interval
+        $target->{config}{refresh} = 60 * $target->{config}{interval};
+    }
 
     my @args = ();
 
