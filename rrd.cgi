@@ -482,10 +482,10 @@ sub do_image($$$$)
     http_headers("image/$imagetype", $target->{config});
         
     my $buf;
-        # could be sendfile in Linux ;-)
-        while(sysread PNG, $buf, 8192) {
-                print $buf;
-        }
+    # could be sendfile in Linux ;-)
+    while(sysread PNG, $buf, 8192) {
+        print $buf;
+    }
     close PNG;
 }
 
