@@ -1348,24 +1348,23 @@ EOT
                      $targets{$item}{suppress} =~ /h/ &&
                      $targets{$item}{config}{interval} eq '1') ) {
                 push @text, <<EOT;
-<tr>
-<td><a name="$item_relative">&nbsp;</a><a href="$item_relative.html$no_auto_refresh_href">$itemname</a><br>
+<div>
+<a name="$item_relative">&nbsp;</a><a href="$item_relative.html$no_auto_refresh_href">$itemname</a><br>
 &nbsp;&nbsp;&nbsp;&nbsp;$freqtext Graphic suppressed. More data is available
 <a href="$item_relative.html">here</a>.
-</tr>
+</div>
 EOT
                 next;
             };
             push @text, <<EOT;
-<tr>
-   <td><a name="$item_relative">&nbsp;</a><a
+<div>
+   <a name="$item_relative">&nbsp;</a><a
     href="$item_relative.html$no_auto_refresh_href">$itemname</a><br>
     <a href="$item_relative.html$no_auto_refresh_href"><img
     src="$item_relative-$freq.$imagetype"
     width="$xsize" height="$ysize"
     border="0" align="top" alt="$item"></a><br clear="all">
-   </td>
-</tr>
+</div>
 EOT
         } 
         print '<ul class="listAsTable">', "\n";
@@ -1379,10 +1378,10 @@ EOT
 </span>
 </div>
 </td><td style="padding-top: 60px;">
-<table border=0 width=100%>
-<tr><td><small>Click on a graphic to go to a deeper level</small></td></tr>
+<div>
+<small>Click on a graphic to go to a deeper level</small>
 @text
-</table>
+</div>
 EOT
     } else {
         print '</td><td style="padding-top: 60px;">&nbsp;', "\n";
