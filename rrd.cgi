@@ -1364,6 +1364,8 @@ EOT
         print <<EOT;
 <a class="navlink"
     href="../$modified_href">&uarr;&nbsp;Up&nbsp;to&nbsp;parent&nbsp;level&nbsp;(..)</a>
+EOT
+        print <<EOT if defined @{$directories{$dir}{target}};
 $link_toggle_auto_refresh
 $link_toggle_preview
 EOT
