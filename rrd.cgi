@@ -68,7 +68,7 @@ sub main ($)
     }
 
     my ($dir, $stat, $ext) = ($q->path_info() =~
-        /^(.*)\/([^\/]+)(\.html|-(hour|day|week|month|year)\.($imagetype|src))$/);
+        /^(.*)\/([^\/]+)(\.html|-(preview|hour|day|week|month|year)\.($imagetype|src))$/);
 
     $dir && $dir =~ s/^\///;
     $dir .= '/' if $dir;
@@ -101,6 +101,8 @@ sub main ($)
 
     if ($ext eq '.html') {
         do_html($tgt, $q);
+    } elsif ($ext eq '-preview.' . $imagetype) {
+        do_image($tgt, 'preview', 0, 1);
     } elsif ($ext eq '-hour.' . $imagetype) {
         do_image($tgt, 'hour', 0, 1);
     } elsif ($ext eq '-day.' . $imagetype) {
@@ -111,6 +113,8 @@ sub main ($)
         do_image($tgt, 'month', 0, 1);
     } elsif ($ext eq '-year.' . $imagetype) {
         do_image($tgt, 'year', 0, 1);
+    } elsif ($ext eq '-preview.src') {
+        do_image($tgt, 'preview', 1, 0);
     } elsif ($ext eq '-hour.src') {
         do_image($tgt, 'hour', 1, 0);
     } elsif ($ext eq '-day.src') {
@@ -132,6 +136,7 @@ sub do_html($$)
 {
     my ($tgt, $q) = @_;
 
+    my( $avh, $xh, $yh ) = do_image($tgt, 'preview',   0, 0);
     my( $avh, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
         unless $tgt->{suppress} =~ /h/ or
         $tgt->{config}{interval} ne '1';
@@ -409,7 +414,11 @@ sub do_image($$$$)
     my $back;
     my $xgrid = '';
 
-    if ($ext eq 'hour') {
+    if ($ext eq 'preview') {
+        $seconds = timelocal(@t);
+        $back = 10*3600;    # 10 hours
+        $oldsec = $seconds - 1*864000;
+    } elsif ($ext eq 'hour') {
         $seconds = timelocal(@t);
         $back = 3*3600;     # 3 hours
         $oldsec = $seconds - $t[2]*3600 - $t[1]*60 - $t[0];     # FIXME: where to set the VRULE
@@ -449,6 +458,17 @@ sub do_image($$$$)
     }
 
     my @graph_args = get_graph_args($target);
+
+    # overwrite values for -h, -w, -W and introduce step size with -S
+    if( $ext eq 'preview' ) {
+        push @graph_args,
+                '-h', 80,
+                '-w', 250,
+                '-W', '\'\'',
+                '-S', 300;
+        # weed out legend related printing
+        @graph_args = grep {!/^(GPRINT|COMMENT|PRINT)/i} @graph_args;
+    }
 
     make_def_paths_absolute($target, \@graph_args);
 
@@ -636,6 +656,8 @@ sub common_args($$$)
 
     $target->{suppress} ||= '';
 
+    $target->{preview}   = $dir . '/' . $name
+        . '-preview.' . $imagetype unless $target->{suppress} =~ /p/;
     $target->{hour}   = $dir . '/' . $name
         . '-hour.' . $imagetype unless
         $target->{suppress} =~ /h/ or $cfg->{interval} ne '1';
@@ -1237,24 +1259,45 @@ sub print_dir($$) {
 
     my $resource_dir = $directories{$dir}{config}{resourcedir};
     $resource_dir = find_resource_dir($dir) unless defined $resource_dir;
+    my $is_set_no_auto_refresh =
+        ($q->param('autorefresh') and $q->param('autorefresh') eq 'no')
+            ?  1 : 0;
+    my $is_set_no_preview =
+        ($q->param('preview') and $q->param('preview') eq 'no')
+            ?  1 : 0;
+    my $modified_href;
+    if( $is_set_no_auto_refresh or $is_set_no_preview ) {
+        if( $is_set_no_auto_refresh and $is_set_no_preview ) {
+            $modified_href = '?autorefresh=no&preview=no';
+        } elsif( $is_set_no_auto_refresh ) {
+            $modified_href = '?autorefresh=no';
+        } else {
+            $modified_href = '?preview=no';
+        }
+    } else {
+        $modified_href = '';
+    }
+
     print <<EOT;
 <html>
 <head>
 <link type="text/css" rel="stylesheet" href="$resource_dir/style.css">
 <title>RRD: Directory $dir1</title>
-</head><body bgcolor=#ffffff>
-<table border="0">
-    <tr align="left" valign="top">
-        <td>
 EOT
 
-    my $no_auto_refresh_href =
-        ($q->param('autorefresh') and
-        $q->param('autorefresh') eq 'no')
-            ?
-        '?autorefresh=no'
-            :
-        '';
+    print <<EOT unless $is_set_no_preview;
+<style type="text/css">
+#graphs { padding-top: 0; clear: left; margin-left: 5; }
+#nav { width: 30%; }
+</style>
+</head>
+EOT
+
+    print <<EOT;
+<body bgcolor=#ffffff>
+<div id="container">
+    <div id="nav">
+EOT
 
     my( @graphs, @text );
 
@@ -1269,24 +1312,12 @@ EOT
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
             push @subdir_text,
-                "<li>&raquo; <a href=\"$item/$no_auto_refresh_href\">$item/</a>\n";
+                "<li>&raquo; <a href=\"$item/$modified_href\">$item/</a>\n";
             $summary->{subdir}++;
         }
 
         push @subdir_text, '</ul></span>', "\n";
     }
-
-    # print summary
-    print '<div id="summary">';
-    $summary->{graphs} and
-        print '<h1>', $summary->{graphs}-$summary->{suppress}, ' Graph(s)</h1>';
-    $summary->{subdir} and
-        print '<h1>', $summary->{subdir},
-            $summary->{subdir} > 1 ? ' Subdirectories' : ' Subdirectory',
-            '</h1>';
-    $summary->{suppress}
-        and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
-    print '</div>', "\n";
 
     print <<EOT;
 <div id="menu">
@@ -1294,17 +1325,47 @@ EOT
 EOT
 
     if ( $dir ne '' ) {
-        my $switch_auto_refresh =
-            $no_auto_refresh_href
-            ?
-            '<a class="navlink" href="' . $q->url(-absolute=>1,-path=>1)
-                    . '">&Theta; Enable Autorefresh</a>'
-            :
-            '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
+        my $link_toggle_auto_refresh;
+        my $link_toggle_preview;
+        if( $is_set_no_auto_refresh and $is_set_no_preview ) {
+            # both autorefresh and preview say "no"
+            $link_toggle_auto_refresh =
+                '<a class="navlink" href="' .
+                $q->url(-absolute=>1,-path=>1) .
+                '?preview=no">&Theta; Enable Autorefresh</a>';
+            $link_toggle_preview =
+                '<a class="navlink" href="' .
+                $q->url(-absolute=>1,-path=>1) .
+                '?autorefresh=no">&Theta; Enable Preview</a>';
+        } elsif( $is_set_no_auto_refresh and !$is_set_no_preview ) {
+            # autorefresh says "no"
+            $link_toggle_auto_refresh =
+                '<a class="navlink" href="' .
+                $q->url(-absolute=>1,-path=>1) .
+                '">&Theta; Enable Autorefresh</a>';
+            $link_toggle_preview =
+                '<a class="navlink" href="?autorefresh=no&preview=no">&Phi; Disable Preview</a>';
+        } elsif( !$is_set_no_auto_refresh and $is_set_no_preview ) {
+            # preview says "no"
+            $link_toggle_preview =
+                '<a class="navlink" href="' .
+                $q->url(-absolute=>1,-path=>1) .
+                '">&Theta; Enable Preview</a>';
+            $link_toggle_auto_refresh =
+                '<a class="navlink" href="?autorefresh=no&preview=no">&Phi; Disable Autorefresh</a>';
+        } else {
+            # none of them say "no"
+            $link_toggle_auto_refresh =
+                '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
+            $link_toggle_preview =
+                '<a class="navlink" href="?preview=no">&Phi; Disable Preview</a>';
+        }
+
         print <<EOT;
 <a class="navlink"
-    href="../$no_auto_refresh_href">&uarr;&nbsp;Up&nbsp;to&nbsp;parent&nbsp;level&nbsp;(..)</a>
-$switch_auto_refresh
+    href="../$modified_href">&uarr;&nbsp;Up&nbsp;to&nbsp;parent&nbsp;level&nbsp;(..)</a>
+$link_toggle_auto_refresh
+$link_toggle_preview
 EOT
     }
 
@@ -1316,6 +1377,8 @@ EOT
         print <<EOT;
 <h1 class="subheading">Title</h1>
 <span class="menuitem">RRD graphs in: <div id="directory">$dir1</div></span>
+EOT
+        print <<EOT if $is_set_no_preview;
 <h1 class="subheading">Available Graphs</h1>
 <span class="menuitem">
 EOT
@@ -1324,7 +1387,10 @@ EOT
             my $itemname = $item;
             common_args($item, $targets{$item}, $q);
             my( $freq, $freqtext );
-            if( $targets{$item}{config}{interval} eq '1' ) {
+            if( !$is_set_no_preview ) {
+                $freq = 'preview';
+                $freqtext = 'Preview';
+            } elsif( $targets{$item}{config}{interval} eq '1' ) {
                 $freq = 'hour';
                 $freqtext = 'Hourly';
             } else {
@@ -1349,47 +1415,84 @@ EOT
                      $targets{$item}{config}{interval} eq '1') ) {
                 push @text, <<EOT;
 <div>
-<a name="$item_relative">&nbsp;</a><a href="$item_relative.html$no_auto_refresh_href">$itemname</a><br>
+<a name="$item_relative">&nbsp;</a><a
+href="$item_relative.html$modified_href">$itemname</a>
 &nbsp;&nbsp;&nbsp;&nbsp;$freqtext Graphic suppressed. More data is available
 <a href="$item_relative.html">here</a>.
 </div>
 EOT
                 next;
             };
-            push @text, <<EOT;
-<div>
+
+            if( $is_set_no_preview ) {
+                push @text, <<EOT;
+   <div>
    <a name="$item_relative">&nbsp;</a><a
-    href="$item_relative.html$no_auto_refresh_href">$itemname</a><br>
-    <a href="$item_relative.html$no_auto_refresh_href"><img
+    href="$item_relative.html$modified_href">$itemname</a>
+   </div>
+EOT
+            }
+
+            push @text, <<EOT;
+<span>
+    <a href="$item_relative.html$modified_href"><img
     src="$item_relative-$freq.$imagetype"
     width="$xsize" height="$ysize"
-    border="0" align="top" alt="$item"></a><br clear="all">
-</div>
+    title="$itemname"
+    border="0" align="top" alt="$itemname"></a>
+</span>
 EOT
         } 
-        print '<ul class="listAsTable">', "\n";
-        foreach my $graph( @graphs ) {
-            print <<EOT;
+        if( $is_set_no_preview ) {
+            print '<ul class="listAsTable">', "\n";
+            foreach my $graph( @graphs ) {
+                print <<EOT;
 <li>&raquo; <a href="#$graph->{item}">$graph->{name}</a>
+EOT
+            }
+            print <<EOT;
+</ul>
 EOT
         }
         print <<EOT;
-</ul>
-</span>
 </div>
-</td><td style="padding-top: 60px;">
-<div>
-<small>Click on a graphic to go to a deeper level</small>
+</div>
+<div id="graphs">
+<small>Click on a graphic to go to a deeper level.</small>
+EOT
+        print <<EOT unless $is_set_no_preview;
+<strong>preview</strong> enabled
+EOT
+        print <<EOT unless $is_set_no_auto_refresh;
+<strong>autorefresh</strong> enabled
+EOT
+        print <<EOT unless $is_set_no_preview and $is_set_no_auto_refresh;
+<small>(disable using navigation)</small>.
+EOT
+        print <<EOT;
+<br/>
 @text
 </div>
 EOT
-    } else {
-        print '</td><td style="padding-top: 60px;">&nbsp;', "\n";
     }
-    print '</td></tr></table>', "\n";
 
-    print <<EOT if @{$directories{$dir}{target}};
-<br>
+    if( $is_set_no_preview ) {
+        # print summary
+        print '<div id="summary">';
+        $summary->{graphs} and
+            print '<h1>', $summary->{graphs}-$summary->{suppress}, ' Graph(s)</h1>';
+        $summary->{subdir} and
+            print '<h1>', $summary->{subdir},
+                $summary->{subdir} > 1 ? ' Subdirectories' : ' Subdirectory',
+                '</h1>';
+        $summary->{suppress}
+            and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
+        print '</div>', "\n";
+    }
+
+    print '<div id="footer">', "\n";
+
+    print <<EOT if @{$directories{$dir}{target}} and $is_set_no_preview;
 <b><a name="Archived">Archived Graphs</a></b>
 <small>These are archived snapshots kept on the filesystem. Serving them
 up via a web-viewable directory carries a very low performance hit.</small>
@@ -1398,7 +1501,6 @@ Display of
 <a href="?mode=daily">daily</a>,
 <a href="?mode=monthly">monthly</a>,
 <a href="?mode=yearly">yearly</a> archival modes is supported.
-<br>
 EOT
 
     print <<EOT;
@@ -1410,6 +1512,7 @@ EOT
 
     print '<!-- $Id$ -->', "\n";
     print <<EOT;
+</div>
 </body>
 </html>
 EOT
