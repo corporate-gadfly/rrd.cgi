@@ -1408,11 +1408,15 @@ EOT
             # strip any directories from $item (first occurrence)
             $item_relative =~ s/$targets{$item}{directory}\/?//;
             push @graphs, {item => $item_relative, name => $itemname};
-            if( (exists $targets{$item}{suppress} &&
+            if(     (exists $targets{$item}{suppress} &&
+                    $targets{$item}{suppress} =~ /p/) ||
+                    (exists $targets{$item}{suppress} &&
                     $targets{$item}{suppress} =~ /d/ &&
+                    $is_set_no_preview &&
                     $targets{$item}{config}{interval} ne '1') ||
                     (exists $targets{$item}{suppress} &&
                      $targets{$item}{suppress} =~ /h/ &&
+                     $is_set_no_preview &&
                      $targets{$item}{config}{interval} eq '1') ) {
                 push @text, <<EOT;
 <div>
