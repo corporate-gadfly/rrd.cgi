@@ -136,7 +136,6 @@ sub do_html($$)
 {
     my ($tgt, $q) = @_;
 
-    my( $avh, $xh, $yh ) = do_image($tgt, 'preview',   0, 0);
     my( $avh, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
         unless $tgt->{suppress} =~ /h/ or
         $tgt->{config}{interval} ne '1';
