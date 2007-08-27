@@ -1472,11 +1472,13 @@ EOT
     border="0" align="top" alt="$itemname"></a>
 </span>
 EOT
+            my $detailed_freq =
+                ($targets{$item}{config}{interval} eq '1') ? 'hour' : 'day';
             push @graph_text, <<EOT unless $is_set_no_preview;
 <div class="tooltip" id="${item_relative}TooltipPopUp"
     style="display: none;">
     <h4>Detailed view for $itemname</h4>
-    <img src="$item_relative-day.$imagetype"/>
+    <img src="$item_relative-$detailed_freq.$imagetype"/>
 </div>
 EOT
         } 
