@@ -1292,35 +1292,31 @@ EOT
 </head>
 EOT
 
-    print <<EOT;
-<body bgcolor=#ffffff>
-<div id="container">
-    <div id="nav">
-EOT
+    my( @graphs, @graph_text, @nav_text, @subdir_text );
 
-    my( @graphs, @text );
-
-    # are there any subdirectories
-    my( @subdir_text ) = ();
     if (defined @{$directories{$dir}{subdir}}) {
         push @subdir_text, <<EOT;
-<h1 class="subheading">Subdirectories in $dir1</h1>
-<span class="menuitem">
-<small>More graphs are available in the following subdirectories</small>
-<ul class="listAsTable">
+            <h1 class="subheading">Subdirectories in $dir1</h1>
+            <span class="menuitem">
+            <small>More graphs are available in the following subdirectories</small>
+            <ul class="listAsTable">
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
-            push @subdir_text,
-                "<li>&raquo; <a href=\"$item/$modified_href\">$item/</a>\n";
+            push @subdir_text, <<EOT;
+            <li>&raquo; <a href="$item/$modified_href">$item/</a>
+EOT
             $summary->{subdir}++;
         }
 
-        push @subdir_text, '</ul></span>', "\n";
+        push @subdir_text, <<EOT;
+            </ul>
+            </span>
+EOT
     }
 
     print <<EOT;
-<div id="menu">
-<h1 class="firstheading">Navigation</h1>
+<body bgcolor=#ffffff>
+<div id="container">
 EOT
 
     if ( $dir ne '' ) {
@@ -1360,28 +1356,45 @@ EOT
                 '<a class="navlink" href="?preview=no">&Phi; Disable Preview</a>';
         }
 
-        print <<EOT;
-<a class="navlink"
-    href="../$modified_href">&uarr; Up to parent level (..)</a>
+        push @nav_text, <<EOT;
+            <a class="navlink"
+                href="../$modified_href">&uarr; Up to parent level (..)</a>
 EOT
-        print <<EOT if defined @{$directories{$dir}{target}};
-$link_toggle_auto_refresh
-$link_toggle_preview
+        push @nav_text, <<EOT if defined @{$directories{$dir}{target}};
+            $link_toggle_auto_refresh
+            $link_toggle_preview
 EOT
     }
 
-    print <<EOT if defined @{$directories{$dir}{subdir}};
+    push @nav_text, <<EOT if defined @{$directories{$dir}{subdir}};
 @subdir_text
 EOT
 
     if (defined @{$directories{$dir}{target}}) {
-        print <<EOT;
-<h1 class="subheading">Title</h1>
-<span class="menuitem">RRD graphs in: <div id="directory">$dir1</div></span>
+        push @nav_text, <<EOT;
+            <h1 class="subheading">Title</h1>
+            <span class="menuitem">RRD graphs in:
+                <div id="directory">$dir1</div>
+            </span>
 EOT
-        print <<EOT if $is_set_no_preview;
-<h1 class="subheading">Available Graphs</h1>
-<span class="menuitem">
+        push @nav_text, <<EOT if $is_set_no_preview;
+            <h1 class="subheading">Available Graphs</h1>
+            <span class="menuitem">
+EOT
+        push @graph_text, <<EOT;
+<small>Click on a graphic to go to a deeper level.</small>
+EOT
+        push @graph_text, <<EOT unless $is_set_no_preview;
+<strong>preview</strong> enabled
+EOT
+        push @graph_text, <<EOT unless $is_set_no_auto_refresh;
+<strong>autorefresh</strong> enabled
+EOT
+        push @graph_text, <<EOT unless $is_set_no_preview and $is_set_no_auto_refresh;
+<small>(disable using navigation)</small>.
+EOT
+        push @graph_text, <<EOT;
+<br/>
 EOT
 
         for my $item (@{$directories{$dir}{target}}) {
@@ -1418,7 +1431,7 @@ EOT
                      $targets{$item}{suppress} =~ /h/ &&
                      $is_set_no_preview &&
                      $targets{$item}{config}{interval} eq '1') ) {
-                push @text, <<EOT;
+                push @graph_text, <<EOT;
 <div>
 <a name="$item_relative">&nbsp;</a><a
 href="$item_relative.html$modified_href">$itemname</a>
@@ -1430,7 +1443,7 @@ EOT
             };
 
             if( $is_set_no_preview ) {
-                push @text, <<EOT;
+                push @graph_text, <<EOT;
     <div>
     <a name="$item_relative">&nbsp;</a><a
      href="$item_relative.html$modified_href">$itemname</a>
@@ -1438,7 +1451,7 @@ EOT
 EOT
             }
 
-            push @text, <<EOT;
+            push @graph_text, <<EOT;
 <span>
     <a href="$item_relative.html$modified_href"><img
     src="$item_relative-$freq.$imagetype"
@@ -1449,37 +1462,30 @@ EOT
 EOT
         } 
         if( $is_set_no_preview ) {
-            print '<ul class="listAsTable">', "\n";
+            push @nav_text, <<EOT;
+            <ul class="listAsTable">
+EOT
             foreach my $graph( @graphs ) {
-                print <<EOT;
-<li>&raquo; <a href="#$graph->{item}">$graph->{name}</a>
+                push @nav_text, <<EOT;
+                <li>&raquo; <a href="#$graph->{item}">$graph->{name}</a>
 EOT
             }
-            print <<EOT;
-</ul>
+            push @nav_text, <<EOT;
+            </ul>
 EOT
         }
-        print <<EOT;
-</div>
-</div>
-<div id="graphs">
-<small>Click on a graphic to go to a deeper level.</small>
-EOT
-        print <<EOT unless $is_set_no_preview;
-<strong>preview</strong> enabled
-EOT
-        print <<EOT unless $is_set_no_auto_refresh;
-<strong>autorefresh</strong> enabled
-EOT
-        print <<EOT unless $is_set_no_preview and $is_set_no_auto_refresh;
-<small>(disable using navigation)</small>.
-EOT
-        print <<EOT;
-<br/>
-@text
-</div>
-EOT
     }
+    print <<EOT;
+    <div id="nav">
+        <div id="menu">
+            <h1 class="firstheading">Navigation</h1>
+@nav_text
+        </div>
+    </div>
+    <div id="graphs">
+@graph_text
+    </div>
+EOT
 
     if( $is_set_no_preview ) {
         # print summary
