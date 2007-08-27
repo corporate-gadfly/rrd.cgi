@@ -1288,7 +1288,18 @@ EOT
 <style type="text/css">
 #graphs { padding-top: 0; clear: left; margin-left: 5; }
 #nav { width: 30%; }
+#container { position: absolute; }
 </style>
+EOT
+    print <<EOT if @{$directories{$dir}{target}};
+<script type="text/javascript" src="$resource_dir/prototype.js">
+</script>
+<script type="text/javascript" src="$resource_dir/scriptaculous.js">
+</script>
+<script type="text/javascript" src="$resource_dir/common.js">
+</script>
+EOT
+    print <<EOT;
 </head>
 EOT
 
@@ -1456,9 +1467,17 @@ EOT
     <a href="$item_relative.html$modified_href"><img
     src="$item_relative-$freq.$imagetype"
     width="$xsize" height="$ysize"
-    title="$itemname"
+    class="tooltipTrigger"
+    id="${item_relative}Tooltip"
     border="0" align="top" alt="$itemname"></a>
 </span>
+EOT
+            push @graph_text, <<EOT unless $is_set_no_preview;
+<div class="tooltip" id="${item_relative}TooltipPopUp"
+    style="display: none;">
+    <h4>Detailed view for $itemname</h4>
+    <img src="$item_relative-day.$imagetype"/>
+</div>
 EOT
         } 
         if( $is_set_no_preview ) {
@@ -1500,6 +1519,11 @@ EOT
             and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
         print '</div>', "\n";
     }
+    print <<EOT if !$is_set_no_preview and @{$directories{$dir}{target}};
+<script type="text/javascript">
+Tooltips.activateOnLoad();
+</script>
+EOT
 
     print '<div id="footer">', "\n";
 
