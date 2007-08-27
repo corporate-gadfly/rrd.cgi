@@ -1431,10 +1431,10 @@ EOT
 
             if( $is_set_no_preview ) {
                 push @text, <<EOT;
-   <div>
-   <a name="$item_relative">&nbsp;</a><a
-    href="$item_relative.html$modified_href">$itemname</a>
-   </div>
+    <div>
+    <a name="$item_relative">&nbsp;</a><a
+     href="$item_relative.html$modified_href">$itemname</a>
+    </div>
 EOT
             }
 
