@@ -161,13 +161,14 @@ EOT
          <td>
 EOT
 
-    my $mtime = (stat $tgt->{rrd})[9];
-
-    if( !defined $mtime ) {
-        $mtime = 0;
+    my $mtime = undef;
+    if( !$tgt->{ignoretimestamps} ) {
+        $mtime = (stat $tgt->{rrd})[9];
         print STDERR
             'Could not get status info for ', $tgt->{rrd}, '. ',
-            'Missing symbolic link or incorrect permissions!', "\n";
+            'Missing symbolic link or incorrect permissions!', "\n"
+            unless defined $mtime;
+        $mtime ||= 0;
     }
     my $no_auto_refresh_href =
         ($q->param('autorefresh') and
@@ -205,10 +206,13 @@ EOT
 <span class="menuitem">$tgt->{pagetop}</span>
 EOT
 
-    print <<EOT;
+    print <<EOT unless defined $tgt->{ignoretimestamps};
 <h1 class="subheading">Timestamp</h1>
 <span class="menuitem">
 @{[ strftime("%A, %d %B, %H:%M:%S %Z", localtime($mtime)) ]}
+EOT
+
+    print <<EOT;
 </span>
 </div>
         </td>
