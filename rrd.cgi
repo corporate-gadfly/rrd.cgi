@@ -1292,11 +1292,13 @@ EOT
 </style>
 EOT
     print <<EOT if @{$directories{$dir}{target}};
-<script type="text/javascript" src="$resource_dir/prototype.js">
+<script type="text/javascript" src="$resource_dir/jquery.js">
 </script>
-<script type="text/javascript" src="$resource_dir/scriptaculous.js">
+<script type="text/javascript" src="$resource_dir/jquery.dimensions.min.js">
 </script>
-<script type="text/javascript" src="$resource_dir/common.js">
+<script type="text/javascript" src="$resource_dir/jquery.cluetip.js">
+</script>
+<script type="text/javascript" src="$resource_dir/jquery.hoverIntent.minified.js">
 </script>
 EOT
     print <<EOT;
@@ -1396,10 +1398,10 @@ EOT
 <small>Click on a graphic to go to a deeper level.</small>
 EOT
         push @graph_text, <<EOT unless $is_set_no_preview;
-<strong>preview</strong> enabled
+<small>Mouseover for individual zoom. <strong>preview</strong> enabled</small>
 EOT
         push @graph_text, <<EOT unless $is_set_no_auto_refresh;
-<strong>autorefresh</strong> enabled
+<small><strong>autorefresh</strong> enabled</small>
 EOT
         push @graph_text, <<EOT unless $is_set_no_preview and $is_set_no_auto_refresh;
 <small>(disable using navigation)</small>.
@@ -1462,24 +1464,28 @@ EOT
 EOT
             }
 
+            my $detailed_freq =
+                ($targets{$item}{config}{interval} eq '1') ? 'hour' : 'day';
             push @graph_text, <<EOT;
 <span>
     <a href="$item_relative.html$modified_href"><img
     src="$item_relative-$freq.$imagetype"
     width="$xsize" height="$ysize"
     class="tooltipTrigger"
-    id="${item_relative}Tooltip"
+    rel="Detailed View for $itemname"
+EOT
+            if( !$is_set_no_preview ) {
+                push @graph_text, <<EOT;
+    title="Detailed View for $itemname<img src='$item_relative-$detailed_freq.$imagetype'/>"
+EOT
+            } else {
+                push @graph_text, <<EOT;
+    title="$itemname"
+EOT
+            }
+            push @graph_text, <<EOT;
     border="0" align="top" alt="$itemname"></a>
 </span>
-EOT
-            my $detailed_freq =
-                ($targets{$item}{config}{interval} eq '1') ? 'hour' : 'day';
-            push @graph_text, <<EOT unless $is_set_no_preview;
-<div class="tooltip" id="${item_relative}TooltipPopUp"
-    style="display: none;">
-    <h4>Detailed view for $itemname</h4>
-    <img src="$item_relative-$detailed_freq.$imagetype"/>
-</div>
 EOT
         } 
         if( $is_set_no_preview ) {
@@ -1523,7 +1529,11 @@ EOT
     }
     print <<EOT if !$is_set_no_preview and @{$directories{$dir}{target}};
 <script type="text/javascript">
-Tooltips.activateOnLoad();
+\$(document).ready(function() {
+    \$('.tooltipTrigger').cluetip({
+        width: 602, cursor: 'pointer'
+    });
+});
 </script>
 EOT
 
