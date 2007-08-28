@@ -170,26 +170,52 @@ EOT
             unless defined $mtime;
         $mtime ||= 0;
     }
-    my $no_auto_refresh_href =
-        ($q->param('autorefresh') and
-        $q->param('autorefresh') eq 'no')
-            ?
-        '?autorefresh=no'
-            :
-        '';
-    my $switch_auto_refresh =
-        $no_auto_refresh_href
-        ?
-        '<a class="navlink" href="' . $q->url(-absolute=>1,-path=>1) .
-                '">&Theta; Enable Autorefresh</a>'
-        :
-        '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
+    my $is_set_no_auto_refresh =
+        ($q->param('autorefresh') and $q->param('autorefresh') eq 'no')
+            ?  1 : 0;
+    my $is_set_no_preview =
+        ($q->param('preview') and $q->param('preview') eq 'no')
+            ?  1 : 0;
+    my $modified_href;
+    if( $is_set_no_auto_refresh or $is_set_no_preview ) {
+        if( $is_set_no_auto_refresh and $is_set_no_preview ) {
+            $modified_href = '?autorefresh=no&preview=no';
+        } elsif( $is_set_no_auto_refresh ) {
+            $modified_href = '?autorefresh=no';
+        } else {
+            $modified_href = '?preview=no';
+        }
+    } else {
+        $modified_href = '';
+    }
+    my $link_toggle_auto_refresh;
+    if( $is_set_no_auto_refresh and $is_set_no_preview ) {
+        # both autorefresh and preview say "no"
+        $link_toggle_auto_refresh =
+            '<a class="navlink" href="' .
+            $q->url(-absolute=>1,-path=>1) .
+            '?preview=no">&Theta; Enable Autorefresh</a>';
+    } elsif( $is_set_no_auto_refresh and !$is_set_no_preview ) {
+        # autorefresh says "no"
+        $link_toggle_auto_refresh =
+            '<a class="navlink" href="' .
+            $q->url(-absolute=>1,-path=>1) .
+            '">&Theta; Enable Autorefresh</a>';
+    } elsif( !$is_set_no_auto_refresh and $is_set_no_preview ) {
+        # preview says "no"
+        $link_toggle_auto_refresh =
+            '<a class="navlink" href="?autorefresh=no&preview=no">&Phi; Disable Autorefresh</a>';
+    } else {
+        # none of them say "no"
+        $link_toggle_auto_refresh =
+            '<a class="navlink" href="?autorefresh=no">&Phi; Disable Autorefresh</a>';
+    }
     print <<EOT;
 <div id="menu">
 <h1 class="firstheading">Navigation</h1>
 <a class="navlink"
-    href="./$no_auto_refresh_href">&uarr; Up to parent level (..)</a>
-$switch_auto_refresh
+    href="./$modified_href">&uarr; Up to parent level (..)</a>
+$link_toggle_auto_refresh
 <span class="menuitem">
 @{[ ($tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1') ? '' : '<a href="#Hourly">Hourly</a>|' ]}
 @{[ $tgt->{suppress} =~ /d/ ? '' : '<a href="#Daily">Daily</a>|' ]}
