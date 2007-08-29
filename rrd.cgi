@@ -1506,7 +1506,7 @@ EOT
 EOT
             if( !$is_set_no_preview ) {
                 push @graph_text, <<EOT;
-    title="Detailed View for $itemname<img src='$item_relative-$detailed_freq.$imagetype'/>"
+    title="Detailed View for $itemname|$item_relative-$detailed_freq.$imagetype"
 EOT
             } else {
                 push @graph_text, <<EOT;
@@ -1561,7 +1561,12 @@ EOT
 <script type="text/javascript">
 \$(document).ready(function() {
     \$('.tooltipTrigger').cluetip({
-        width: 602, cursor: 'pointer'
+        width: 602, cursor: 'pointer', splitTitle: '|',
+        dropShadow: false,
+        onShow: function(ct, c) {
+            var inner = \$(c);
+            inner.html('<img src="' + inner.html() + '"/>');
+        }
     });
 });
 </script>
