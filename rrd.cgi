@@ -1574,7 +1574,7 @@ EOT
 
     print '<div id="footer">', "\n";
 
-    print <<EOT if @{$directories{$dir}{target}} and $is_set_no_preview;
+    print <<EOT if @{$directories{$dir}{target}};
 <b><a name="Archived">Archived Graphs</a></b>
 <small>These are archived snapshots kept on the filesystem. Serving them
 up via a web-viewable directory carries a very low performance hit.</small>
