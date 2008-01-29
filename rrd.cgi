@@ -1322,13 +1322,12 @@ EOT
 </style>
 EOT
     print <<EOT if @{$directories{$dir}{target}};
-<script type="text/javascript" src="$resource_dir/jquery.js">
+<script type="text/javascript" src="$resource_dir/overlibmws.js">
 </script>
-<script type="text/javascript" src="$resource_dir/jquery.dimensions.min.js">
-</script>
-<script type="text/javascript" src="$resource_dir/jquery.cluetip.js">
-</script>
-<script type="text/javascript" src="$resource_dir/jquery.hoverIntent.minified.js">
+<script type="text/javascript">
+function OLpreviewImage(src) {
+    return '<img src="' + src + '"/>';
+}
 </script>
 EOT
     print <<EOT;
@@ -1502,15 +1501,12 @@ EOT
     src="$item_relative-$freq.$imagetype"
     width="$xsize" height="$ysize"
     class="tooltipTrigger"
-    rel="Detailed View for $itemname"
+    title="$itemname"
 EOT
             if( !$is_set_no_preview ) {
                 push @graph_text, <<EOT;
-    title="Detailed View for $itemname|$item_relative-$detailed_freq.$imagetype"
-EOT
-            } else {
-                push @graph_text, <<EOT;
-    title="$itemname"
+    onmouseover="return overlib(OLpreviewImage('$item_relative-$detailed_freq.$imagetype'), CAPTION, 'Detailed View for $itemname', WIDTH, 602);"
+    onmouseout="nd();"
 EOT
             }
             push @graph_text, <<EOT;
@@ -1557,20 +1553,6 @@ EOT
             and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
         print '</div>', "\n";
     }
-    print <<EOT if !$is_set_no_preview and @{$directories{$dir}{target}};
-<script type="text/javascript">
-\$(document).ready(function() {
-    \$('.tooltipTrigger').cluetip({
-        width: 602, cursor: 'pointer', splitTitle: '|',
-        dropShadow: false,
-        onShow: function(ct, c) {
-            var inner = \$(c);
-            inner.html('<img src="' + inner.html() + '"/>');
-        }
-    });
-});
-</script>
-EOT
 
     print '<div id="footer">', "\n";
 
