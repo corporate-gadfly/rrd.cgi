@@ -275,12 +275,12 @@ EOT
         </td>
     </tr>
 </table>
-<br>
+<br/>
 <b><a name="Historical">Run-time Historical Graphs</a></b>
 <small>These historical graphs produce images that are not cached at
 all and hence carry a performance hit every time they are requested,
 so be gentle</small>
-<br>
+<br/>
 EOT
     foreach my $i (1..6) {
         last if $tgt->{suppress} =~ /h/ or
@@ -289,28 +289,28 @@ EOT
             $i, ' hour', $i > 1 ? 's' : '', ' ago',
             '</a>', "\n";
     }
-    print '<br>', "\n";
+    print '<br/>', "\n";
     foreach my $i (1..7) {
         print '<a href="?start=', -$i, 'd">',
             $i, ' day', $i > 1 ? 's' : '', ' ago',
             '</a>', "\n";
     }
-    print '<br>', "\n";
+    print '<br/>', "\n";
     foreach my $i (1..4) {
         print '<a href="?start=', -$i, 'w">',
             $i, ' week', $i > 1 ? 's' : '', ' ago',
             '</a>', "\n";
     }
-    print '<br>', "\n";
+    print '<br/>', "\n";
     foreach my $i (1..6) {
         print '<a href="?start=', -$i, 'm">',
             $i, ' month', $i > 1 ? 's' : '', ' ago',
             '</a>', "\n";
     }
-    print '<br>', "\n";
+    print '<br/>', "\n";
     print <<EOT;
 <form method="post">
-Arbitrary start and end dates:<br>
+Arbitrary start and end dates:<br/>
 Start Date: <input type="text" name="start" length="6" maxlength="40">
 End Date: <input type="text" name="end" length="6" maxlength="40">
 <input type="submit">
@@ -329,16 +329,16 @@ End Date: <input type="text" name="end" length="6" maxlength="40">
 EOT
 
     print <<EOT;
-<br>
+<br/>
 <b><a name="Archived">Archived Graphs</a></b>
 <small>These are archived snapshots kept on the filesystem. Serving them
 up via a web-viewable directory carries a very low performance hit.</small>
-<br>
+<br/>
 Display of
 <a href="?mode=daily">daily</a>,
 <a href="?mode=monthly">monthly</a>,
 <a href="?mode=yearly">yearly</a> archival modes is supported.
-<br>
+<br/>
 EOT
 
     print <<EOT;
@@ -362,10 +362,10 @@ sub html_graph($$$$$$$)
     return unless defined $tgt->{$ext};
 
     print <<EOT;
-<br><a name="$freq"><b>"$freq" Graph ($period Average)</b></a><br>
+<br/><a name="$freq"><b>"$freq" Graph ($period Average)</b></a><br/>
 <img src="$tgt->{url}-$ext.$imagetype"
 width="$xsize" height="$ysize"
-alt="$freq Graph"/><br>
+alt="$freq Graph"/><br/>
 EOT
     if( defined $av->[0] ) {
         print "<small>";
@@ -377,7 +377,7 @@ EOT
             sprintf('%.1f%%', $av->[2]/$av->[3]*100) : ' 0.0%';
         print ' Max: ', !fp_equal($av->[5], 0.0, 2) ? 
             sprintf('%.1f%%', $av->[4]/$av->[5]*100) : ' 0.0%';
-        print "</small><br>";
+        print "</small><br/>";
     }
 
     print <<EOT;
@@ -873,7 +873,7 @@ EOT
             :
             ' [<a href="?mode=' . $m . '">' . $m . '</a>]';
     }
-    print '<br>';
+    print '<br/>';
 
 
     for my $target ( @targets ) {
@@ -887,8 +887,8 @@ EOT
                 ) {
             # target is suppressed for this mode
             print '<b>', $targets{$target}{title},
-                    '</b><br> Suppressed for <b>', $mode,
-                    '</b> archive mode: <br>';
+                    '</b><br/> Suppressed for <b>', $mode,
+                    '</b> archive mode: <br/>';
             next;
         }
 
@@ -915,7 +915,7 @@ EOT
             print '<b>', $targets{$target}{title},
                     '</b> does not have a <b>', $mode,
                     '</b> archived image for <b>',
-                    $error_date, '</b>.<br>';
+                    $error_date, '</b>.<br/>';
             if( $mode eq 'monthly' and $cur_y <= $y and $cur_m <= $m ) {
                 my $avail_month = sprintf("%02d", $m+1); 
                 my $avail_year = $y;
@@ -926,20 +926,20 @@ EOT
                 }
                 print 'It will become available on <b>',
                       $avail_month, '-01-', $avail_year,
-                      '</b>.<br>', "\n";
+                      '</b>.<br/>', "\n";
             }
             if( $mode eq 'yearly' and $cur_y <= $y ) {
                 print 'It will become available on <b>',
                       '01-01-', $y+1,
-                      '</b>.<br>', "\n";
+                      '</b>.<br/>', "\n";
             }
             next;
         }
         print <<EOT;
 <b>$targets{$target}{title}</b>
-<br>
+<br/>
 <img src="$archive_url/$dir/$image_file"/>
-<br>
+<br/>
 EOT
     }
     print '<!-- $Id$ -->', "\n";
@@ -1570,7 +1570,7 @@ EOT
 <b><a name="Archived">Archived Graphs</a></b>
 <small>These are archived snapshots kept on the filesystem. Serving them
 up via a web-viewable directory carries a very low performance hit.</small>
-<br>
+<br/>
 Display of
 <a href="?mode=daily">daily</a>,
 <a href="?mode=monthly">monthly</a>,
