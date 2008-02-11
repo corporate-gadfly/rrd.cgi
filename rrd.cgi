@@ -333,7 +333,7 @@ End Date: <input type="text" name="end" size="6" maxlength="40"/>
 EOT
 
     print <<EOT;
-<br/>
+<div id="footer">
 <b><a name="Archived">Archived Graphs</a></b>
 <small>These are archived snapshots kept on the filesystem. Serving them
 up via a web-viewable directory carries a very low performance hit.</small>
@@ -349,6 +349,7 @@ EOT
 <a href="http://www.rrdtool.org/"><img
     src="$tgt->{config}{resourcedir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool"/></a>
+</div>
 </div>
 EOT
 
