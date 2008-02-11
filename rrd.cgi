@@ -148,7 +148,7 @@ sub do_html($$)
     print <<EOT;
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="$tgt->{config}{resourcedir}/style.css">
+<link type="text/css" rel="stylesheet" href="$tgt->{config}{resourcedir}/style.css"/>
 <title>
 EOT
     print $tgt->{title} if defined $tgt->{title};
@@ -850,7 +850,7 @@ sub display_archived_images($$$$) {
     print <<EOT;
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="$resource_dir/style.css">
+<link type="text/css" rel="stylesheet" href="$resource_dir/style.css"/>
 <title>RRD: Archived $title</title>
 <script type="text/javascript" src="$resource_dir/CalendarPopup.js">
 </script>
@@ -1310,7 +1310,7 @@ sub print_dir($$) {
     print <<EOT;
 <html>
 <head>
-<link type="text/css" rel="stylesheet" href="$resource_dir/style.css">
+<link type="text/css" rel="stylesheet" href="$resource_dir/style.css"/>
 <title>RRD: Directory $dir1</title>
 EOT
 
