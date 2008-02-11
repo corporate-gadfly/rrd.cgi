@@ -401,7 +401,9 @@ sub http_headers($$)
     my $refresh = $cfg->{refresh};
     $refresh ||= 300;
 
-    print 'Content-Type: ', $content_type, "\n";
+    print 'Content-Type: ', $content_type,
+            ($content_type eq 'text/html' ? '; charset=utf-8' : ''),
+            "\n";
 
     if( %$cfg ) {
         # $cfg contains a reference to a non-empty hash
