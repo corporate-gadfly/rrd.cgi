@@ -275,13 +275,11 @@ EOT
         </td>
     </tr>
 </table>
-<p>
+<div>
 <b><a name="Historical">Run-time Historical Graphs</a></b>
 <small>These historical graphs produce images that are not cached at
 all and hence carry a performance hit every time they are requested,
 so be gentle</small>
-</p>
-<p>
 EOT
     if( $tgt->{suppress} !~ /h/ and $tgt->{config}{interval} eq '1' ) {
     print '<br/>', "\n";
@@ -346,7 +344,7 @@ EOT
 <a href="http://www.rrdtool.org/"><img
     src="$tgt->{config}{resourcedir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool"/></a>
-</p>
+</div>
 EOT
 
     print '<!-- $Id$ -->', "\n";
