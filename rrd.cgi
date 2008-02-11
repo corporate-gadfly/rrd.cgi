@@ -344,7 +344,7 @@ EOT
     print <<EOT;
 <a href="http://www.rrdtool.org/"><img
     src="$tgt->{config}{resourcedir}/rrdtool.gif" width="120"
-    height="34" alt="RRDTool" border="0"></a>
+    height="34" alt="RRDTool"/></a>
 EOT
 
     print '<!-- $Id$ -->', "\n";
@@ -1579,7 +1579,7 @@ EOT
 <h3><a href="/rrd/scripts/">About This Site</a></h3>
 <a href="http://www.rrdtool.org/"><img
     src="$resource_dir/rrdtool.gif" width="120"
-    height="34" alt="RRDTool" border="0"></a>
+    height="34" alt="RRDTool"/></a>
 </div>
 EOT
 
