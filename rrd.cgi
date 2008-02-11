@@ -869,6 +869,7 @@ sub display_archived_images($$$$) {
 <script type="text/javascript" src="$resource_dir/CalendarPopup.js">
 </script>
 </head><body>
+<div>
 EOT
 
     generate_calendar($q, $mode, $m, $d, $y, $resource_dir);
@@ -952,6 +953,7 @@ EOT
     }
     print '<!-- $Id$ -->', "\n";
     print <<EOT;
+</div>
 </body>
 </html>
 EOT
