@@ -155,7 +155,7 @@ EOT
     print <<EOT;
 </title>
 </head>
-<body bgcolor=#ffffff>
+<body bgcolor="#ffffff">
 <table border="0">
      <tr align="left" valign="top">
          <td>
@@ -1357,7 +1357,7 @@ EOT
     }
 
     print <<EOT;
-<body bgcolor=#ffffff>
+<body bgcolor="#ffffff">
 <div id="container">
 EOT
 
