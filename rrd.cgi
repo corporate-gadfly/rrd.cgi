@@ -1443,7 +1443,7 @@ EOT
 EOT
         push @nav_text, <<EOT if $is_set_no_preview;
             <h1 class="subheading">Available Graphs</h1>
-            <span class="menuitem">
+            <div class="menuitem">
 EOT
         push @graph_text, <<EOT;
 <small>Click on a graphic to go to a deeper level.</small>
@@ -1547,6 +1547,7 @@ EOT
             }
             push @nav_text, <<EOT;
             </ul>
+            </div>
 EOT
         }
     }
