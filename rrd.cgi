@@ -1353,7 +1353,7 @@ EOT
 EOT
         for my $item (@{$directories{$dir}{subdir}}) {
             push @subdir_text, <<EOT;
-            <li>&raquo; <a href="$item/$modified_href">$item/</a>
+            <li>&raquo; <a href="$item/$modified_href">$item/</a></li>
 EOT
             $summary->{subdir}++;
         }
