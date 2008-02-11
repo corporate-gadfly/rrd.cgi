@@ -146,7 +146,9 @@ sub do_html($$)
 
     http_headers('text/html', $tgt->{config});
     print <<EOT;
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <link type="text/css" rel="stylesheet" href="$tgt->{config}{resourcedir}/style.css"/>
 <title>
@@ -848,7 +850,9 @@ sub display_archived_images($$$$) {
     $resource_dir = find_resource_dir($dir) unless defined $resource_dir;
     http_headers('text/html', undef);
     print <<EOT;
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <link type="text/css" rel="stylesheet" href="$resource_dir/style.css"/>
 <title>RRD: Archived $title</title>
@@ -1308,7 +1312,9 @@ sub print_dir($$) {
     }
 
     print <<EOT;
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <link type="text/css" rel="stylesheet" href="$resource_dir/style.css"/>
 <title>RRD: Directory $dir1</title>
