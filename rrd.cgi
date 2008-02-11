@@ -1572,6 +1572,7 @@ EOT
 <a href="http://www.rrdtool.org/"><img
     src="$resource_dir/rrdtool.gif" width="120"
     height="34" alt="RRDTool" border="0"></a>
+</div>
 EOT
 
     print '<!-- $Id$ -->', "\n";
