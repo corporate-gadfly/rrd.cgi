@@ -1033,6 +1033,7 @@ EOT
 
 <form method="post"
     action="@{[ $q->url(-absolute=>1,-path=>1) ]}">
+    <div>
     <input type="hidden" name="mode" value="$mode"/>
     <input style="margin-left: 75px;" type="text" name="date"
 EOT
@@ -1077,6 +1078,7 @@ EOT
     <span style="margin-left: 20px;">
         <a href="?$prev">&laquo;prev</a> <a href="?$next">next&raquo;</a>
     </span>
+    </div>
 </form>
 <div id="calDiv"
     style="position:absolute; visibility:hidden; background-color:white;"></div>
