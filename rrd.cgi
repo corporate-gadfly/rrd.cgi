@@ -1542,7 +1542,7 @@ EOT
 EOT
             foreach my $graph( @graphs ) {
                 push @nav_text, <<EOT;
-                <li>&raquo; <a href="#$graph->{item}">$graph->{name}</a>
+                <li>&raquo; <a href="#$graph->{item}">$graph->{name}</a></li>
 EOT
             }
             push @nav_text, <<EOT;
