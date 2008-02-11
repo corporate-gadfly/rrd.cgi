@@ -1073,7 +1073,7 @@ EOT
     <a href="#"
         onclick="cal.showCalendar(this.id); return false;"
         name="calAnchor" id="calAnchor"><img
-        width="34" height="21"
+        width="34" height="21" alt="[calendar]"
         src="$resource_dir/calendar.gif"/></a>
     <span style="margin-left: 20px;">
         <a href="?$prev">&laquo;prev</a> <a href="?$next">next&raquo;</a>
