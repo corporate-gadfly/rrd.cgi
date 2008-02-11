@@ -404,7 +404,7 @@ sub http_headers($$)
     $refresh ||= 300;
 
     print 'Content-Type: ', $content_type,
-            ($content_type eq 'text/html' ? '; charset=utf-8' : ''),
+            ($content_type eq 'text/html' ? '; charset=iso-8859-1' : ''),
             "\n";
 
     if( %$cfg ) {
@@ -1736,7 +1736,7 @@ sub dump_directories($$) {
 sub print_error(@)
 {
     print <<EOT;
-Content-Type: text/html; charset=utf-8
+Content-Type: text/html; charset=iso-8859-1
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
