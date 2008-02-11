@@ -157,7 +157,7 @@ EOT
     print <<EOT;
 </title>
 </head>
-<body bgcolor="#ffffff">
+<body>
 <table border="0">
      <tr align="left" valign="top">
          <td>
@@ -860,7 +860,7 @@ sub display_archived_images($$$$) {
 <title>RRD: Archived $title</title>
 <script type="text/javascript" src="$resource_dir/CalendarPopup.js">
 </script>
-</head><body bgcolor="#ffffff">
+</head><body>
 EOT
 
     generate_calendar($q, $mode, $m, $d, $y, $resource_dir);
@@ -1365,7 +1365,7 @@ EOT
     }
 
     print <<EOT;
-<body bgcolor="#ffffff">
+<body>
 <div id="container">
 EOT
 
