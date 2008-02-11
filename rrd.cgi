@@ -1033,18 +1033,18 @@ EOT
 
 <form method="post"
     action="@{[ $q->url(-absolute=>1,-path=>1) ]}">
-    <input type="hidden" name="mode" value="$mode">
+    <input type="hidden" name="mode" value="$mode"/>
     <input style="margin-left: 75px;" type="text" name="date"
 EOT
 
     print <<EOT if $mode eq 'daily';
-        value="$m-$d-$y" size="10">
+        value="$m-$d-$y" size="10"/>
 EOT
     print <<EOT if $mode eq 'monthly';
-        value="$m-$y" size="7">
+        value="$m-$y" size="7"/>
 EOT
     print <<EOT if $mode eq 'yearly';
-        value="$y" size="4">
+        value="$y" size="4"/>
 EOT
 
     my( $prev, $next, $parse_date );
