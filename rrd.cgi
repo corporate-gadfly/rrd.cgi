@@ -310,9 +310,9 @@ EOT
     print <<EOT;
 <form method="post" action="@{[ $q->url(-absolute=>1,-path=>1) ]}">
 Arbitrary start and end dates:<br/>
-Start Date: <input type="text" name="start" length="6" maxlength="40">
-End Date: <input type="text" name="end" length="6" maxlength="40">
-<input type="submit">
+Start Date: <input type="text" name="start" size="6" maxlength="40"/>
+End Date: <input type="text" name="end" size="6" maxlength="40"/>
+<input type="submit"/>
 </form>
 <div style="font-size: 80%"><dl>
 <dt>Some examples of date specification for the above 2 inputs are:</dt>
