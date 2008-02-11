@@ -970,7 +970,8 @@ sub generate_calendar($$$$$$) {
     my $resource_dir = shift;
 
     print <<EOT;
-<script type="text/javascript" language="JavaScript">
+<script type="text/javascript">
+<!-- hide
 var cal = new CalendarPopup('calDiv');
 
 EOT
@@ -1027,6 +1028,7 @@ EOT
 
     print <<EOT;
 }
+// end hidding -->
 </script>
 
 <form method="post"
