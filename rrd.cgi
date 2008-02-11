@@ -1071,7 +1071,7 @@ EOT
 
     print <<EOT;
     <a href="#"
-        onClick="cal.showCalendar(this.id); return false;"
+        onclick="cal.showCalendar(this.id); return false;"
         name="calAnchor" id="calAnchor"><img
         width="34" height="21"
         src="$resource_dir/calendar.gif"/></a>
