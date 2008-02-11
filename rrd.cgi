@@ -284,13 +284,14 @@ so be gentle</small>
 <p>
 EOT
     if( $tgt->{suppress} !~ /h/ and $tgt->{config}{interval} eq '1' ) {
+    print '<br/>', "\n";
         foreach my $i (1..6) {
             print '<a href="?start=', -$i, 'h">',
                 $i, ' hour', $i > 1 ? 's' : '', ' ago',
                 '</a>', "\n";
         }
-        print '<br/>', "\n";
     }
+    print '<br/>', "\n";
     foreach my $i (1..7) {
         print '<a href="?start=', -$i, 'd">',
             $i, ' day', $i > 1 ? 's' : '', ' ago',
@@ -315,7 +316,6 @@ Start Date: <input type="text" name="start" length="6" maxlength="40">
 End Date: <input type="text" name="end" length="6" maxlength="40">
 <input type="submit">
 </form>
-</p>
 <small><dl>
 <dt>Some examples of date specification for the above 2 inputs are:
 <dd>today
@@ -346,6 +346,7 @@ EOT
 <a href="http://www.rrdtool.org/"><img
     src="$tgt->{config}{resourcedir}/rrdtool.gif" width="120"
     height="34" alt="RRDTool"/></a>
+</p>
 EOT
 
     print '<!-- $Id$ -->', "\n";
