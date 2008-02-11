@@ -275,21 +275,22 @@ EOT
         </td>
     </tr>
 </table>
-<br/>
+<p>
 <b><a name="Historical">Run-time Historical Graphs</a></b>
 <small>These historical graphs produce images that are not cached at
 all and hence carry a performance hit every time they are requested,
 so be gentle</small>
-<br/>
+</p>
+<p>
 EOT
-    foreach my $i (1..6) {
-        last if $tgt->{suppress} =~ /h/ or
-            $tgt->{config}{interval} ne '1';
-        print '<a href="?start=', -$i, 'h">',
-            $i, ' hour', $i > 1 ? 's' : '', ' ago',
-            '</a>', "\n";
+    if( $tgt->{suppress} !~ /h/ and $tgt->{config}{interval} eq '1' ) {
+        foreach my $i (1..6) {
+            print '<a href="?start=', -$i, 'h">',
+                $i, ' hour', $i > 1 ? 's' : '', ' ago',
+                '</a>', "\n";
+        }
+        print '<br/>', "\n";
     }
-    print '<br/>', "\n";
     foreach my $i (1..7) {
         print '<a href="?start=', -$i, 'd">',
             $i, ' day', $i > 1 ? 's' : '', ' ago',
@@ -307,14 +308,14 @@ EOT
             $i, ' month', $i > 1 ? 's' : '', ' ago',
             '</a>', "\n";
     }
-    print '<br/>', "\n";
     print <<EOT;
-<form method="post">
+<form method="post" action="@{[ $q->url(-absolute=>1,-path=>1) ]}">
 Arbitrary start and end dates:<br/>
 Start Date: <input type="text" name="start" length="6" maxlength="40">
 End Date: <input type="text" name="end" length="6" maxlength="40">
 <input type="submit">
 </form>
+</p>
 <small><dl>
 <dt>Some examples of date specification for the above 2 inputs are:
 <dd>today
