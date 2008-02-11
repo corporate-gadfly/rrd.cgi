@@ -1324,7 +1324,7 @@ EOT
 
     print <<EOT unless $is_set_no_preview;
 <style type="text/css">
-#graphs { padding-top: 0; clear: left; margin-left: 5; }
+#graphs { padding-top: 0; clear: left; margin-left: 5px; }
 #nav { width: 30%; }
 #container { position: absolute; }
 </style>
