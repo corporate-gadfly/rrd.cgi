@@ -1347,7 +1347,7 @@ EOT
     if (defined @{$directories{$dir}{subdir}}) {
         push @subdir_text, <<EOT;
             <h1 class="subheading">Subdirectories in $dir1</h1>
-            <span class="menuitem">
+            <div class="menuitem">
             <small>More graphs are available in the following subdirectories</small>
             <ul class="listAsTable">
 EOT
@@ -1360,7 +1360,7 @@ EOT
 
         push @subdir_text, <<EOT;
             </ul>
-            </span>
+            </div>
 EOT
     }
 
