@@ -1520,7 +1520,7 @@ EOT
 EOT
             }
             push @graph_text, <<EOT;
-    border="0" align="top" alt="$itemname"></a>
+    alt="$itemname"/></a>
 </span>
 EOT
         } 
