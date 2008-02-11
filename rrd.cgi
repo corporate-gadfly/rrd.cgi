@@ -184,7 +184,7 @@ EOT
     my $modified_href;
     if( $is_set_no_auto_refresh or $is_set_no_preview ) {
         if( $is_set_no_auto_refresh and $is_set_no_preview ) {
-            $modified_href = '?autorefresh=no&preview=no';
+            $modified_href = '?autorefresh=no&amp;preview=no';
         } elsif( $is_set_no_auto_refresh ) {
             $modified_href = '?autorefresh=no';
         } else {
@@ -209,7 +209,7 @@ EOT
     } elsif( !$is_set_no_auto_refresh and $is_set_no_preview ) {
         # preview says "no"
         $link_toggle_auto_refresh =
-            '<a class="navlink" href="?autorefresh=no&preview=no">&Phi; Disable Autorefresh</a>';
+            '<a class="navlink" href="?autorefresh=no&amp;preview=no">&Phi; Disable Autorefresh</a>';
     } else {
         # none of them say "no"
         $link_toggle_auto_refresh =
@@ -1317,7 +1317,7 @@ sub print_dir($$) {
     my $modified_href;
     if( $is_set_no_auto_refresh or $is_set_no_preview ) {
         if( $is_set_no_auto_refresh and $is_set_no_preview ) {
-            $modified_href = '?autorefresh=no&preview=no';
+            $modified_href = '?autorefresh=no&amp;preview=no';
         } elsif( $is_set_no_auto_refresh ) {
             $modified_href = '?autorefresh=no';
         } else {
@@ -1403,7 +1403,7 @@ EOT
                 $q->url(-absolute=>1,-path=>1) .
                 '">&Theta; Enable Autorefresh</a>';
             $link_toggle_preview =
-                '<a class="navlink" href="?autorefresh=no&preview=no">&Phi; Disable Preview</a>';
+                '<a class="navlink" href="?autorefresh=no&amp;preview=no">&Phi; Disable Preview</a>';
         } elsif( !$is_set_no_auto_refresh and $is_set_no_preview ) {
             # preview says "no"
             $link_toggle_preview =
@@ -1411,7 +1411,7 @@ EOT
                 $q->url(-absolute=>1,-path=>1) .
                 '">&Theta; Enable Preview</a>';
             $link_toggle_auto_refresh =
-                '<a class="navlink" href="?autorefresh=no&preview=no">&Phi; Disable Autorefresh</a>';
+                '<a class="navlink" href="?autorefresh=no&amp;preview=no">&Phi; Disable Autorefresh</a>';
         } else {
             # none of them say "no"
             $link_toggle_auto_refresh =
