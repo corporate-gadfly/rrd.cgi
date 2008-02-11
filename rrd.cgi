@@ -316,17 +316,17 @@ Start Date: <input type="text" name="start" length="6" maxlength="40">
 End Date: <input type="text" name="end" length="6" maxlength="40">
 <input type="submit">
 </form>
-<small><dl>
-<dt>Some examples of date specification for the above 2 inputs are:
-<dd>today
-<dd>1st thursday in June 1992
-<dd>05/10/93
-<dd>April 1, 2003
-<dd>2 days ago
-<dd>15 weeks ago
-<dd>..., etc.
+<div style="font-size: 80%"><dl>
+<dt>Some examples of date specification for the above 2 inputs are:</dt>
+<dd>today</dd>
+<dd>1st thursday in June 1992</dd>
+<dd>05/10/93</dd>
+<dd>April 1, 2003</dd>
+<dd>2 days ago</dd>
+<dd>15 weeks ago</dd>
+<dd>..., etc.</dd>
 </dl>
-</small>
+</div>
 EOT
 
     print <<EOT;
