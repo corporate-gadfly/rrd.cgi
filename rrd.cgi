@@ -24,6 +24,11 @@ use RRDs;
 
 use vars qw(@config_files @all_config_files %targets $config_time
     %directories $imagetype $percent_h);
+use constant HTML_PREAMBLE => <<EOT;
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+EOT
 
 # EDIT THIS to reflect all your RRD config files
 # Since this is in a BEGIN block, changes here require a restart in
@@ -146,9 +151,7 @@ sub do_html($$)
 
     http_headers('text/html', $tgt->{config});
     print <<EOT;
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+@{[HTML_PREAMBLE]}
 <head>
 <link type="text/css" rel="stylesheet" href="$tgt->{config}{resourcedir}/style.css"/>
 <title>
@@ -510,9 +513,7 @@ sub do_image($$$$)
     do {
         http_headers("text/html", $target->{config});
         print <<EOT;
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+@{[HTML_PREAMBLE]}
 <head><title>Source</title></head>
 <body>
 EOT
@@ -861,9 +862,7 @@ sub display_archived_images($$$$) {
     $resource_dir = find_resource_dir($dir) unless defined $resource_dir;
     http_headers('text/html', undef);
     print <<EOT;
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+@{[HTML_PREAMBLE]}
 <head>
 <link type="text/css" rel="stylesheet" href="$resource_dir/style.css"/>
 <title>RRD: Archived $title</title>
@@ -1323,9 +1322,7 @@ sub print_dir($$) {
     }
 
     print <<EOT;
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+@{[HTML_PREAMBLE]}
 <head>
 <link type="text/css" rel="stylesheet" href="$resource_dir/style.css"/>
 <title>RRD: Directory $dir1</title>
@@ -1745,9 +1742,7 @@ sub print_error(@)
     print <<EOT;
 Content-Type: text/html; charset=iso-8859-1
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+@{[HTML_PREAMBLE]}
 <head><title>Error</title></head>
 <body>
 <p>
