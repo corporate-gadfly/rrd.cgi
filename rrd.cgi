@@ -1052,21 +1052,21 @@ EOT
     if( $mode eq 'daily' ) {
         $parse_date = ParseDate($m.'/'.$d.'/'.$y);
         $prev = UnixDate(DateCalc($parse_date, '-1 day'), '%m-%d-%Y');
-        $prev = 'date=' . $prev . '&mode=daily';
+        $prev = 'date=' . $prev . '&amp;mode=daily';
         $next = UnixDate(DateCalc($parse_date, '+1 day'), '%m-%d-%Y');
-        $next = 'date=' . $next . '&mode=daily';
+        $next = 'date=' . $next . '&amp;mode=daily';
     } elsif( $mode eq 'monthly' ) {
         $parse_date = ParseDate($m.'/01/'.$y);
         $prev = UnixDate(DateCalc($parse_date, '-1 month'), '%m-%d-%Y');
-        $prev = 'date=' . $prev . '&mode=monthly';
+        $prev = 'date=' . $prev . '&amp;mode=monthly';
         $next = UnixDate(DateCalc($parse_date, '+1 month'), '%m-%d-%Y');
-        $next = 'date=' . $next . '&mode=monthly';
+        $next = 'date=' . $next . '&amp;mode=monthly';
     } elsif( $mode eq 'yearly') {
         $parse_date = ParseDate('01/01/'.$y);
         $prev = UnixDate(DateCalc($parse_date, '-1 year'), '%m-%d-%Y');
-        $prev = 'date=' . $prev . '&mode=yearly';
+        $prev = 'date=' . $prev . '&amp;mode=yearly';
         $next = UnixDate(DateCalc($parse_date, '+1 year'), '%m-%d-%Y');
-        $next = 'date=' . $next . '&mode=yearly';
+        $next = 'date=' . $next . '&amp;mode=yearly';
     }
 
     print <<EOT;
