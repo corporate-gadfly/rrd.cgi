@@ -218,7 +218,7 @@ EOT
 <a class="navlink"
     href="./$modified_href">&uarr; Up to parent level (..)</a>
 $link_toggle_auto_refresh
-<span class="menuitem">
+<div class="menuitem">
 @{[ ($tgt->{suppress} =~ /h/ or $tgt->{config}{interval} ne '1') ? '' : '<a href="#Hourly">Hourly</a>|' ]}
 @{[ $tgt->{suppress} =~ /d/ ? '' : '<a href="#Daily">Daily</a>|' ]}
 @{[ $tgt->{suppress} =~ /w/ ? '' : '<a href="#Weekly">Weekly</a>|' ]}
@@ -226,22 +226,22 @@ $link_toggle_auto_refresh
 @{[ $tgt->{suppress} =~ /y/ ? '' : '<a href="#Yearly">Yearly</a>|' ]}
 <a href="#Historical">Historical</a>|
 <a href="#Archived">Archived</a> Graphs
-</span>
+</div>
 EOT
 
     print <<EOT if defined $tgt->{pagetop};
 <h1 class="subheading">Title</h1>
-<span class="menuitem">$tgt->{pagetop}</span>
+<div class="menuitem">$tgt->{pagetop}</div>
 EOT
 
     print <<EOT unless defined $tgt->{ignoretimestamps};
 <h1 class="subheading">Timestamp</h1>
-<span class="menuitem">
+<div class="menuitem">
 @{[ strftime("%A, %d %B, %H:%M:%S %Z", localtime($mtime)) ]}
 EOT
 
     print <<EOT;
-</span>
+</div>
 </div>
         </td>
         <td style="padding-top: 50px;">
