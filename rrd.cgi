@@ -1333,9 +1333,11 @@ EOT
 <script type="text/javascript" src="$resource_dir/overlibmws.js">
 </script>
 <script type="text/javascript">
+<!-- hide
 function OLpreviewImage(src) {
     return '<img src="' + src + '"/>';
 }
+// end hiding -->
 </script>
 EOT
     print <<EOT;
