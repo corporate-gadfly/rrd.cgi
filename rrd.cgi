@@ -1425,9 +1425,9 @@ EOT
     if (defined @{$directories{$dir}{target}}) {
         push @nav_text, <<EOT;
             <h1 class="subheading">Title</h1>
-            <span class="menuitem">RRD graphs in:
+            <div class="menuitem">RRD graphs in:
                 <div id="directory">$dir1</div>
-            </span>
+            </div>
 EOT
         push @nav_text, <<EOT if $is_set_no_preview;
             <h1 class="subheading">Available Graphs</h1>
