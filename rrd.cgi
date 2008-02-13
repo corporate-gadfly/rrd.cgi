@@ -510,7 +510,7 @@ sub do_image($$$$)
         # args with LINE1 or AREA should have multiple spaces stripped
         for( @graph_args ) {
             if( m/^(LINE1|AREA)/ ) {
-                s/\s+//g;
+                s/\s{2,}//g;
             }
         }
     }
