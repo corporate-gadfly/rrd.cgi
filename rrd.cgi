@@ -507,9 +507,9 @@ sub do_image($$$$)
                 '-S', 300;
         # weed out legend related printing
         @graph_args = grep {!/^(GPRINT|COMMENT|PRINT)/i} @graph_args;
-        # args with LINE1 in them should have multiple spaces stripped
+        # args with LINE1 or AREA should have multiple spaces stripped
         for( @graph_args ) {
-            if( m/LINE1/ ) {
+            if( m/^(LINE1|AREA)/ ) {
                 s/\s+//g;
             }
         }
