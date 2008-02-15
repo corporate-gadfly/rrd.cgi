@@ -1353,7 +1353,7 @@ sub print_dir($$) {
 <title>RRD: Directory $dir1</title>
 EOT
 
-    print <<EOT unless $is_set_no_preview;
+    print <<EOT unless $is_set_no_preview and @{$directories{$dir}{target}};
 <style type="text/css">
 #graphs { padding-top: 0; clear: left; margin-left: 5px; }
 #nav { width: 30%; }
@@ -1582,11 +1582,10 @@ EOT
     </div>
 EOT
 
-    if( $is_set_no_preview ) {
+    if( $is_set_no_preview and $summary->{graphs} ) {
         # print summary
         print '<div id="summary">';
-        $summary->{graphs} and
-            print '<h1>', $summary->{graphs}-$summary->{suppress}, ' Graph(s)</h1>';
+        print '<h1>', $summary->{graphs}-$summary->{suppress}, ' Graph(s)</h1>';
         $summary->{subdir} and
             print '<h1>', $summary->{subdir},
                 $summary->{subdir} > 1 ? ' Subdirectories' : ' Subdirectory',
