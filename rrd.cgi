@@ -1116,11 +1116,13 @@ sub try_read_config($)
     
     my $read_cfg;
     if (!defined $config_time) {
+            # must read config files initially
         $read_cfg = 1;
     } else {
         for my $file (@all_config_files) {
             my $mtime = (stat $file)[9];
             if ($config_time < $mtime) {
+                    # modification time is newer than last read time
                 $read_cfg = 1;
                 last;
             }
