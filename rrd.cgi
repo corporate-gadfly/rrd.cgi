@@ -19,6 +19,8 @@ use Date::Manip;
 use CGI;
 use LWP::UserAgent;
 use HTTP::Request::Common qw(GET);
+use File::Basename;
+use File::Path;
 
 use RRDs;
 
@@ -533,6 +535,14 @@ EOT
         return;
     } if $wantsrc;
 
+    my $dir_name = dirname($file);
+    if( !-d $dir_name ) {
+        eval { mkpath $dir_name };
+        if( $@ ) {
+            print_error("Could not create $dir_name: $@");
+        }
+    }
+   
     my( $averages, $xsize, $ysize ) =
         RRDs::graph($file, '-s', "-$back", @local_args,
         @{$target->{args}}, @graph_args, "VRULE:$oldsec#ff0000",
