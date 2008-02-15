@@ -8,7 +8,6 @@
 # mrtg-rrd.cgi available at: http://www.fi.muni.cz/~kas/mrtg-rrd/
 # I did not like its limitations and tight coupling with MRTG
 #
-# $Id$
 
 use strict;
 
@@ -31,6 +30,7 @@ use constant HTML_PREAMBLE => <<EOT;
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 EOT
+use constant SCRIPT_VERSION => '<!-- $Id$ -->';
 
 # EDIT THIS to reflect all your RRD config files
 # Since this is in a BEGIN block, changes here require a restart in
@@ -355,8 +355,8 @@ EOT
 </div>
 EOT
 
-    print '<!-- $Id$ -->', "\n";
     print <<EOT;
+@{[ SCRIPT_VERSION ]}
 </body>
 </html>
 EOT
@@ -968,9 +968,9 @@ EOT
 <br/>
 EOT
     }
-    print '<!-- $Id$ -->', "\n";
     print <<EOT;
 </div>
+@{[ SCRIPT_VERSION ]}
 </body>
 </html>
 EOT
@@ -1615,9 +1615,9 @@ EOT
 </div>
 EOT
 
-    print '<!-- $Id$ -->', "\n";
     print <<EOT;
 </div>
+@{[ SCRIPT_VERSION ]}
 </body>
 </html>
 EOT
