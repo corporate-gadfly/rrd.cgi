@@ -1136,7 +1136,7 @@ sub try_read_config($)
     @all_config_files = @config_files;
 
     my $order = 0;
-    for my $cfgfile (@config_files) {
+    for my $cfgfile (@all_config_files) {
         my $cfgref = {
             refresh => 300,
             interval => 5,
