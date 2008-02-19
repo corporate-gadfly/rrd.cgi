@@ -1660,9 +1660,11 @@ sub archive_directory($$) {
             }
 
             unless( -d $archive_dir ) {
-                warn 'Nonexistent directory ', $archive_dir, ' for ',
-                     $dir, '/', "\n";
-                return;
+                eval { mkpath $archive_dir };
+                if( $@ ) {
+                    print_error("Could not create $archive_dir for $dir/: $@");
+                    return;
+                }
             }
 
             my( $m, $d, $y ) = split /-/, $date;
