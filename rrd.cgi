@@ -37,6 +37,7 @@ use constant SCRIPT_VERSION => '<!-- $Id$ -->';
 # mod_perl to take effect
 BEGIN { @config_files = qw(
     /etc/rrd/rrd.cfg
+    /etc/rrd/rrd-mysql.cfg
     /etc/rrd/rrd-tomcat.cfg
     /etc/rrd/rrd-network.cfg
     /etc/rrd/rrd-weather.cfg
