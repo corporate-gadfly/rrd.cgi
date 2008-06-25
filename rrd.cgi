@@ -1358,7 +1358,6 @@ EOT
 <style type="text/css">
 #graphs { padding-top: 0; clear: left; margin-left: 5px; }
 #nav { width: 30%; }
-#container { position: absolute; }
 </style>
 EOT
     print <<EOT if @{$directories{$dir}{target}};
