@@ -20,6 +20,7 @@ use LWP::UserAgent;
 use HTTP::Request::Common qw(GET);
 use File::Basename;
 use File::Path;
+use Image::Size qw(imgsize);
 
 use RRDs;
 
@@ -551,6 +552,9 @@ EOT
 
     my $rrd_error = RRDs::error;
     print_error("RRDs::graph failed, $rrd_error") if defined $rrd_error;
+
+    # on FreeBSD, RRDs::graph may return hugely wrong image size
+    ( $xsize, $ysize ) = imgsize($file) if $xsize > 100000;
 
     # Do not proceed unless image is wanted
     return( $averages, $xsize, $ysize ) unless $wantimage;
