@@ -1171,7 +1171,10 @@ sub read_rrd_config($$$)
         s/\s+/ /g;                # collapse white spaces to one space
         next if /^ *\#/;          # skip comment lines
         next if /^\s*$/;          # skip empty lines
-        if (/^ \S/) {             # multiline (lines beginning with whitespace)
+        if (scalar @lines and /^\s+\S/) {
+                                # lines beginning with whitespace followed
+                                # by content are really a continuation, so
+                                # combine them
             $lines[$#lines] .= $_;
         } else {
             push @lines, $_;
