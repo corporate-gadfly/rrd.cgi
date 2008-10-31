@@ -351,8 +351,8 @@ EOT
 
     print <<EOT;
 <a href="http://www.rrdtool.org/"><img
-    src="$tgt->{config}{resourcedir}/rrdtool.gif" width="120"
-    height="34" alt="RRDTool"/></a>
+    src="$tgt->{config}{resourcedir}/rrdtool-logo-light.png" width="121"
+    height="48" alt="RRDTool"/></a>
 </div>
 </div>
 EOT
@@ -1618,8 +1618,8 @@ EOT
     print <<EOT;
 <h3><a href="/rrd/scripts/">About This Site</a></h3>
 <a href="http://www.rrdtool.org/"><img
-    src="$resource_dir/rrdtool.gif" width="120"
-    height="34" alt="RRDTool"/></a>
+    src="$resource_dir/rrdtool-logo-light.png" width="121"
+    height="48" alt="RRDTool"/></a>
 </div>
 EOT
 
