@@ -145,13 +145,13 @@ sub do_html($$)
 {
     my ($tgt, $q) = @_;
 
-    my( $avh, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
+    my( undef, $xh, $yh ) = do_image($tgt, 'hour',   0, 0)
         unless $tgt->{suppress} =~ /h/ or
         $tgt->{config}{interval} ne '1';
-    my( $avd, $xd, $yd ) = do_image($tgt, 'day',   0, 0);
-    my( $avw, $xw, $yw ) = do_image($tgt, 'week',  0, 0);
-    my( $avm, $xm, $ym ) = do_image($tgt, 'month', 0, 0);
-    my( $avy, $xy, $yy ) = do_image($tgt, 'year',  0, 0);
+    my( undef, $xd, $yd ) = do_image($tgt, 'day',   0, 0);
+    my( undef, $xw, $yw ) = do_image($tgt, 'week',  0, 0);
+    my( undef, $xm, $ym ) = do_image($tgt, 'month', 0, 0);
+    my( undef, $xy, $yy ) = do_image($tgt, 'year',  0, 0);
 
     http_headers('text/html', $tgt->{config});
     print <<EOT;
@@ -272,11 +272,11 @@ EOT
 #    print Dumper(%targets);
 #    print '-->', "\n";
 
-    html_graph($tgt, 'hour', 'Hourly', $dayavg . ' Minute', $xh, $yh, $avh);
-    html_graph($tgt, 'day', 'Daily', '5 Minute', $xd, $yd, $avd);
-    html_graph($tgt, 'week', 'Weekly', '30 Minute', $xw, $yw, $avw);
-    html_graph($tgt, 'month', 'Monthly', '2 Hour', $xm, $ym, $avm);
-    html_graph($tgt, 'year', 'Yearly', '1 Day', $xy, $yy, $avy);
+    html_graph($tgt, 'hour', 'Hourly', $dayavg . ' Minute', $xh, $yh);
+    html_graph($tgt, 'day', 'Daily', '5 Minute', $xd, $yd);
+    html_graph($tgt, 'week', 'Weekly', '30 Minute', $xw, $yw);
+    html_graph($tgt, 'month', 'Monthly', '2 Hour', $xm, $ym);
+    html_graph($tgt, 'year', 'Yearly', '1 Day', $xy, $yy);
 
     print <<EOT;
         </td>
@@ -365,9 +365,9 @@ EOT
 
 }
 
-sub html_graph($$$$$$$)
+sub html_graph($$$$$$)
 {
-    my ($tgt, $ext, $freq, $period, $xsize, $ysize, $av) = @_;
+    my ($tgt, $ext, $freq, $period, $xsize, $ysize) = @_;
 
     return unless defined $tgt->{$ext};
 
@@ -377,18 +377,6 @@ sub html_graph($$$$$$$)
 width="$xsize" height="$ysize"
 alt="$freq Graph"/><br/>
 EOT
-    if( defined $av->[0] ) {
-        print "<small>";
-        print defined $tgt->{relpercent} ?
-            $tgt->{relpercent} : "Relative percentage";
-        print ' Cur: ', !fp_equal($av->[1], 0.0, 2) ?
-            sprintf('%.1f%%', $av->[0]/$av->[1]*100) : ' 0.0%';
-        print ' Avg: ', !fp_equal($av->[3], 0.0, 2) ?
-            sprintf('%.1f%%', $av->[2]/$av->[3]*100) : ' 0.0%';
-        print ' Max: ', !fp_equal($av->[5], 0.0, 2) ? 
-            sprintf('%.1f%%', $av->[4]/$av->[5]*100) : ' 0.0%';
-        print "</small><br/>";
-    }
 
     print <<EOT;
 <div style="font-size: 85%;"><a href="$tgt->{url}-$ext.src">[source]</a></div>
@@ -545,7 +533,7 @@ EOT
         }
     }
    
-    my( $averages, $xsize, $ysize ) =
+    my( undef, $xsize, $ysize ) =
         RRDs::graph($file, '-s', "-$back", @local_args,
         @{$target->{args}}, @graph_args, "VRULE:$oldsec#ff0000",
         "VRULE:$seconds#ff0000");
@@ -557,7 +545,7 @@ EOT
     ( $xsize, $ysize ) = imgsize($file) if $xsize > 100000;
 
     # Do not proceed unless image is wanted
-    return( $averages, $xsize, $ysize ) unless $wantimage;
+    return( undef, $xsize, $ysize ) unless $wantimage;
 
     # Return the exact image straight from the file
     open PNG, "<$file" or print_error("Can't open $file: $!");
