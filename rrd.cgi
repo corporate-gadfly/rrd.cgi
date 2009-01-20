@@ -802,8 +802,17 @@ EOT
 EOT
         }
     } else {
-            # no date provided - so default to yesterday
-        ( $m, $d, $y ) = UnixDate('yesterday', '%m', '%d', '%Y');
+        # no date provided
+        if( $mode eq 'daily' ) {
+            # default to yesterday
+            ( $m, $d, $y ) = UnixDate('yesterday', '%m', '%d', '%Y');
+        } elsif( $mode eq 'monthly' ) {
+            # default to 1 month ago
+            ( $m, $d, $y ) = UnixDate('1 month ago', '%m', '%d', '%Y');
+        } elsif( $mode eq 'yearly' ) {
+            # default to 1 year ago
+            ( $m, $d, $y ) = UnixDate('1 year ago', '%m', '%d', '%Y');
+        }
     }
     my $parse_date = ParseDate($m.'/'.$d.'/'.$y);
     my $parse_time = UnixDate($parse_date, "%s");
