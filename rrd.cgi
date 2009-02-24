@@ -915,8 +915,9 @@ EOT
                 ) {
             # target is suppressed for this mode
             print '<b>', $targets{$target}{title},
-                    '</b><br/> Suppressed for <b>', $mode,
-                    '</b> archive mode: <br/>';
+                    '</b> <br/> <span style="margin-left: 20px;">',
+                    '<b>', $mode, '</b> archive mode is suppressed.',
+                    'Try another mode above</span><br/>';
             next;
         }
 
