@@ -257,7 +257,10 @@ EOT
                 # total number of graphs (either 4 or 5)
     my $total_graphs = $tgt->{config}{interval} ne '1' ? 4 : 5;
                 # How many are suppressed?
-    my( $suppressed_graphs ) = $tgt->{suppress} =~ /([hdwmy]+)/;
+    my( $suppressed_graphs ) =
+        $tgt->{config}{interval} ne '1' ?
+            $tgt->{suppress} =~ /([dwmy]+)/ :
+            $tgt->{suppress} =~ /([hdwmy]+)/;
     $suppressed_graphs ||= "";
     print '<div id="summary">';
     print '<h1>', $total_graphs-length($suppressed_graphs), ' Graphs(s)</h1>';
