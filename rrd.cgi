@@ -43,6 +43,7 @@ BEGIN { @config_files = qw(
     /etc/rrd/rrd-network.cfg
     /etc/rrd/rrd-weather.cfg
     /etc/rrd/rrd-sar.cfg
+    /etc/rrd/rrd-home.cfg
 ); }
 
 # This depends on what image format your libgd (and rrdtool) uses
