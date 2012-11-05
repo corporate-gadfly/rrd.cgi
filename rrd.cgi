@@ -21,6 +21,7 @@ use HTTP::Request::Common qw(GET);
 use File::Basename;
 use File::Path;
 use Image::Size qw(imgsize);
+use List::Util qw(first);
 
 use RRDs;
 
@@ -494,12 +495,19 @@ sub do_image($$$$)
 
     my @graph_args = get_graph_args($target);
 
-    # overwrite values for -h, -w, -W and introduce step size with -S
     if( $ext eq 'preview' ) {
+        # find index of first array element which is equal to -W (watermark)
+        my $watermark_index = first { @{$target->{args}}[$_] eq '-W' } 0..$#{$target->{args}};
+
+        # weed out -W (watermark) and it's argument
+        if (defined $watermark_index) {
+            splice(@{$target->{args}}, $watermark_index, 2);
+        }
+
+        # overwrite values for -h, -w, -W and introduce step size with -S
         push @graph_args,
                 '-h', 80,
                 '-w', 250,
-                '-W', '\'\'',
                 '-S', 300;
         # weed out legend related printing
         @graph_args = grep {!/^(GPRINT|COMMENT|PRINT)/i} @graph_args;
