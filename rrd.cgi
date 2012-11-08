@@ -431,60 +431,60 @@ sub http_headers($$)
 
 sub do_image($$$$)
 {
-    my ($target, $ext, $wantsrc, $wantimage) = @_;
+    my ($target, $freq, $wantsrc, $wantimage) = @_;
 
-    my $file = $target->{$ext};
+    my $file = $target->{$freq};
 
     do {
-        print_error("Target '$ext' suppressed for this target") if $wantimage;
+        print_error("Target '$freq' suppressed for this target") if $wantimage;
         return;
     } unless defined $file;
 
     # Now the vertical rule at the end of the day
     my @t = localtime(time);
     # set seconds, minutes, hours to zero
-    $t[0] = $t[1] = $t[2] = 0 unless $ext eq 'hour';
+    $t[0] = $t[1] = $t[2] = 0 unless $freq eq 'hour';
 
     my $seconds;
     my $oldsec;
     my $back;
     my $xgrid = '';
 
-    if ($ext eq 'preview') {
+    if ($freq eq 'preview') {
         $seconds = timelocal(@t);
         $back = 10*3600;    # 10 hours
         $oldsec = $seconds - 1*864000;
-    } elsif ($ext eq 'hour') {
+    } elsif ($freq eq 'hour') {
         $seconds = timelocal(@t);
         $back = 3*3600;     # 3 hours
         $oldsec = $seconds - $t[2]*3600 - $t[1]*60 - $t[0];     # FIXME: where to set the VRULE
         $seconds = 0;
-    } elsif ($ext eq 'day') {
+    } elsif ($freq eq 'day') {
         $seconds = timelocal(@t);
         $back = 30*3600;    # 30 hours
         $oldsec = $seconds - 86400;
         # We need this only for day graph. The other ones
         # are magically correct.
         $xgrid = 'HOUR:1:HOUR:6:HOUR:2:0:' . $percent_h;
-    } elsif ($ext eq 'week') {
+    } elsif ($freq eq 'week') {
         $seconds = timelocal(@t);
         $t[6] = ($t[6]+6) % 7;
         $seconds -= $t[6]*86400;
         $back = 8*86400;    # 8 days
         $oldsec = $seconds - 7*86400;
-    } elsif ($ext eq 'month') {
+    } elsif ($freq eq 'month') {
         $t[3] = 1;
         $seconds = timelocal(@t);
         $back = 36*86400;   # 36 days
         $oldsec = $seconds - 30*86400; # FIXME (the right # of days!!)
-    } elsif ($ext eq 'year') {
+    } elsif ($freq eq 'year') {
         $t[3] = 1;
         $t[4] = 0;
         $seconds = timelocal(@t);
         $back = 396*86400;  # 365 + 31 days
         $oldsec = $seconds - 365*86400; # FIXME (the right # of days!!)
     } else {
-        print_error("Unknown file extension: $ext");
+        print_error("Unknown frequence: $freq");
     }
 
     my @local_args;
@@ -495,7 +495,7 @@ sub do_image($$$$)
 
     my @graph_args = get_graph_args($target);
 
-    if( $ext eq 'preview' ) {
+    if( $freq eq 'preview' ) {
         # find index of first array element which is equal to -W (watermark)
         my $watermark_index = first { @{$target->{args}}[$_] eq '-W' } 0..$#{$target->{args}};
 
