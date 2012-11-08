@@ -484,7 +484,7 @@ sub do_image($$$$)
         $back = 396*86400;  # 365 + 31 days
         $oldsec = $seconds - 365*86400; # FIXME (the right # of days!!)
     } else {
-        print_error("Unknown frequence: $freq");
+        print_error("Unknown frequency: $freq");
     }
 
     my @local_args = ();
@@ -495,13 +495,15 @@ sub do_image($$$$)
 
     my @graph_args = get_graph_args($target);
 
+    my @common_graph_args = @{$target->{args}};
+
     if( $freq eq 'preview' ) {
         # find index of first array element which is equal to -W (watermark)
-        my $watermark_index = first { @{$target->{args}}[$_] eq '-W' } 0..$#{$target->{args}};
+        my $watermark_index = first { $common_graph_args[$_] eq '-W' } 0..$#common_graph_args;
 
         # weed out -W (watermark) and it's argument
         if (defined $watermark_index) {
-            splice(@{$target->{args}}, $watermark_index, 2);
+            splice(@common_graph_args, $watermark_index, 2);
         }
 
         # overwrite values for -h, -w, -W and introduce step size with -S
@@ -531,7 +533,7 @@ EOT
         print '<pre>RRDs::graph(',
                 join(",\n",
                 $file, '-s', "-$back", @local_args,
-                @{$target->{args}}, @graph_args, "VRULE:$oldsec#ff0000",
+                @common_graph_args, @graph_args, "VRULE:$oldsec#ff0000",
                 "VRULE:$seconds#ff0000"),
                 ')</pre></body></html>';
         return;
@@ -547,7 +549,7 @@ EOT
    
     my( undef, $xsize, $ysize ) =
         RRDs::graph($file, '-s', "-$back", @local_args,
-        @{$target->{args}}, @graph_args, "VRULE:$oldsec#ff0000",
+        @common_graph_args, @graph_args, "VRULE:$oldsec#ff0000",
         "VRULE:$seconds#ff0000");
 
     my $rrd_error = RRDs::error;
