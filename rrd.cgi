@@ -487,7 +487,7 @@ sub do_image($$$$)
         print_error("Unknown frequence: $freq");
     }
 
-    my @local_args;
+    my @local_args = ();
 
     if ($xgrid) {
         push @local_args, '-x', $xgrid;
