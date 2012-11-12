@@ -703,7 +703,7 @@ sub common_args($$$)
         delete $cfg->{autorefresh};
     }
 
-    return @{$target->{args}} if defined @{$target->{args}};
+    return @{$target->{args}} if defined $target->{args} and @{$target->{args}};
 
     $target->{name} = $name;
 
@@ -1317,7 +1317,7 @@ sub print_dir($$) {
 
     my( $summary ) = {graphs => 0, suppress => 0, subdir => 0};
     # run over all the targets in this directory for summary stats
-    if (defined @{$directories{$dir}{target}}) {
+    if (@{$directories{$dir}{target}}) {
         for my $item (@{$directories{$dir}{target}}) {
             $summary->{graphs}++;
             # see if item is suppressed?
@@ -1334,7 +1334,7 @@ sub print_dir($$) {
 
     # run over all the targets in this directory to see if any of them
     # has interval as 1 meaning a refresh of 60
-    if (defined @{$directories{$dir}{target}}) {
+    if (@{$directories{$dir}{target}}) {
         for my $item (@{$directories{$dir}{target}}) {
             common_args($item, $targets{$item}, $q);
             if( $targets{$item}{config}{interval} eq '1'
@@ -1397,7 +1397,7 @@ EOT
 
     my( @graphs, @graph_text, @nav_text, @subdir_text );
 
-    if (defined @{$directories{$dir}{subdir}}) {
+    if (defined $directories{$dir}{subdir} and @{$directories{$dir}{subdir}}) {
         push @subdir_text, <<EOT;
             <h1 class="subheading">Subdirectories in $dir1</h1>
             <div class="menuitem">
@@ -1463,17 +1463,17 @@ EOT
             <a class="navlink"
                 href="../$modified_href">&uarr; Up to parent level (..)</a>
 EOT
-        push @nav_text, <<EOT if defined @{$directories{$dir}{target}};
+        push @nav_text, <<EOT if defined $directories{$dir}{target} and @{$directories{$dir}{target}};
             $link_toggle_auto_refresh
             $link_toggle_preview
 EOT
     }
 
-    push @nav_text, <<EOT if defined @{$directories{$dir}{subdir}};
+    push @nav_text, <<EOT if defined $directories{$dir}{subdir} and @{$directories{$dir}{subdir}};
 @subdir_text
 EOT
 
-    if (defined @{$directories{$dir}{target}}) {
+    if (defined $directories{$dir}{target} and @{$directories{$dir}{target}}) {
         push @nav_text, <<EOT;
             <h1 class="subheading">Title</h1>
             <div class="menuitem">RRD graphs in:
