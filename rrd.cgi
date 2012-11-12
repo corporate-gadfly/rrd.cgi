@@ -16,6 +16,7 @@ use Time::Local;
 use Text::ParseWords;
 use Date::Manip;
 use CGI;
+use CGI::SpeedyCGI;
 use LWP::UserAgent;
 use HTTP::Request::Common qw(GET);
 use File::Basename;
@@ -663,7 +664,7 @@ sub do_custom_image($$$) {
     make_def_paths_absolute($target, \@graph_args);
 
     my( $fh, $filename );
-    if( $ENV{MOD_PERL} ) {
+    if( $ENV{MOD_PERL} or defined $CGI::SpeedyCGI::i_am_speedy ) {
         use File::Temp qw/ tempfile /;
         ( $fh, $filename )= tempfile( );
     } else {
@@ -676,7 +677,7 @@ sub do_custom_image($$$) {
             '-s', $start_time,
             '-e', $end_time,
             @{$target->{args}}, @graph_args);
-    if( $ENV{MOD_PERL} ) {
+    if( $ENV{MOD_PERL} or defined $CGI::SpeedyCGI::i_am_speedy ) {
         binmode $fh;
         my $buf;
         while(sysread $fh, $buf, 8192) {
