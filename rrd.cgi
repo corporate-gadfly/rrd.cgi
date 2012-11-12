@@ -1317,7 +1317,7 @@ sub print_dir($$) {
 
     my( $summary ) = {graphs => 0, suppress => 0, subdir => 0};
     # run over all the targets in this directory for summary stats
-    if (@{$directories{$dir}{target}}) {
+    if (defined $directories{$dir}{target} and @{$directories{$dir}{target}}) {
         for my $item (@{$directories{$dir}{target}}) {
             $summary->{graphs}++;
             # see if item is suppressed?
@@ -1334,7 +1334,7 @@ sub print_dir($$) {
 
     # run over all the targets in this directory to see if any of them
     # has interval as 1 meaning a refresh of 60
-    if (@{$directories{$dir}{target}}) {
+    if (defined $directories{$dir}{target} and @{$directories{$dir}{target}}) {
         for my $item (@{$directories{$dir}{target}}) {
             common_args($item, $targets{$item}, $q);
             if( $targets{$item}{config}{interval} eq '1'
@@ -1374,13 +1374,13 @@ sub print_dir($$) {
 <title>RRD: Directory $dir1</title>
 EOT
 
-    print <<EOT unless $is_set_no_preview and @{$directories{$dir}{target}};
+    print <<EOT unless $is_set_no_preview and defined $directories{$dir}{target} and @{$directories{$dir}{target}};
 <style type="text/css">
 #graphs { padding-top: 0; clear: left; margin-left: 5px; }
 #nav { width: 30%; }
 </style>
 EOT
-    print <<EOT if @{$directories{$dir}{target}};
+    print <<EOT if defined $directories{$dir}{target} and @{$directories{$dir}{target}};
 <script type="text/javascript" src="$resource_dir/overlibmws.js">
 </script>
 <script type="text/javascript">
@@ -1617,7 +1617,7 @@ EOT
 
     print '<div id="footer">', "\n";
 
-    print <<EOT if @{$directories{$dir}{target}};
+    print <<EOT if defined $directories{$dir}{target} and @{$directories{$dir}{target}};
 <b><a name="Archived">Archived Graphs</a></b>
 <small>These are archived snapshots kept on the filesystem. Serving them
 up via a web-viewable directory carries a very low performance hit.</small>
