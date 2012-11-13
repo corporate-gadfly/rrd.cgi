@@ -96,14 +96,6 @@ sub main ($)
 
     common_args($dir . $stat, $tgt, $q);
 
-    # We may be running under mod_perl or something. Do not destroy
-    # the original settings of timezone.
-    my $oldtz; 
-    if (defined $tgt->{timezone}) {
-        $oldtz = $ENV{TZ};
-        $ENV{TZ} = $tgt->{timezone};
-    }
-
     my $start = $q->param('start');
     my $end = $q->param('end');
     if( defined $start || defined $end ) {
@@ -140,8 +132,6 @@ sub main ($)
     } else {
         print_error('Unknown extension: ' . $ext);
     }
-    $ENV{TZ} = $oldtz
-        if defined $oldtz;
 }
 
 sub do_html($$)
