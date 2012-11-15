@@ -505,6 +505,11 @@ sub do_image($$$$)
                 '-h', 80,
                 '-w', 250,
                 '-t', $preview_title,
+                # make title, axis, unit and legend fonts smaller
+                '-n', 'TITLE:8',
+                '-n', 'AXIS:7',
+                '-n', 'UNIT:7',
+                '-n', 'LEGEND:7',
                 '-S', 300;
         # weed out legend related printing
         @graph_args = grep {!/^(GPRINT|COMMENT|PRINT)/i} @graph_args;
