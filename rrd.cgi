@@ -491,6 +491,10 @@ sub do_image($$$$)
     if( $freq eq 'preview' ) {
         # shorten the title to first 50 characters
         my $preview_title = substr $target->{title}, 0, 50;
+        # replaced last 3 characters with ... if too long
+        if (length $preview_title > 47) {
+            $preview_title = (substr $preview_title, 0, 47) . '...';
+        }
 
         # find index of first array element which is equal to -W (watermark)
         my $watermark_index = first { $common_graph_args[$_] eq '-W' } 0..$#common_graph_args;
