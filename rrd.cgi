@@ -489,6 +489,9 @@ sub do_image($$$$)
     my @common_graph_args = @{$target->{args}};
 
     if( $freq eq 'preview' ) {
+        # shorten the title to first 50 characters
+        my $preview_title = substr $target->{title}, 0, 50;
+
         # find index of first array element which is equal to -W (watermark)
         my $watermark_index = first { $common_graph_args[$_] eq '-W' } 0..$#common_graph_args;
 
@@ -501,6 +504,7 @@ sub do_image($$$$)
         push @graph_args,
                 '-h', 80,
                 '-w', 250,
+                '-t', $preview_title,
                 '-S', 300;
         # weed out legend related printing
         @graph_args = grep {!/^(GPRINT|COMMENT|PRINT)/i} @graph_args;
