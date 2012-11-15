@@ -256,9 +256,9 @@ EOT
             $tgt->{suppress} =~ /([hdwmy]+)/;
     $suppressed_graphs ||= "";
     print '<div id="summary">';
-    print '<h1>', $total_graphs-length($suppressed_graphs), ' Graphs(s)</h1>';
+    print '<h1>Graphs: ', $total_graphs-length($suppressed_graphs), '</h1>';
     $suppressed_graphs
-        and print '<p>', length($suppressed_graphs), ' graph(s) suppressed</p>';
+        and print '<p>Suppressed: ', length($suppressed_graphs), '</p>';
     print '</div>';
 
     my $dayavg = $tgt->{config}->{interval};
@@ -280,35 +280,25 @@ EOT
 </table>
 <div>
 <b><a name="Historical">Run-time Historical Graphs</a></b>
-<small>These historical graphs produce images that are not cached at
-all and hence carry a performance hit every time they are requested,
-so be gentle</small>
+<small>(on-line generated and not cached - causes performance hit)</small>
 EOT
     if( $tgt->{suppress} !~ /h/ and $tgt->{config}{interval} eq '1' ) {
-    print '<br/>', "\n";
+        print '<br/>', "\nHours back: ";
         foreach my $i (1..6) {
-            print '<a href="?start=', -$i, 'h">',
-                $i, ' hour', $i > 1 ? 's' : '', ' ago',
-                '</a>', "\n";
+            print '<a href="?start=', -$i, 'h">', $i, '</a>', "\n";
         }
     }
-    print '<br/>', "\n";
+    print ' | ', "\nDays back: ";
     foreach my $i (1..7) {
-        print '<a href="?start=', -$i, 'd">',
-            $i, ' day', $i > 1 ? 's' : '', ' ago',
-            '</a>', "\n";
+        print '<a href="?start=', -$i, 'd">', $i, '</a>', "\n";
     }
-    print '<br/>', "\n";
+    print ' | ', "\nWeeks back: ";
     foreach my $i (1..4) {
-        print '<a href="?start=', -$i, 'w">',
-            $i, ' week', $i > 1 ? 's' : '', ' ago',
-            '</a>', "\n";
+        print '<a href="?start=', -$i, 'w">', $i, '</a>', "\n";
     }
-    print '<br/>', "\n";
+    print ' | ', "\nMonths back: ";
     foreach my $i (1..6) {
-        print '<a href="?start=', -$i, 'm">',
-            $i, ' month', $i > 1 ? 's' : '', ' ago',
-            '</a>', "\n";
+        print '<a href="?start=', -$i, 'm">', $i, '</a>', "\n";
     }
     print <<EOT;
 <form method="post" action="@{[ $q->url(-absolute=>1,-path=>1) ]}">
@@ -335,13 +325,12 @@ EOT
     print <<EOT;
 <div id="footer">
 <b><a name="Archived">Archived Graphs</a></b>
-<small>These are archived snapshots kept on the filesystem. Serving them
-up via a web-viewable directory carries a very low performance hit.</small>
+<small><i>(filesystem snapshots - no performance hit)</i></small>
 <br/>
-Display of
+Modes: 
 <a href="?mode=daily">daily</a>,
 <a href="?mode=monthly">monthly</a>,
-<a href="?mode=yearly">yearly</a> archival modes is supported.
+<a href="?mode=yearly">yearly</a>.
 <br/>
 EOT
 
@@ -1608,13 +1597,14 @@ EOT
     if( $is_set_no_preview and $summary->{graphs} ) {
         # print summary
         print '<div id="summary">';
-        print '<h1>', $summary->{graphs}-$summary->{suppress}, ' Graph(s)</h1>';
+        print '<h1>Graphs: ', $summary->{graphs}-$summary->{suppress}, '</h1>';
         $summary->{subdir} and
-            print '<h1>', $summary->{subdir},
+            print '<h1>',
                 $summary->{subdir} > 1 ? ' Subdirectories' : ' Subdirectory',
+                $summary->{subdir},
                 '</h1>';
         $summary->{suppress}
-            and print '<p>', $summary->{suppress}, ' graph(s) suppressed</p>';
+            and print '<p>Suppressed: ', $summary->{suppress}, '</p>';
         print '</div>', "\n";
     }
 
