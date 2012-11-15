@@ -396,7 +396,7 @@ sub http_headers($$)
     $refresh ||= 300;
 
     print 'Content-Type: ', $content_type,
-            ($content_type eq 'text/html' ? '; charset=iso-8859-1' : ''),
+            ($content_type eq 'text/html' ? '; charset=utf-8' : ''),
             "\n";
 
     if( %$cfg ) {
@@ -1781,7 +1781,7 @@ sub dump_directories($$) {
 sub print_error(@)
 {
     print <<EOT;
-Content-Type: text/html; charset=iso-8859-1
+Content-Type: text/html; charset=utf-8
 
 @{[HTML_PREAMBLE]}
 <head><title>Error</title></head>
