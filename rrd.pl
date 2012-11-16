@@ -478,11 +478,12 @@ sub do_image($$$$)
     my @common_graph_args = @{$target->{args}};
 
     if( $freq eq 'preview' ) {
-        # shorten the title to first 50 characters
-        my $preview_title = substr $target->{title}, 0, 50;
-        # replaced last 3 characters with ... if too long
-        if (length $preview_title > 47) {
-            $preview_title = (substr $preview_title, 0, 47) . '...';
+        use constant PREVIEW_TITLE_LENGTH => 47;
+        # shorten the title to first PREVIEW_TITLE_LENGTH characters
+        my $preview_title = substr $target->{title}, 0, PREVIEW_TITLE_LENGTH;
+        # replace last 3 characters with ellipses (only if getting cut off)
+        if (length $target->{title} > PREVIEW_TITLE_LENGTH) {
+            substr $preview_title, PREVIEW_TITLE_LENGTH-3, 3, '...';
         }
 
         # find index of first array element which is equal to -W (watermark)
