@@ -16,7 +16,6 @@ use Time::Local;
 use Text::ParseWords;
 use Date::Manip;
 use CGI;
-use CGI::SpeedyCGI;
 use LWP::UserAgent;
 use HTTP::Request::Common qw(GET);
 use File::Basename;
